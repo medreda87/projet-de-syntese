@@ -2,17 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LaundryController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::apiResource('products', ProductController::class);
+Route::apiResource('categories', CategoryController::class);
+
+Route::get('/laundry', [LaundryController::class, 'index']);
+Route::post('/laundry', [LaundryController::class, 'store']);
