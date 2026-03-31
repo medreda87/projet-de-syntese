@@ -15,6 +15,7 @@ class Laundry extends Model
         'phone',
         'email',
         'description',
-        'logo'
+        'logo',
+        'bigLogo'
     ];
 }
