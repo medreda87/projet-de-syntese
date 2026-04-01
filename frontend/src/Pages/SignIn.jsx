@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import Button from '../Components/Button';
+import { useAuth } from '../contexts/AuthContext';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +13,12 @@ const SignIn = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+  const from = location.state?.from || '/';
 
+
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -59,10 +65,8 @@ const SignIn = () => {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      // In real app, handle authentication here
-      console.log('Sign in:', formData);
-      // Navigate to home or dashboard
-      navigate('/');
+      login({ email: formData.email, name: formData.email.split('@')[0] });
+      navigate(from, { replace: true });
     }, 1000);
   };
 

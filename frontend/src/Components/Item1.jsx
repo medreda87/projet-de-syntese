@@ -2,11 +2,16 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MdOutlineVerified } from "react-icons/md";
 import { IoLocationOutline } from "react-icons/io5";
+import { useAuth } from '../contexts/AuthContext';
 function Item1(props){
   const navigate = useNavigate()
+
+  const {idLaundry , setIdLaundry} = useAuth();
   
   const handleClick = () => {
-    navigate(`/shop/${props.id}`)
+    setIdLaundry(props.id);
+    console.log("Laundry ID set to:", idLaundry);
+    navigate(`/shop/${props.title}`)
   }
   
   return (

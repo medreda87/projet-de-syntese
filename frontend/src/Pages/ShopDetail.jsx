@@ -5,6 +5,7 @@ import { IoLocationOutline, IoCallOutline, IoMailOutline } from "react-icons/io5
 import { FaTruck, FaClock } from "react-icons/fa"
 import { IoArrowBack } from "react-icons/io5"
 import Reviews from '../Components/Reviews'
+import { useAuth } from '../contexts/AuthContext'
 
 // Sample reviews data for each shop
 const getShopReviews = (shopId) => {
@@ -182,9 +183,12 @@ const baseLaundries = [
 ]
 
 const ShopDetail = () => {
-  const { id } = useParams()
+  //const { id } = useParams()
+  const {idLaundry} = useAuth();
+
+  console.log("ShopDetail - id from URL:", idLaundry);
   const [selectedServices, setSelectedServices] = useState([])
-  const shopId = parseInt(id)
+  const shopId = parseInt(idLaundry)
   
   const baseShop = baseLaundries.find(l => l.id === shopId)
   const details = getShopDetails(shopId)

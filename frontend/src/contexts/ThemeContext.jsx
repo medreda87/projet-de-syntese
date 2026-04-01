@@ -33,6 +33,8 @@ export const ThemeProvider = ({ children }) => {
     isDark: theme === 'dark'
   };
 
+  
+
   return (
     <ThemeContext.Provider value={value}>
       {children}

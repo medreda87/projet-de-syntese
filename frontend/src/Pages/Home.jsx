@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Component9 from '../Components/Component9'
 import Component20 from '../Components/Component20'
@@ -9,6 +9,7 @@ import Item1 from '../Components/Item1'
 import Component8 from '../Components/Component8'
 import Component31 from '../Components/Component31'
 import Reviews from '../Components/Reviews'
+import axios from 'axios'
 
 
 const laundries = [
@@ -200,7 +201,29 @@ const staggerContainerVariants = {
   }
 }
 
+
+
+
 const Home = () => {
+
+
+  const [laundries, setLaundries] = useState([]);
+
+
+  useEffect(()=>{
+  const getLaundries = async () => {
+    try {
+      const response = await axios.get('/api/laundries');
+      setLaundries(response.data);
+      
+    } catch (error) {
+      console.error('Error fetching laundries:', error);
+    }
+  }
+  getLaundries();
+} , [])
+
+
   return (
     <main>
       <motion.div

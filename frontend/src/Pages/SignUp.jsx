@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
 import Button from '../Components/Button';
+import { useAuth } from '../contexts/AuthContext';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,9 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+  const from = location.state?.from || '/';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,10 +85,8 @@ const SignUp = () => {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      // In real app, handle registration here
-      console.log('Sign up:', formData);
-      // Navigate to home or verification page
-      navigate('/');
+      login({ email: formData.email, name: formData.fullName });
+      navigate(from, { replace: true });
     }, 1000);
   };
 
