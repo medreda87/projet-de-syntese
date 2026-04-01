@@ -5,7 +5,7 @@ import Button from './Button'
 import Icon from './ui/Icon'
 import { FaCheck, FaArrowRight, FaCheckCircle, FaTimes } from 'react-icons/fa'
 import { sendEmail } from '../utils/send_email'
-
+import API from '../utils/api';
 const Component16 = ({
   tagText = null,
   titlePart1 = "Ready to Get <span>Started ?</span>",
@@ -26,6 +26,10 @@ const Component16 = ({
       placeholder: "john@example.com",
       value: ""
     },
+    password: {
+       label: "Password", 
+       placeholder: "your password",
+        value: "" },
     phone: {
       label: "Phone Number",
       placeholder: "+1 234 567 890",
@@ -46,7 +50,8 @@ const Component16 = ({
     ownerName: formFields.ownerName.value || "",
     email: formFields.email.value || "",
     phone: formFields.phone.value || "",
-    address: formFields.address.value || ""
+    address: formFields.address.value || "",
+    password: formFields.password.value || ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -59,59 +64,94 @@ const Component16 = ({
     })
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setError(null)
-    setShowSuccess(false)
+  // const handleSubmit = (e) => {
+  //   e.preventDefault()
+  //   setIsSubmitting(true)
+  //   setError(null)
+  //   setShowSuccess(false)
     
-    // Create message content
-    const message = `
-      Business Name: ${formData.businessName}
-      Owner Name: ${formData.ownerName}
-      Email: ${formData.email}
-      Phone: ${formData.phone}
-      Address: ${formData.address}
-    `.trim();
-    
-    sendEmail({
-      name: formData.ownerName,
-      phone: formData.phone,
-      email: formData.email,
-      address: formData.address,
-      businessName: formData.businessName,
-      subject: `New Application from ${formData.businessName}`,
-      message: message
-    }).then(() => {
-      // Handle success
-      if (onSubmit) {
-        onSubmit(formData)
-      }
-      setIsSubmitting(false)
-      setShowSuccess(true)
-      setError(null)
-      
-      // Reset form
-      setFormData({
-        businessName: '',
-        ownerName: '',
-        email: '',
-        phone: '',
-        address: ''
-      })
-      
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        setShowSuccess(false)
-      }, 5000)
-    }).catch((error) => {
-      console.error('Error sending email:', error)
-      setIsSubmitting(false)
-      setError('There was an error submitting your application. Please try again.')
-      setShowSuccess(false)
-    })
-  }
 
+
+  //   // Create message content
+  //   const message = `
+  //     Business Name: ${formData.businessName}
+  //     Owner Name: ${formData.ownerName}
+  //     Email: ${formData.email}
+  //     Phone: ${formData.phone}
+  //     Address: ${formData.address}
+  //   `.trim();
+    
+  //   sendEmail({
+  //     name: formData.ownerName,
+  //     phone: formData.phone,
+  //     email: formData.email,
+  //     address: formData.address,
+  //     businessName: formData.businessName,
+  //     password: formData.password,
+  //     subject: `New Application from ${formData.businessName}`,
+  //     message: message
+  //   }).then(() => {
+  //     // Handle success
+  //     if (onSubmit) {
+  //       onSubmit(formData)
+  //     }
+  //     setIsSubmitting(false)
+  //     setShowSuccess(true)
+  //     setError(null)
+      
+  //     // Reset form
+  //     setFormData({
+  //       businessName: '',
+  //       ownerName: '',
+  //       email: '',
+  //       phone: '',
+  //       address: '',
+  //       password:""
+  //     })
+      
+  //     // Hide success message after 5 seconds
+  //     setTimeout(() => {
+  //       setShowSuccess(false)
+  //     }, 5000)
+  //   }).catch((error) => {
+  //     console.error('Error sending email:', error)
+  //     setIsSubmitting(false)
+  //     setError('There was an error submitting your application. Please try again.')
+  //     setShowSuccess(false)
+  //   })
+  // }
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await API.post("/providers", {
+      laudry_name: formData.businessName,
+      provider_name: formData.ownerName,
+      email: formData.email,
+      password: "123456", // أو خليها input إضافي إذا بغيت
+      phone: formData.phone,
+      address: formData.address
+    });
+
+    console.log("Provider créé:", response.data);
+    alert("Provider créé avec succès !");
+    
+    // Reset form
+    setFormData({
+      businessName: "",
+      ownerName: "",
+      email: "",
+      phone: "",
+      address: ""
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert("Erreur lors de la création du provider !");
+  }
+};
   return (
     <div id='register'  className="bg-primary-light py-16 px-4">
       <div className="container">
@@ -229,6 +269,21 @@ const Component16 = ({
                   className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
                 />
               </div>
+              {/* Password */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-[#1E2A36] mb-2">
+                {formFields.password.label}
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder={formFields.password.placeholder}
+                className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+              />
+            </div>
 
               {/* Phone Number */}
               <div>

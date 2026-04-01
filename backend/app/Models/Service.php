@@ -5,22 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Laundry extends Model
+class Service extends Model
 {
     use HasFactory;
-
     protected $fillable = [
+        'icon',
         'name',
-        'address',
-        'phone',
-        'email',
         'description',
-        'logo',
-        'bigLogo'
+        'price',
     ];
-
-    public function provider()
-    {
-        return $this->belongsTo(Provider::class);
-    }
 }
