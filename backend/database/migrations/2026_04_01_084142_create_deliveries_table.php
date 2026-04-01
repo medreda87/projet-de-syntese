@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('services', function (Blueprint $table) {
+        Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
-            $table->string('icon');
-            $table->string('name');
-            $table->text('description');
-            $table->decimal('price', 8, 2);
             $table->foreignId('laundry_id')->constrained('laundries')->onDelete('cascade');
+            $table->enum('type',['distance','fixed','free_above','free']);
+            $table->decimal('price_per_km', 8, 2)->nullable();
+            $table->decimal('fixed_price', 8, 2)->nullable();
+            $table->decimal('min_order', 8, 2)->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('services');
+        Schema::dropIfExists('deliveries');
     }
 };

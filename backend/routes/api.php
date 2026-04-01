@@ -21,4 +21,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 use App\Http\Controllers\ProviderController;
 Route::apiResource('providers', ProviderController::class);
-
+use App\Http\Controllers\LaundryController;
+Route::apiResource('laundries', LaundryController::class);
+use App\Http\Controllers\CategoryController;
+Route::apiResource('categories', CategoryController::class);
+use App\Http\Controllers\ProductController;
+Route::apiResource('products', ProductController::class);
+use App\Http\Controllers\ServiceController;
+Route::apiResource('services', ServiceController::class);
+use App\Http\Controllers\DeliveryController;
+Route::apiResource('deliveries', DeliveryController::class);
