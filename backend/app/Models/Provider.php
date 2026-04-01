@@ -16,5 +16,10 @@ class Provider extends Model
         'phone',
         'address',
     ];
+
+    public function laundries()
+    {
+        return $this->hasMany(Laundry::class);
+    }
     
 }
