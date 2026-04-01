@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Provider;
 use Illuminate\Http\Request;
 
 class ProviderController extends Controller
@@ -38,6 +39,7 @@ class ProviderController extends Controller
         ]);
 
         $provider=Provider::create($request->all());
+        
 
         return response()->json($provider, 201);
     }
