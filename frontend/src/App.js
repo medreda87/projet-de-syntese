@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import Header  from "./Components/Header";
 import Footer from "./Components/Footer";
 import CookieBanner from "./Components/CookieBanner";
@@ -19,9 +20,13 @@ import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 import AddLaundryForm from "./Components/AddlaundryForm";
 
+
+
+
 const App = () => {
   return (
     <ThemeProvider>
+      <AuthProvider>
       <div className="min-h-screen bg-background transition-colors duration-200">
         <Header />
         
@@ -49,7 +54,7 @@ const App = () => {
         <Footer />
         <CookieBanner />
       </div>
-      
+      </AuthProvider>
     </ThemeProvider>
   );
 };
