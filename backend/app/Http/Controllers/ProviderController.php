@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Provider;
 use Illuminate\Http\Request;
 use App\Models\Provider;
 class ProviderController extends Controller
