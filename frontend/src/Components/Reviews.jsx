@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Star, ChevronLeft, ChevronRight, LogIn } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, LogIn, Pencil, Trash2, Check, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import TitleSectionText from "./ui/TitleSectionText";
 import { useAuth } from "../contexts/AuthContext";
@@ -15,6 +15,8 @@ const Reviews = ({
   const reviewsPerPage = variant === "testimonials" ? 3 : 5;
   const [comments, setComments] = useState("");
   const [error, setError] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState("");
   const { isAuthenticated, user } = useAuth();
   const location = useLocation();
 
@@ -65,12 +67,40 @@ const Reviews = ({
       setError({ comments: "Comment cannot be empty" });
       return;
     }
-    
 
-    
     // You can use this to associate the comment with a specific shop
-
     // You can make an API call to submit the comment to the backend
+  };
+
+  // Start editing a comment
+  const handleEditComment = (review) => {
+    setEditingId(review.id);
+    setEditText(review.comment);
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditText("");
+  };
+
+  // Save edited comment
+  const handleSaveEdit = async (reviewId) => {
+    if (editText.trim() === "") return;
+
+    // TODO: Make an API call to update the comment on the backend
+    // e.g. await fetch(`/api/reviews/${reviewId}`, { method: 'PUT', body: JSON.stringify({ comment: editText }) })
+
+    setEditingId(null);
+    setEditText("");
+  };
+
+  // Delete a comment
+  const handleDeleteComment = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+
+    // TODO: Make an API call to delete the comment on the backend
+    // e.g. await fetch(`/api/reviews/${reviewId}`, { method: 'DELETE' })
   };
 
   if (variant === "testimonials") {
@@ -207,13 +237,58 @@ const Reviews = ({
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    {renderStars(review.rating)}
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      {renderStars(review.rating)}
+                    </div>
+                    {isAuthenticated && user?.name === review.customerName && (
+                      <div className="flex items-center gap-1 ml-2">
+                        <button
+                          onClick={() => handleEditComment(review)}
+                          className="p-1.5 rounded-md text-[#62707D] hover:text-[#0EA5C9] hover:bg-[#E0F2FE] transition-colors"
+                          title="Edit comment"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteComment(review.id)}
+                          className="p-1.5 rounded-md text-[#62707D] hover:text-red-500 hover:bg-red-50 transition-colors"
+                          title="Delete comment"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <p className="text-[#62707D] leading-relaxed">
-                  {review.comment}
-                </p>
+                {editingId === review.id ? (
+                  <div className="mt-2">
+                    <textarea
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg p-3 text-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] resize-none"
+                      rows={3}
+                    />
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => handleSaveEdit(review.id)}
+                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-[#1BB38C] text-white text-sm hover:bg-[#1bb38dcf] transition-colors"
+                      >
+                        <Check className="w-4 h-4" /> Save
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-gray-200 text-[#1E2A36] text-sm hover:bg-gray-300 transition-colors"
+                      >
+                        <X className="w-4 h-4" /> Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-[#62707D] leading-relaxed">
+                    {review.comment}
+                  </p>
+                )}
                 {review.service && (
                   <div className="mt-3">
                     <span className="text-sm bg-[#E0F2FE] text-[#0EA5C9] px-3 py-1 rounded-lg">

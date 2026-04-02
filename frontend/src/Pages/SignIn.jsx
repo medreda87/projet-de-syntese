@@ -62,12 +62,14 @@ const SignIn = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      login({ email: formData.email, name: formData.email.split('@')[0] });
+    const result = await login({ email: formData.email, password: formData.password });
+    setIsLoading(false);
+
+    if (result.success) {
       navigate(from, { replace: true });
-    }, 1000);
+    } else {
+      setErrors({ general: result.message });
+    }
   };
 
   return (
@@ -83,6 +85,11 @@ const SignIn = () => {
         {/* Sign In Form */}
         <div className="bg-card rounded-xl shadow-lg p-8 border border-border">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {errors.general && (
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+                {errors.general}
+              </div>
+            )}
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">

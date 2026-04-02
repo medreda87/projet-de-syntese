@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->decimal('price', 8, 2);
-            $table->foriengId('laundry_id')->constrained('laundries')->onDelete('cascade');
+            $table->foreignId('laundry_id')->references("id")->on('laundries')->onDelete('cascade');
             $table->timestamps();
         });
     }
