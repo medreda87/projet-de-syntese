@@ -30,7 +30,6 @@ class LaundryController extends Controller
                 'provider_id' => $request->provider_id
             ],
             [
-                'name' => $request->name,
                 'address' => $request->address,
                 'phone' => $request->phone,
                 'email' => $request->email,

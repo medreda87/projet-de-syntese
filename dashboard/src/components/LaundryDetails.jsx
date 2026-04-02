@@ -4,7 +4,7 @@ import './LaundryDetails.css';
 const LaundryDetails = ({ setCurrentPage }) => {
   // State pour les données du formulaire
   const [formData, setFormData] = useState({
-    laundryTitle: 'Blue Horizon Eco Cleaners',
+    name: 'Blue Horizon Eco Cleaners',
     email: 'contact@bluehorizon.com',
     description: 'Professional eco-friendly laundry service dedicated to providing high-quality cleaning with environmentally safe products. We specialize in delicate fabrics, dry cleaning, and same-day service. Our state-of-the-art equipment ensures your garments receive the best care possible.',
     phone: '+1 (555) 123-4567',
@@ -109,7 +109,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
   const handleDiscard = () => {
     if (window.confirm('Are you sure you want to discard all changes?')) {
       setFormData({
-        laundryTitle: 'Blue Horizon Eco Cleaners',
+        name: 'Blue Horizon Eco Cleaners',
         email: 'contact@bluehorizon.com',
         description: 'Professional eco-friendly laundry service dedicated to providing high-quality cleaning with environmentally safe products. We specialize in delicate fabrics, dry cleaning, and same-day service. Our state-of-the-art equipment ensures your garments receive the best care possible.',
         phone: '+1 (555) 123-4567',
@@ -199,7 +199,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
                   </label>
                 </div>
                 <div className="profile-info">
-                  <h2 className="shop-name">{formData.laundryTitle}</h2>
+                  <h2 className="shop-name">{formData.name}</h2>
                   <p className="shop-status">⭐ 4.9 ★ (328 reviews) • Verified Business</p>
                 </div>
               </div>
@@ -207,7 +207,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
           </div>
 
           {/* Tabs Section */}
-          <div className="tabs-container">
+          {/* <div className="tabs-container">
             <button 
               className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
               onClick={() => setActiveTab('general')}
@@ -232,10 +232,10 @@ const LaundryDetails = ({ setCurrentPage }) => {
             >
               <span>🖼️</span> Gallery
             </button>
-          </div>
+          </div> */}
 
           {/* General Information Tab */}
-          {activeTab === 'general' && (
+          
             <div className="form-card">
               <div className="form-section-title">
                 <span className="title-icon">🏪</span>
@@ -247,10 +247,10 @@ const LaundryDetails = ({ setCurrentPage }) => {
                   <label className="field-label">Laundry Business Name</label>
                   <input
                     type="text"
-                    name="laundryTitle"
+                    name="name"
                     className="field-input"
                     placeholder="Enter business name"
-                    value={formData.laundryTitle}
+                    value={formData.name}
                     onChange={handleInputChange}
                   />
                   <p className="field-hint">This name will appear on customer invoices and receipts</p>
@@ -282,10 +282,10 @@ const LaundryDetails = ({ setCurrentPage }) => {
                 </div>
               </div>
             </div>
-          )}
+          
 
           {/* Contact Details Tab */}
-          {activeTab === 'contact' && (
+          
             <div className="form-card">
               <div className="form-section-title">
                 <span className="title-icon">📱</span>
@@ -308,7 +308,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
                   </div>
                 </div>
                 
-                <div className="form-field">
+                {/* <div className="form-field">
                   <label className="field-label">WhatsApp Business</label>
                   <div className="input-with-icon">
                     <span className="input-leading-icon">💬</span>
@@ -322,7 +322,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
                     />
                   </div>
                   <p className="field-hint">Customers can contact you via WhatsApp</p>
-                </div>
+                </div> */}
                 
                 <div className="form-field full-width">
                   <label className="field-label">Business Address</label>
@@ -340,10 +340,9 @@ const LaundryDetails = ({ setCurrentPage }) => {
                 </div>
               </div>
             </div>
-          )}
+          
 
           {/* Business Hours Tab */}
-          {activeTab === 'schedule' && (
             <div className="form-card">
               <div className="form-section-title">
                 <span className="title-icon">⏰</span>
@@ -377,10 +376,9 @@ const LaundryDetails = ({ setCurrentPage }) => {
                 </div>
               </div>
             </div>
-          )}
+          
 
           {/* Gallery Tab */}
-          {activeTab === 'gallery' && (
             <div className="form-card">
               <div className="form-section-title">
                 <span className="title-icon">🖼️</span>
@@ -424,7 +422,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
               
               <p className="gallery-hint">Showcase your facility to build trust with customers. Add up to 20 photos.</p>
             </div>
-          )}
+          
 
           {/* Action Buttons */}
           <div className="action-bar">
