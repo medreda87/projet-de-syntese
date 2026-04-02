@@ -14,4 +14,8 @@ class Service extends Model
         'description',
         'price',
     ];
+    public function laundry()
+    {
+        return $this->belongsTo(Laundry::class);
+    }
 }

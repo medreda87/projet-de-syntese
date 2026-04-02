@@ -4,16 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-USE App\Models\Product;
-class Category extends Model
+
+class Delivery extends Model
 {
     use HasFactory;
-     protected $fillable = ['name'];
-
-    public function products()
-    {
-        return $this->hasMany(Product::class);
-    }
+    protected $fillable = [
+    'laundry_id',
+    'type',
+    'price_per_km',
+    'fixed_price',
+    'min_order',
+    ];
     public function laundry()
     {
         return $this->belongsTo(Laundry::class);

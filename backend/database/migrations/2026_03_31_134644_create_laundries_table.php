@@ -20,9 +20,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('logo')->nullable();
             $table->string('bigLogo')->nullable();
-            $table->foriengId('provider_id')->constrained('providers')->onDelete('cascade');
+            $table->foreignId('provider_id')->constrained('providers')->onDelete('cascade');
             $table->timestamps();
-
         });
     }
 
