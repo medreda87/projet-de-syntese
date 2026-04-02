@@ -126,14 +126,15 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const response = await API.post("/providers", {
-      laudry_name: formData.businessName,
-      provider_name: formData.ownerName,
-      email: formData.email,
-      password: "123456", // أو خليها input إضافي إذا بغيت
-      phone: formData.phone,
-      address: formData.address
-    });
+  const response = await API.post("/providers", {
+    laudry_name: formData.businessName,
+    provider_name: formData.ownerName,
+    email: formData.email,
+    password: formData.password,
+    phone: formData.phone,
+    address: formData.address
+  });
+
 
     console.log("Provider créé:", response.data);
     alert("Provider créé avec succès !");
@@ -144,14 +145,15 @@ const handleSubmit = async (e) => {
       ownerName: "",
       email: "",
       phone: "",
-      address: ""
+      address: "",
+      password: ""
     });
 
   } catch (err) {
-    console.error(err);
-    alert("Erreur lors de la création du provider !");
+  console.log(err.response?.data);  // 🔹 hna ghadi tchouf keys li fail
+  alert(JSON.stringify(err.response?.data));
+}
   }
-};
   return (
     <div id='register'  className="bg-primary-light py-16 px-4">
       <div className="container">
