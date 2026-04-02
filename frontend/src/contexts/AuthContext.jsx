@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../utils/api';
 
 
 const AuthContext = createContext(null);
@@ -12,38 +12,74 @@ export const AuthProvider = ({ children }) => {
   // Load user from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (stored) {
+    const token = localStorage.getItem('token');
+    if (stored && token) {
       try {
-        setUser(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        setUser(parsed);
+        setIsAuthenticated(true);
       } catch {
         localStorage.removeItem('user');
+        localStorage.removeItem('token');
       }
     }
   }, []);
 
-  const login = async (userData ) => {
-
-    const res = await axios.post("/api/auth/login" , userData);
-
-    if(res.data.success){
-         setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+  const login = async (credentials) => {
+    try {
+      const res = await API.post('/login', credentials);
+      if (res.data.success) {
+        const { user: userData, access_token } = res.data;
+        setUser(userData);
         setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', access_token);
         return { success: true };
+      }
+      return { success: false, message: res.data.message || 'Login failed' };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Login failed';
+      return { success: false, message };
     }
-    return { success: false, message: res.data.message || 'Login failed' };
-    
   };
 
-  const logout = () => {
+  const register = async (data) => {
+    try {
+      const res = await API.post('/register', data);
+      if (res.data.success) {
+        const { user: userData, access_token } = res.data;
+        setUser(userData);
+        setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', access_token);
+        return { success: true };
+      }
+      return { success: false, message: res.data.message || 'Registration failed' };
+    } catch (error) {
+      if (error.response?.status === 422) {
+        return { success: false, errors: error.response.data.errors };
+      }
+      const message = error.response?.data?.message || 'Registration failed';
+      return { success: false, message };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await API.post('/logout');
+    } catch {
+      // ignore errors on logout
+    }
     setUser(null);
+    setIsAuthenticated(false);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, idLaundry, setIdLaundry }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, idLaundry, setIdLaundry }}>
       {children}
     </AuthContext.Provider>
   );

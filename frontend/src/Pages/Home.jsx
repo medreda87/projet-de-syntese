@@ -10,6 +10,7 @@ import Component8 from '../Components/Component8'
 import Component31 from '../Components/Component31'
 import Reviews from '../Components/Reviews'
 import axios from 'axios'
+import API from '../utils/api'
 
 
 const laundries = [
@@ -213,7 +214,7 @@ const Home = () => {
   useEffect(()=>{
   const getLaundries = async () => {
     try {
-      const response = await axios.get('/api/laundries');
+      const response = await API.get('/laundry');
       setLaundries(response.data);
       
     } catch (error) {

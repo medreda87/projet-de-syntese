@@ -18,7 +18,7 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { login, register } = useAuth();
   const from = location.state?.from || '/';
 
   const handleChange = (e) => {
@@ -82,12 +82,26 @@ const SignUp = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      login({ email: formData.email, name: formData.fullName });
+    const result = await register({
+      name: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+      password_confirmation: formData.confirmPassword,
+    });
+    setIsLoading(false);
+
+    if (result.success) {
       navigate(from, { replace: true });
-    }, 1000);
+    } else if (result.errors) {
+      // Map Laravel validation errors to form fields
+      const mapped = {};
+      if (result.errors.name) mapped.fullName = result.errors.name[0];
+      if (result.errors.email) mapped.email = result.errors.email[0];
+      if (result.errors.password) mapped.password = result.errors.password[0];
+      setErrors(mapped);
+    } else {
+      setErrors({ general: result.message });
+    }
   };
 
   return (
@@ -103,6 +117,11 @@ const SignUp = () => {
         {/* Sign Up Form */}
         <div className="bg-card rounded-xl shadow-lg p-8 border border-border">
           <form onSubmit={handleSubmit} className="space-y-5">
+            {errors.general && (
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+                {errors.general}
+              </div>
+            )}
             {/* Full Name Field */}
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-[#1E2A36] mb-2">

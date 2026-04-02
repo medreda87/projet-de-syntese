@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\ProviderController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,8 +22,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
-use App\Http\Controllers\ProviderController;
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'user']);
+});
+
 Route::apiResource('providers', ProviderController::class);
 use App\Http\Controllers\LaundryController;
 Route::apiResource('laundries', LaundryController::class);
