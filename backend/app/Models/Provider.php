@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Notifications\Notifiable;
 class Provider extends Model
 {
-    use HasFactory;
+    use HasFactory,Notifiable;
         protected $fillable = [
         'laudry_name',
         'provider_name',

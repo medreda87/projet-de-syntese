@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Provider;
+use App\Notifications\ProviderEmail;
+
 class ProviderController extends Controller
 {
     /**
@@ -37,9 +40,10 @@ class ProviderController extends Controller
             'address' => 'nullable',
         ]);
 
-        $provider=Provider::create($request->all());
+        $data = $request->all();
+        $data['password'] = Hash::make($data['password']);
+        $provider = Provider::create($data);
         
-
         return response()->json($provider, 201);
     }
 
@@ -71,13 +75,17 @@ class ProviderController extends Controller
             'laudry_name' => 'required',
             'provider_name' => 'required',
             'email' => 'required|email|unique:providers,email,' . $id,
-            'password' => 'required|min:6',
+            'password' => 'sometimes|min:6',
             'phone' => 'nullable',
             'address' => 'nullable',
         ]);
 
         $provider = Provider::findOrFail($id);
-        $provider->update($request->all());
+        $data = $request->all();
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($data['password']);
+        }
+        $provider->update($data);
 
         return response()->json($provider);
     }
@@ -92,4 +100,7 @@ class ProviderController extends Controller
 
         return response()->json(['message' => 'Provider deleted successfully']);
     }
+
+
+
 }
