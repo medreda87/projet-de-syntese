@@ -29,7 +29,7 @@ const App = () => {
       <AuthProvider>
       <div className="min-h-screen bg-background transition-colors duration-200">
         <Header />
-        
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shops" element={<FindShops />} />
