@@ -32,10 +32,10 @@ class DeliveryController extends Controller
         $data=$request->validate([
    'laundry_id' => 'required|exists:laundries,id',
     'type' => 'required|in:distance,fixed,free_above,free',
-
     'price_per_km' => 'required_if:type,distance|nullable|numeric',
     'fixed_price' => 'required_if:type,fixed|nullable|numeric',
     'min_order' => 'required_if:type,free_above|nullable|numeric',
+    'delivery_radius' => 'nullable|numeric',
         ]);
     
 
