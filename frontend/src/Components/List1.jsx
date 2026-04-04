@@ -329,10 +329,11 @@ const isDirty =
 {/* hadi div deya filter kansardo fiha les props*/}
   <div style={{backgroundColor:'#f4f7f7', fontSize:"20px"}}>
     <Filter1 search={search} setSearch={setSearch}
-    filter={filter} setFilter={setFilter}
-    sortType={sortType} setSortType={setSortType}
-    isDirty={isDirty} handleClear={handleClear}
-    selectedCity={selectedCity} setSelectedCity={setSelectedCity}
+      filter={filter} setFilter={setFilter}
+      sortType={sortType} setSortType={setSortType}
+      isDirty={isDirty} handleClear={handleClear}
+      onhandleFilter={handleSearch}
+      selectedCity={selectedCity} setSelectedCity={setSelectedCity}
     />
   </div>
 {/* wehada howa li fih mesbanat daylna  */}
@@ -362,7 +363,7 @@ const isDirty =
           <button className='empty-icon'><IoSearchOutline/></button>
           <h2 className='empty-title'>No shops found</h2>
           <p className='empty-text'>Try adjusting your filters or search query</p>
-          <button className="empty-button" onClick={()=>handleSearch()}> Clear Filters </button>
+          <button className="empty-button" onClick={()=>handleClear()}> Clear Filters </button>
         </div>
       )}
     </div>

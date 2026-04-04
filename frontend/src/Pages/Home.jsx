@@ -11,6 +11,8 @@ import Component31 from '../Components/Component31'
 import Reviews from '../Components/Reviews'
 import axios from 'axios'
 import API from '../utils/api'
+import { useAuth } from '../contexts/AuthContext'
+import { UserCheck, Store, LayoutDashboard } from 'lucide-react'
 
 
 const laundries = [
@@ -207,8 +209,22 @@ const staggerContainerVariants = {
 
 const Home = () => {
 
-
+  const { user, isAuthenticated, updateRole } = useAuth();
   const [laundries, setLaundries] = useState([]);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('');
+  const [roleLoading, setRoleLoading] = useState(false);
+  const [showDashboardPrompt, setShowDashboardPrompt] = useState(false);
+
+  // Show role modal 2 seconds after page loads for new users without a role
+  useEffect(() => {
+    if (isAuthenticated && user && !user.role) {
+      const timer = setTimeout(() => {
+        setShowRoleModal(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, user]);
 
 
   useEffect(()=>{
@@ -325,6 +341,101 @@ const Home = () => {
       >
         <Component20 />
       </motion.div>
+
+      {/* Role Selection Modal */}
+      {showRoleModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-[#1E2A36] mb-2">Welcome to FreshFold!</h2>
+              <p className="text-[#62707D]">How would you like to use our platform?</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <button
+                type="button"
+                onClick={() => setSelectedRole('client')}
+                className={`flex flex-col items-center gap-3 p-5 border-2 rounded-xl transition-all ${
+                  selectedRole === 'client'
+                    ? 'border-[#0EA5C9] bg-[#0EA5C9]/5 text-[#0EA5C9] shadow-md'
+                    : 'border-gray-200 hover:border-gray-300 text-[#62707D]'
+                }`}
+              >
+                <UserCheck className="w-8 h-8" />
+                <span className="font-semibold">Client</span>
+                <span className="text-xs text-center opacity-70">I want to use laundry services</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedRole('provider')}
+                className={`flex flex-col items-center gap-3 p-5 border-2 rounded-xl transition-all ${
+                  selectedRole === 'provider'
+                    ? 'border-[#0EA5C9] bg-[#0EA5C9]/5 text-[#0EA5C9] shadow-md'
+                    : 'border-gray-200 hover:border-gray-300 text-[#62707D]'
+                }`}
+              >
+                <Store className="w-8 h-8" />
+                <span className="font-semibold">Provider</span>
+                <span className="text-xs text-center opacity-70">I want to offer laundry services</span>
+              </button>
+            </div>
+
+            <button
+              onClick={async () => {
+                if (!selectedRole) return;
+                setRoleLoading(true);
+                const result = await updateRole(selectedRole);
+                setRoleLoading(false);
+                if (result.success) {
+                  setShowRoleModal(false);
+                  if (selectedRole === 'provider') {
+                    setShowDashboardPrompt(true);
+                  }
+                }
+              }}
+              disabled={!selectedRole || roleLoading}
+              className={`w-full py-3 rounded-lg font-medium transition-colors ${
+                selectedRole
+                  ? 'bg-[#0EA5C9] text-white hover:bg-[#0d94b8]'
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              {roleLoading ? 'Saving...' : 'Continue'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Dashboard Prompt for Providers */}
+      {showDashboardPrompt && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div className="text-center mb-6">
+              <LayoutDashboard className="w-12 h-12 text-[#0EA5C9] mx-auto mb-3" />
+              <h2 className="text-2xl font-bold text-[#1E2A36] mb-2">Go to your Dashboard?</h2>
+              <p className="text-[#62707D]">You can manage your laundry services from your provider dashboard.</p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDashboardPrompt(false)}
+                className="flex-1 py-3 rounded-lg font-medium border-2 border-gray-200 text-[#62707D] hover:border-gray-300 transition-colors"
+              >
+                Stay Here
+              </button>
+              <button
+                onClick={() => {
+                  window.open('http://localhost:3001', '_blank');
+                  setShowDashboardPrompt(false);
+                }}
+                className="flex-1 py-3 rounded-lg font-medium bg-[#0EA5C9] text-white hover:bg-[#0d94b8] transition-colors"
+              >
+                Go to Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

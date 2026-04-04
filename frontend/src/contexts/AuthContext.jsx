@@ -26,8 +26,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (credentials) => {
+    
     try {
       const res = await API.post('/login', credentials);
+      console.log('Login response:', res.data);
       if (res.data.success) {
         const { user: userData, access_token } = res.data;
         setUser(userData);
@@ -64,6 +66,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateRole = async (role) => {
+    try {
+      const res = await API.put('/update-role', { role });
+      if (res.data.success) {
+        const updatedUser = res.data.user;
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        return { success: true };
+      }
+      return { success: false, message: res.data.message || 'Failed to update role' };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to update role';
+      return { success: false, message };
+    }
+  };
+
   const logout = async () => {
     try {
       await API.post('/logout');
@@ -79,7 +97,7 @@ export const AuthProvider = ({ children }) => {
   
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, idLaundry, setIdLaundry }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, updateRole, idLaundry, setIdLaundry }}>
       {children}
     </AuthContext.Provider>
   );

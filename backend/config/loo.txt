@@ -1,0 +1,620 @@
+
+
+
+You are an expert frontend engineer and UI/UX designer. Build a complete, 
+production-ready web application called "tri9i" — a smart city mobility 
+platform for Tangier, Morocco.
+
+═══════════════════════════════════════════════
+PART 1 — PROJECT IDENTITY
+═══════════════════════════════════════════════
+
+App name: tri9i
+Tagline: "مدينة تتحرك بذكاء" / "A city that moves with intelligence"
+Target users: 
+  - Citizens (mobile, Arabic/French speakers)
+  - Students (mobile, 15–25 age group)
+  - Port/transport operators (desktop)
+  - City officials and traffic engineers (desktop)
+
+Language: Support Arabic (RTL) and French (LTR). Default = Arabic.
+Color palette:
+  - Primary: #1A6FFF (trust, technology)
+  - Secondary: #00C48C (movement, green city)
+  - Warning: #F5A623 (alerts)
+  - Danger: #E24B4A (emergency)
+  - Background: #F7F8FC (light) / #0F1117 (dark)
+  - Surface: #FFFFFF / #1C1F26
+  - Text primary: #1A1A2E / #F0F0F0
+
+Design style: Clean, flat, mobile-first. No gradients. 
+Rounded corners (border-radius: 12px cards, 8px buttons).
+Thin 0.5px borders. Generous whitespace.
+
+═══════════════════════════════════════════════
+PART 2 — APP ARCHITECTURE (14 SERVICES)
+═══════════════════════════════════════════════
+
+Build these as separate pages/sections with bottom tab navigation on mobile 
+and sidebar navigation on desktop.
+
+──────────────────────────────────────────────
+SERVICE 1 — Smart Routing (Mobile)
+──────────────────────────────────────────────
+Purpose: Real-time GPS navigation avoiding congestion
+UI components:
+  - Full-screen map (use Leaflet.js with OpenStreetMap tiles)
+  - Search bar: "From" and "To" with autocomplete
+  - Route options panel: Fastest / Least traffic / Eco mode
+  - ETA display card: time, distance, CO2 saved
+  - Live incident banner (red bar when road blocked ahead)
+  - "Share ETA" button → generates shareable link
+  - Voice guidance toggle
+AI inputs needed:
+  - user_gps: {lat, lng, speed, heading}
+  - destination: {lat, lng, name}
+  - traffic_density_grid: 2D heatmap of road congestion (0–100)
+  - incidents: [{type, lat, lng, severity, timestamp}]
+  - time_of_day: ISO8601 string
+AI outputs:
+  - recommended_route: [{lat, lng}] polyline
+  - eta_minutes: number
+  - alternative_routes: array of 2 fallback routes
+  - reroute_trigger: boolean
+
+──────────────────────────────────────────────
+SERVICE 2 — Parking Finder (Mobile)
+──────────────────────────────────────────────
+Purpose: Find and reserve real-time parking spots
+UI components:
+  - Map with parking zone markers (color: green=available, red=full, amber=filling)
+  - Filter bar: price range slider, covered/open toggle, distance radius
+  - Parking card: name, price/hour, available spots count, distance
+  - Reserve button → shows confirmation modal with timer countdown
+  - "Navigate to parking" CTA
+  - Notification: "Your zone is 80% full — 3 spots left"
+AI inputs needed:
+  - user_location: {lat, lng}
+  - parking_zones: [{id, lat, lng, total_spots, occupied_spots, price_per_hour, covered}]
+  - reservation_db: current active reservations
+  - historical_fill_rate: {zone_id, hour_of_day → avg_occupancy_%}
+AI outputs:
+  - recommended_zone: zone_id with score
+  - fill_prediction_30min: % occupancy in 30 minutes
+  - alert_threshold_reached: boolean
+
+──────────────────────────────────────────────
+SERVICE 3 — Public Transport Assistant (Mobile)
+──────────────────────────────────────────────
+Purpose: Live bus tracking, routes, and arrival times
+UI components:
+  - Map with bus icons moving in real-time (animate markers)
+  - "Nearby stops" list sorted by walking distance
+  - Stop detail: next 3 buses, ETA each, crowding level (low/medium/high)
+  - Crowding badge: use colored pill (green/amber/red)
+  - Journey planner: A→B with bus line suggestions + walking segments
+  - Push notification preview: "Bus 14 arrives in 2 min at Stop Beni Makada"
+  - Carpool match button: "Find someone on your route"
+AI inputs needed:
+  - bus_fleet: [{bus_id, line_id, lat, lng, speed, passenger_count, capacity}]
+  - stop_locations: [{stop_id, lat, lng, name, lines_serving}]
+  - user_location: {lat, lng}
+  - user_destination: {lat, lng}
+  - route_graph: adjacency list of stops with travel times
+AI outputs:
+  - nearest_stops: [{stop_id, walk_minutes}]
+  - next_arrivals: [{bus_id, eta_minutes, crowding_level}]
+  - optimal_journey: [{segment_type, line, from_stop, to_stop, depart_at}]
+
+──────────────────────────────────────────────
+SERVICE 4 — Best Time to Leave (Mobile)
+──────────────────────────────────────────────
+Purpose: Predict the optimal departure window
+UI components:
+  - Destination selector (pre-saved: Home, Work, University, Port)
+  - Time cost chart: horizontal bar chart showing congestion by 15-min slots
+    (next 2 hours, bar color = green/amber/red by predicted congestion)
+  - "Leave now" vs "Leave in X min" recommendation card
+  - Savings display: "Leaving in 20 min saves you 14 minutes"
+  - Local context toggles: Factor in prayer times / school hours / port shift
+  - Calendar integration hint: "Tomorrow you have class at 8am — suggest 7:15am departure"
+AI inputs needed:
+  - user_profile: {home, work, school, preferred_mode}
+  - destination: {lat, lng}
+  - traffic_forecast: {timestamp_slots: [{time, congestion_level}]} for next 3 hours
+  - local_schedule: {prayer_times, school_bell_times, port_shift_hours}
+  - historical_travel_times: {origin→destination, by_hour_of_day}
+AI outputs:
+  - optimal_departure_time: ISO8601
+  - time_saved_vs_now: minutes
+  - congestion_timeline: [{slot_time, level: 0–100}]
+  - reasoning: string (shown to user in plain language)
+
+──────────────────────────────────────────────
+SERVICE 5 — Lost & Found (Mobile + Desktop)
+──────────────────────────────────────────────
+Purpose: Report and recover lost items in transport
+UI components (citizen mobile):
+  - "I lost something" form: photo upload, item category dropdown,
+    description textarea, where lost (bus line or station selector), date/time
+  - "I found something" form: same fields + where item currently is
+  - My reports list: status badges (Searching / Match found / Recovered)
+  - Match notification: "We found an item matching your description on Bus 7"
+UI components (operator desktop):
+  - Table: all items, columns = type/description/location/status/date
+  - Match review panel: side-by-side comparison of lost vs found item
+  - Action buttons: Confirm match / Reject / Archive
+  - Storage location field per found item
+AI inputs needed:
+  - lost_report: {photo_embedding, description_text, category, location, timestamp}
+  - found_items: [{id, photo_embedding, description_text, category, location, timestamp}]
+AI outputs:
+  - match_candidates: [{found_id, similarity_score, reason}]
+  - auto_match_confidence: 0–1 (auto-confirm if > 0.92)
+
+──────────────────────────────────────────────
+SERVICE 6 — Student Zone (Mobile)
+──────────────────────────────────────────────
+Purpose: School/university-specific mobility alerts
+UI components:
+  - Profile setup: select institution, campus, class schedule (time slots)
+  - Home screen widget: "Your bus leaves in 8 min — Bus 22 from Ibnou Sina stop"
+  - Live campus bus tracker (shows only buses serving selected institution)
+  - Alert types: Bus delay / Gate closed / Exam day traffic warning / Safe route home
+  - Parent view (sub-profile): map showing child's live location on campus bus
+    (requires child's consent toggle, anonymized off-campus)
+  - Safe route home: suggested route with well-lit streets flagged
+AI inputs needed:
+  - student_profile: {institution_id, campus_location, class_schedule, home_location}
+  - campus_bus_fleet: subset of main bus feed filtered by institution
+  - parent_consent: boolean
+  - time_of_day + day_of_week
+  - safe_street_index: {street_id → safety_score} (lit/busy streets preferred)
+AI outputs:
+  - departure_alert: {bus_id, eta_minutes, stop_name, urgency}
+  - safe_route_home: [{lat, lng}] avoiding low-safety streets
+  - campus_status: {gate_open, bus_running, anomaly_detected}
+
+──────────────────────────────────────────────
+SERVICE 7 — Cargo Flow (Mobile + Desktop)
+──────────────────────────────────────────────
+Purpose: Port truck management and city entry coordination
+UI components (truck driver mobile):
+  - Entry slot card: "Your window: 14:30–15:00 — Gate 3"
+  - Status indicator: HOLD (red) / PROCEED (green) / REROUTE (amber)
+  - Alternative waiting zone map
+  - Push: "Delay — enter in 25 min. Suggested rest area: ..."
+UI components (port supervisor desktop):
+  - Fleet table: truck_id, cargo_type, assigned_gate, status, ETA
+  - City congestion overlay on port entry roads (live heatmap)
+  - Slot scheduler: drag-and-drop to reassign entry windows
+  - Statistics: trucks/hour throughput, average wait time
+AI inputs needed:
+  - truck_fleet: [{truck_id, cargo_type, current_location, assigned_slot}]
+  - port_schedule: [{gate, capacity_per_hour, shift_times}]
+  - city_congestion: traffic density on port access roads
+  - weather_data: {wind_speed, visibility, precipitation}
+AI outputs:
+  - entry_signal: {truck_id, action: hold|proceed|reroute, reason}
+  - optimal_slot_assignment: [{truck_id, gate, time_window}]
+  - throughput_forecast: trucks/hour for next 4 hours
+
+──────────────────────────────────────────────
+SERVICE 8 — Event Assistant (Mobile)
+──────────────────────────────────────────────
+Purpose: Event-aware traffic warnings and route planning
+UI components:
+  - Event feed: upcoming events with traffic impact badge (Low/Medium/High)
+  - Event detail: venue, date, expected attendance, affected roads
+  - Personalized warning: "Raja match tomorrow affects your route to work"
+  - Alternative departure time suggestion
+  - "Add to my calendar" button
+  - Bus operators: special event line suggestions
+AI inputs needed:
+  - event_calendar: [{name, venue_lat_lng, date, expected_attendance, type}]
+  - user_home_work: saved locations
+  - historical_event_impact: {event_type → traffic_delta_%}
+AI outputs:
+  - impact_on_user: {affected: boolean, severity, affected_routes}
+  - recommended_departure_shift: +/- minutes from normal
+  - alternative_route: polyline
+
+──────────────────────────────────────────────
+SERVICE 9 — Personal Alert (Mobile)
+──────────────────────────────────────────────
+Purpose: Hyper-personalized mobility nudges
+UI components:
+  - Notification feed (timeline style)
+  - Alert cards: icon + title + action button
+    Example: "Traffic on your morning route is building — leave in 5 min"
+  - Alert preferences settings: which alerts to receive, quiet hours
+  - Carpool match: "Youssef (2.3km away) goes to the same area — match?"
+  - Weekly summary card: "You saved 47 min this week using tri9i"
+AI inputs needed:
+  - user_routine: {typical_departure_times, frequent_routes}
+  - live_traffic: current conditions on saved routes
+  - nearby_users_opt_in: anonymized proximity cluster
+AI outputs:
+  - push_alerts: [{type, message, urgency, action_url}]
+  - carpool_match: {user_id_anonymized, overlap_score, meeting_point}
+
+──────────────────────────────────────────────
+SERVICE 10 — Emergency Routing (Mobile + Desktop)
+──────────────────────────────────────────────
+Purpose: Crisis-mode city routing and mass alerts
+UI components (citizen mobile):
+  - Emergency banner: full-width red bar with incident type
+  - Safe route map: green path avoiding danger zone
+  - Mass notification: "Road closed near Grand Socco — use Route de Tétouan"
+UI components (operator desktop):
+  - Incident creation form: type, coordinates, radius, severity
+  - Zone polygon draw tool on map
+  - Mass alert composer: message + target zone + channels (push/SMS/in-app)
+  - Live affected users count estimate
+  - Emergency services ETA tracker
+AI inputs needed:
+  - incident: {type, lat, lng, radius_meters, severity: 1–5}
+  - all_active_users_locations: anonymized cluster positions
+  - road_network_graph: full city graph for pathfinding
+  - emergency_services: [{type, location, ETA}]
+AI outputs:
+  - affected_zone_users: count estimate
+  - safe_alternative_routes: [{origin_zone, route_polyline}]
+  - recommended_alert_message: string (Arabic + French)
+
+──────────────────────────────────────────────
+SERVICE 11 — Station Camera AI (Desktop only)
+──────────────────────────────────────────────
+Purpose: Computer vision on station cameras for crowd management
+UI components:
+  - Camera grid: 4–9 camera feeds (use static image placeholders in demo)
+  - Each feed has: station name, live crowd count, density heatmap overlay
+  - Alert panel: auto-generated alerts when thresholds exceeded
+  - Alert types: Overcrowding / Abnormal behavior / Queue overflow / Unattended object
+  - Station detail view: hourly crowd chart (Chart.js bar chart)
+  - Privacy notice: "Anonymized — no face recognition"
+AI inputs needed:
+  - camera_feed: RTSP stream or image frames (demo: use static placeholder images)
+  - station_metadata: {station_id, name, capacity, camera_positions}
+  - crowd_model_output: {person_count, density_map, zone_alerts}
+  - anomaly_classifier_output: {anomaly_type, confidence, bounding_box}
+AI outputs:
+  - crowd_level: {station_id, count, density_percent, status}
+  - alerts: [{station_id, type, severity, timestamp, description}]
+  - recommended_action: string for operator
+
+──────────────────────────────────────────────
+SERVICE 12 — Control Center Dashboard (Desktop only)
+──────────────────────────────────────────────
+Purpose: Full city overview for traffic engineers
+UI components:
+  - Hero map: full city with layers toggle (traffic / buses / parking / incidents)
+  - KPI row: 4 metric cards (Active buses / Avg speed km/h / Parking % full / Open incidents)
+  - Traffic signal grid: list of intersections with signal state + MARL override button
+  - Incident log table: sortable, filterable
+  - Real-time charts: traffic flow over last 60 min (line chart)
+  - Broadcast panel: send message to specific app (Routing / Transport / Emergency)
+AI inputs needed:
+  - all_sensor_streams: aggregated from all services above
+  - signal_state_machine: current phase of each intersection
+  - marl_recommendations: [{intersection_id, suggested_phase, reason}]
+  - digital_twin_state: snapshot of all city variables
+AI outputs:
+  - signal_override_suggestions: [{intersection_id, action, confidence}]
+  - city_health_score: 0–100
+  - anomaly_alerts: [{type, location, priority}]
+
+──────────────────────────────────────────────
+SERVICE 13 — AI Decision Assistant (Desktop only)
+──────────────────────────────────────────────
+Purpose: NL interface for city officials to query and understand AI decisions
+UI components:
+  - Chat interface (like ChatGPT but for city data)
+  - Example queries shown as chips:
+    "Why did the AI close Route de Tétouan this morning?"
+    "Which bus line is most overloaded on Mondays?"
+    "What should we do to reduce port truck congestion?"
+  - AI response: plain language explanation + supporting chart or map
+  - Policy suggestion cards: "Add 2 buses on Line 4 between 7–9am"
+  - Decision log: history of AI recommendations + whether they were accepted
+  - Export button: PDF report of session
+AI inputs needed:
+  - marl_decision_log: full history of AI signal/routing decisions
+  - city_kpi_database: all metrics (traffic, buses, parking, events)
+  - nl_query: official's question in Arabic or French
+AI outputs:
+  - nl_explanation: string answering the question
+  - supporting_data: {chart_type, data} to visualize
+  - policy_recommendations: [{action, expected_impact, priority}]
+
+──────────────────────────────────────────────
+SERVICE 14 — Eco Mode (Mobile)
+──────────────────────────────────────────────
+Purpose: CO2-optimized routing and green incentives
+UI components:
+  - Route option with CO2 tag: "This route saves 340g CO2 vs fastest route"
+  - Weekly eco score card: kg CO2 saved, equivalent trees planted
+  - Leaderboard: anonymous city-wide ranking of eco users
+  - Incentive badges: unlock rewards for eco streaks (7 days, 30 days)
+  - Modal: how CO2 is calculated (transparency)
+AI inputs needed:
+  - route_options: [{polyline, distance_km, estimated_speed}]
+  - vehicle_type: car/bus/bike/walking (user-set)
+  - co2_emission_factors: {car: g/km, bus: g/km per passenger}
+AI outputs:
+  - co2_per_route: [{route_id, grams_co2}]
+  - eco_score_delta: points earned for choosing green route
+  - weekly_summary: {co2_saved_kg, equivalent_trees}
+
+═══════════════════════════════════════════════
+PART 3 — NAVIGATION STRUCTURE
+═══════════════════════════════════════════════
+
+Mobile bottom tab bar (5 tabs):
+  Tab 1 — Home (personalized dashboard with quick actions)
+  Tab 2 — Map (routing + live map)
+  Tab 3 — Transport (buses + carpool)
+  Tab 4 — Alerts (notifications + emergency)
+  Tab 5 — Profile (settings + eco score + student zone)
+
+Desktop sidebar (collapsible):
+  Section: City Operations
+    - Control Center
+    - Station Cameras
+    - Cargo Flow
+    - Emergency
+  Section: Intelligence
+    - AI Decision Assistant
+    - Analytics
+  Section: Settings
+
+═══════════════════════════════════════════════
+PART 4 — TECH STACK
+═══════════════════════════════════════════════
+
+Frontend:
+  - React 18 + TypeScript
+  - Tailwind CSS (utility classes only)
+  - Leaflet.js for all maps (OpenStreetMap tiles — free, no API key)
+  - Chart.js for all data visualizations
+  - React Router v6 for navigation
+  - Zustand for global state (bus positions, alerts, user profile)
+  - i18next for Arabic/French translation
+
+Mock data layer (no backend needed for demo):
+  - /src/mock/buses.json — 20 fake buses with GPS coords + passenger count
+  - /src/mock/parking.json — 8 parking zones with occupancy
+  - /src/mock/incidents.json — 3 sample incidents
+  - /src/mock/events.json — 5 upcoming city events
+  - /src/mock/lostFound.json — 6 sample items
+  - Use setInterval() to simulate real-time movement of buses on map
+  - Use Math.random() variation on occupancy numbers every 10s
+
+PWA setup:
+  - manifest.json with tri9i name, icons, theme color #1A6FFF
+  - Service worker for offline mode (cache map tiles + last known data)
+  - "Add to home screen" prompt on mobile
+
+═══════════════════════════════════════════════
+PART 5 — KEY UX RULES
+═══════════════════════════════════════════════
+
+1. Every screen must work at 375px width (iPhone SE)
+2. Arabic mode = RTL layout flip on entire app
+3. Loading states: use skeleton loaders, never spinners alone
+4. Empty states: always show an illustration + helpful CTA
+5. Maps: always show user location dot (blue pulsing circle)
+6. All alerts must have: icon + title + body + timestamp + action button
+7. Crowding levels visual: use filled circle icons (1–5 scale)
+8. All forms: validate inline, show error below field in red
+9. Offline banner: yellow bar at top when no connection
+10. Accessibility: all interactive elements min 44x44px touch target
+
+═══════════════════════════════════════════════
+PART 6 — DEMO SCREENS TO BUILD FIRST
+═══════════════════════════════════════════════
+
+Priority order for initial build:
+
+1. Mobile Home Dashboard
+   - Greeting: "صباح الخير، Youssef"
+   - Quick action buttons: Navigate / Find Parking / My Bus
+   - Active alert card (if any incident)
+   - Best time to leave widget (countdown to optimal departure)
+   - Nearby bus ETA strip (horizontal scroll)
+
+2. Smart Routing screen with Leaflet map
+
+3. Public Transport screen with live bus markers
+
+4. Control Center desktop dashboard
+
+5. AI Decision Assistant chat interface
+
+Build each screen to pixel-perfect quality before moving to the next.
+Use realistic Tangier street names and locations:
+  - Grand Socco, Bab El Fahs, Boulevard Mohammed V,
+    Port of Tangier, Ibn Batouta Airport, Ibnou Sina University,
+    Quartier Beni Makada, Route de Tétouan, Malabata Beach
+
+═══════════════════════════════════════════════
+PART 7 — AI INTEGRATION NOTES
+═══════════════════════════════════════════════
+
+For each service, the AI layer works as follows:
+
+Input pipeline:
+  sensors → normalize → feature_vector → model_inference → output
+
+In the frontend demo, simulate AI outputs using:
+  - Pre-computed mock responses in /src/ai/mockResponses.ts
+  - Add 800ms artificial delay to simulate inference time
+  - Show "AI thinking..." skeleton while waiting
+  - Label all AI-generated content with a small "AI" badge
+
+When integrating real AI later:
+  - All AI calls go through /api/ai/{service_name} endpoint
+  - Inputs: JSON matching the schema defined in each service above
+  - Outputs: JSON matching the output schema
+  - Model type per service:
+    Routing → Graph Neural Network + OSRM
+    Parking prediction → XGBoost time-series
+    Crowd counting → YOLOv8 object detection
+    Lost & Found matching → CLIP image embeddings + cosine similarity
+    Decision Assistant → LLM (Arabic-capable: Jais or AraGPT2)
+    Best time to leave → LSTM traffic forecast
+    All signal optimization → MARL (Multi-Agent RL, RLlib framework)
+
+═══════════════════════════════════════════════
+PART 8 — DELIVERABLE
+═══════════════════════════════════════════════
+
+Deliver:
+  1. Complete React project (src/ folder structure)
+  2. All 14 service screens (mobile + desktop variants where applicable)
+  3. Realistic mock data for all services
+  4. Working Leaflet maps with simulated moving buses
+  5. Arabic/French language toggle
+  6. Dark mode toggle
+  7. README.md with: project overview, how to run, service list, AI input/output schemas
+
+Start with the project scaffold and Home Dashboard.
+Ask me before moving to each new service. 
+
+═══════════════════════════════════════════════
+Build a full real-time Digital Twin of Tangier city as a core intelligence layer inside tri9i.
+This must be treated as a city-wide simulation engine, not just a map.
+🎯 Purpose
+The system must create a live virtual replica of Tangier, including:
+* all roads
+* intersections
+* traffic lights
+* buses
+* trucks
+* port flows
+* parking zones
+* pedestrians
+* event venues
+* weather impact
+* school rush hours
+* Ramadan/night prayer traffic
+* ferry arrivals
+* stadium match evacuation
+* road works
+* emergency closures
+The Digital Twin must continuously ingest live and simulated data to:
+predict congestion before it happensand automatically suggest preventive solutions.
+
+🧠 DIGITAL TWIN UI EXPERIENCE
+Create a dedicated premium page:
+Digital Twin Control Room
+Desktop UI
+* full-screen 3D/2D city map simulation view
+* animated traffic flow streams on major roads
+* live congestion heatmap
+* intersection nodes pulsing by density
+* simulation timeline slider:
+    * now
+    * +15 min
+    * +30 min
+    * +1h
+    * +24h event simulation
+* scenario presets:
+    * Rain
+    * Port peak
+    * Match day
+    * Ramadan after iftar
+    * Summer tourism
+    * Emergency road closure
+* AI solution recommendation cards
+* “Apply prevention strategy” CTA
+* before vs after simulation comparison split view
+* city risk score
+* bottleneck prediction list
+* top 5 future congestion zones
+Mobile UI
+* simplified twin map snapshot
+* “Future traffic in 30 min” preview
+* leave earlier recommendation
+* route risk score
+* neighborhood congestion warnings
+
+🤖 DIGITAL TWIN AI INPUTS
+
+digital_twin_inputs: {
+  road_network_graph,
+  live_vehicle_gps,
+  traffic_signals_state,
+  bus_positions,
+  truck_port_schedule,
+  parking_occupancy,
+  weather_forecast,
+  event_calendar,
+  school_schedules,
+  prayer_times,
+  pedestrian_density,
+  incident_feed
+}
+
+
+🧠 DIGITAL TWIN AI OUTPUTS
+
+digital_twin_outputs: {
+  congestion_prediction_zones: [{ zone, severity, eta_minutes }],
+  future_bottlenecks: [{ road, confidence, predicted_at }],
+  preventive_signal_changes: [{ intersection_id, new_phase }],
+  smart_rerouting_plan: [{ corridor, diversion_path }],
+  truck_delay_strategy: [{ truck_group, hold_minutes }],
+  parking_distribution_strategy: [{ zone, redirect_to }],
+  emergency_escape_routes: [{ zone, polyline }],
+  city_risk_score: number
+}
+
+
+🚦 PREVENTIVE AI BEHAVIOR (VERY IMPORTANT)
+The AI must solve congestion BEFORE it physically appears using:
+* predictive traffic light timing
+* MARL signal cooperation
+* truck hold/release windows
+* event-based departure staggering
+* dynamic reversible lanes
+* bus reinforcement on overloaded corridors
+* proactive parking redirection
+* citizen push alerts:“Leave in 15 min to avoid Grand Socco congestion”
+* district-wide route balancing
+* school dismissal optimization
+* stadium evacuation wave planning
+This section is mandatory and central to the tri9i vision.
+The Digital Twin should feel like:
+a real operating system for Tangier city mobility
+
+💎 فين تزيدها؟
+زيدها مباشرة من بعد PART 2 – APP ARCHITECTUREوسميها:
+PART 2.5 — DIGITAL TWIN CITY INTELLIGENCE LAYER
+باش تبان:
+core innovation layer
+
+🏆 هادي أقوى جملة فالprompt
+predict congestion before it happens and simulate prevention strategies before applying them to the real city
+هاد sentence بوحدها كترفع جودة الgeneration بزاف.
+إلى بغيتي، نقدر نعاونك نزيد MARL traffic signal intelligence layer prompt بنفس القوة.
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+

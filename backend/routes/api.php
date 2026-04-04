@@ -28,12 +28,15 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'user']);
+    Route::put('/update-role', [AuthController::class, 'updateRole']);
 });
 
 Route::apiResource('providers', ProviderController::class);
 use App\Http\Controllers\LaundryController;
 Route::apiResource('laundries', LaundryController::class);
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
+
 Route::apiResource('categories', CategoryController::class);
 use App\Http\Controllers\ProductController;
 Route::apiResource('products', ProductController::class);
@@ -41,3 +44,14 @@ use App\Http\Controllers\ServiceController;
 Route::apiResource('services', ServiceController::class);
 use App\Http\Controllers\DeliveryController;
 Route::apiResource('deliveries', DeliveryController::class);
+
+
+Route::middleware('auth:sanctum')->apiResource('comment', CommentController::class);
+
+use App\Http\Controllers\RamassageController;
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/ramassages', [RamassageController::class, 'index']);
+    Route::post('/ramassages', [RamassageController::class, 'store']);
+    Route::get('/ramassages/{id}', [RamassageController::class, 'show']);
+});
+ 

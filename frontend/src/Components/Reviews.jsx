@@ -3,6 +3,7 @@ import { Star, ChevronLeft, ChevronRight, LogIn, Pencil, Trash2, Check, X } from
 import { Link, useLocation } from "react-router-dom";
 import TitleSectionText from "./ui/TitleSectionText";
 import { useAuth } from "../contexts/AuthContext";
+import API from "../utils/api";
 
 const Reviews = ({
   reviews = [],
@@ -67,6 +68,22 @@ const Reviews = ({
       setError({ comments: "Comment cannot be empty" });
       return;
     }
+
+   await API.post("/comment" , {
+      comment: comments,
+      shop_id: shopId,
+    })
+    .then((response) => {
+      console.log("Comment submitted successfully:", response.data);
+      setComments("");
+      setError("");
+    })
+    .catch((error) => {
+      console.error("Error submitting comment:", error);
+      setError({ comments: "Failed to submit comment. Please try again." });
+    });
+
+    console.log("Submitting comment:", { comment: comments, shop_id: shopId });
 
     // You can use this to associate the comment with a specific shop
     // You can make an API call to submit the comment to the backend

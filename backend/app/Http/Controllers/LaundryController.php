@@ -6,10 +6,30 @@ use Illuminate\Http\Request;
 use App\Models\Laundry;
 class LaundryController extends Controller
 {
-     public function index()
+     public function index(Request $request)
     {
-        $laundries = Laundry::with('provider', 'services', 'categories.products')->get();
+        $query = Laundry::with('provider', 'services', 'categories.products');
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->has('address')) {
+            $query->where('address', 'like', '%' . $request->address . '%');
+        }
+
+        if ($request->has('provider_id')) {
+            $query->where('provider_id', $request->provider_id);
+        }
+
+        $laundries = $query->get();
         return response()->json($laundries);
+    }
+
+    public function show($id)
+    {
+        $laundry = Laundry::with('provider', 'services', 'categories.products', 'comment.user', 'delivery')->findOrFail($id);
+        return response()->json($laundry);
     }
      public function store(Request $request)
     {

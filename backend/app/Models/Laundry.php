@@ -41,4 +41,10 @@ class Laundry extends Model
     {
         return $this->hasOne(Delivery::class);
     }
+
+     public function comment()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
 }

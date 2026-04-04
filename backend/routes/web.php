@@ -17,6 +17,4 @@ Route::post('/laundry', [LaundryController::class, 'store']);
 
 
 Route::resource("/user" , UserController::class);
-Route::post('/login', [AuthController::class, 'login']);
-
-Route::resource("/comment" , [CommentController::class]);
+Route::resource("/comment" , CommentController::class);

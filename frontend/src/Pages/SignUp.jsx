@@ -18,7 +18,7 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, register } = useAuth();
+  const { register } = useAuth();
   const from = location.state?.from || '/';
 
   const handleChange = (e) => {
@@ -91,7 +91,7 @@ const SignUp = () => {
     setIsLoading(false);
 
     if (result.success) {
-      navigate(from, { replace: true });
+      navigate('/', { replace: true });
     } else if (result.errors) {
       // Map Laravel validation errors to form fields
       const mapped = {};
@@ -122,6 +122,7 @@ const SignUp = () => {
                 {errors.general}
               </div>
             )}
+
             {/* Full Name Field */}
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-[#1E2A36] mb-2">

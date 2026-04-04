@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { FaBars, FaTimes } from 'react-icons/fa'
+import { useAuth } from '../contexts/AuthContext'
 
 const logo = '/images/imageLogo.png'
 
@@ -8,6 +9,7 @@ function Header() {
     const navigate = useNavigate()
     const location = useLocation()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const { isAuthenticated, logout } = useAuth()
 
     // Close menu when route changes
     useEffect(() => {
@@ -62,12 +64,20 @@ function Header() {
 
                 {/* Desktop Buttons */}
                 <div className="header-buttons desktop-buttons">
-                    <button className="btn btn-outline" onClick={() => navigate('/login')}>
-                        Sign In
-                    </button>
-                    <button className="btn btn-primary" onClick={() => navigate('/become-provider')}>
-                        Get Started
-                    </button>
+                    {isAuthenticated ? (
+                        <button className="btn btn-outline" onClick={() => { logout(); navigate('/'); }}>
+                            Logout
+                        </button>
+                    ) : (
+                        <>
+                            <button className="btn btn-outline" onClick={() => navigate('/login')}>
+                                Sign In
+                            </button>
+                            <button className="btn btn-primary" onClick={() => navigate('/signup')}>
+                                Sign Up
+                            </button>
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -105,24 +115,39 @@ function Header() {
                         ))}
                     </ul>
                     <div className="mobile-buttons">
-                        <button 
-                            className="btn btn-outline mobile-btn" 
-                            onClick={() => {
-                                navigate('/login')
-                                setIsMenuOpen(false)
-                            }}
-                        >
-                            Sign In
-                        </button>
-                        <button 
-                            className="btn btn-primary mobile-btn" 
-                            onClick={() => {
-                                navigate('/become-provider')
-                                setIsMenuOpen(false)
-                            }}
-                        >
-                            Get Started
-                        </button>
+                        {isAuthenticated ? (
+                            <button 
+                                className="btn btn-outline mobile-btn" 
+                                onClick={() => {
+                                    logout()
+                                    navigate('/')
+                                    setIsMenuOpen(false)
+                                }}
+                            >
+                                Logout
+                            </button>
+                        ) : (
+                            <>
+                                <button 
+                                    className="btn btn-outline mobile-btn" 
+                                    onClick={() => {
+                                        navigate('/login')
+                                        setIsMenuOpen(false)
+                                    }}
+                                >
+                                    Sign In
+                                </button>
+                                <button 
+                                    className="btn btn-primary mobile-btn" 
+                                    onClick={() => {
+                                        navigate('/signup')
+                                        setIsMenuOpen(false)
+                                    }}
+                                >
+                                    Sign Up
+                                </button>
+                            </>
+                        )}
                     </div>
                 </nav>
             </div>

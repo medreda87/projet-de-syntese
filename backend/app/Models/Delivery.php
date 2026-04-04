@@ -9,11 +9,11 @@ class Delivery extends Model
 {
     use HasFactory;
     protected $fillable = [
-    'laundry_id',
-    'type',
-    'price_per_km',
-    'fixed_price',
-    'min_order',
+        'laundry_id',
+        'type',
+        'price_per_km',
+        'fixed_price',
+        'min_order',
     ];
     public function laundry()
     {
