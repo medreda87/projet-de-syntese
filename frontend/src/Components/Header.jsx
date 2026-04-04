@@ -9,7 +9,8 @@ function Header() {
     const navigate = useNavigate()
     const location = useLocation()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const { isAuthenticated, logout } = useAuth()
+    const { isAuthenticated, logout , user } = useAuth()
+
 
     // Close menu when route changes
     useEffect(() => {
@@ -32,8 +33,8 @@ function Header() {
         { href: "/", label: "Home" },
         { href: "/shops", label: "Find Shops" },
         { href: "/how-it-works", label: "How It Works" },
-        { href: "/about", label: "About Us" },
-        { href: "/become-provider", label: "Become a Provider" }
+        { href: "/about", label: "About Us" }
+        
     ]
 
     return (
@@ -59,6 +60,28 @@ function Header() {
                                 </Link>
                             </li>
                         ))}
+                        {user && user.role === 'provider' && (
+                            <li key="/dashboard">
+                                <a 
+                                    href="http://localhost:3001" 
+                                    className="nav-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Dashboard
+                                </a>
+                            </li>
+                        )}
+                        {user && user.role !== 'provider' && (
+                            <li key="/become-provider">
+                                <Link 
+                                    to="/become-provider" 
+                                    className={`nav-link ${location.pathname === "/become-provider" ? 'active' : ''}`}
+                                >
+                                    Become a Provider
+                                </Link>
+                            </li>
+                        )}
                     </ul>
                 </nav>
 
@@ -113,6 +136,19 @@ function Header() {
                                 </Link>
                             </li>
                         ))}
+                        {user && user.role === 'provider' && (
+                            <li key="/dashboard-mobile">
+                                <a 
+                                    href="http://localhost:3001"
+                                    className="mobile-nav-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    Dashboard
+                                </a>
+                            </li>
+                        )}
                     </ul>
                     <div className="mobile-buttons">
                         {isAuthenticated ? (

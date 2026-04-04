@@ -71,6 +71,7 @@ export const AuthProvider = ({ children }) => {
       const res = await API.put('/update-role', { role });
       if (res.data.success) {
         const updatedUser = res.data.user;
+        console.log('Updated user:', updatedUser);
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
         return { success: true };

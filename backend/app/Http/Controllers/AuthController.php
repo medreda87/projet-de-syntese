@@ -78,17 +78,17 @@ class AuthController extends Controller
 
     public function updateRole(Request $request)
     {
-        // $request->validate([
-        //     'role' => 'required|string|in:client,provider',
-        // ]);
+        $request->validate([
+            'role' => 'required|string|in:client,provider',
+        ]);
 
-        // $user = $request->user();
-        // $user->role = $request->role;
-        // $user->save();
+        $user = $request->user();
+        $user->role = $request->role;
+        $user->save();
 
         return response()->json([
             'success' => true,
-            //'user' => $user,
+            'user' => $user,
         ]);
     }
 }
