@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './DeliverySettings.css';
-
+import API from '../api/axiosApi';
 const DeliverySettings = ({ setCurrentPage }) => {
   const [deliveryType, setDeliveryType] = useState('distance');
   const [pricePerKm, setPricePerKm] = useState(5.50);
@@ -10,10 +10,21 @@ const DeliverySettings = ({ setCurrentPage }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSaved, setIsSaved] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2500);
+    await API.post('deliveries', {
+      laundry_id: 4,
+      type: deliveryType,
+      price_per_km: parseFloat(pricePerKm),
+      fixed_price: parseFloat(fixedPrice),
+      min_order: parseFloat(minOrderAmount),
+      delivery_radius: parseFloat(deliveryRadius) 
+    })
   };
+
+
+
 
   const handleDiscard = () => {
     setDeliveryType('distance');
@@ -334,10 +345,10 @@ const DeliverySettings = ({ setCurrentPage }) => {
               </div>
               <div className="radius-control">
                 <input
-                  type="text"
+                  type="number"
                   className="radius-input"
                   value={deliveryRadius}
-                  onChange={(e) => setDeliveryRadius(e.target.value)}
+                  onChange={(e) => setDeliveryRadius(parseFloat(e.target.value))}
                 />
                 <span className="radius-unit">KM</span>
               </div>
@@ -371,9 +382,11 @@ const DeliverySettings = ({ setCurrentPage }) => {
             </button>
           </div>
 
+          {/* Save Confirmation - Affiché après sauvegarde */}
           {isSaved && (
-            <div className="success-message">
-              ✓ Delivery settings saved successfully!
+            <div className="save-confirmation">
+              <span>✅</span>
+              <p>Settings saved successfully!</p>
             </div>
           )}
         </div>

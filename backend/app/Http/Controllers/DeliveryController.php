@@ -43,10 +43,19 @@ class DeliveryController extends Controller
     $data['fixed_price']  = $data['type'] === 'fixed' ? $data['fixed_price'] ?? null : null;
     $data['min_order']    = $data['type'] === 'free_above' ? $data['min_order'] ?? null : null;
 
+
+    // if laudry pas existe on le cree sinon on le met a jour
+    // if aussi pour laudry id if not exsiste laudry_id update else créer un auther row
     $delivery = Delivery::updateOrCreate(
-    ['laundry_id' => $data['laundry_id']],
-    $data
-);
+        ['laundry_id' => $data['laundry_id']],
+        [
+            'type' => $data['type'],
+            'price_per_km' => $data['price_per_km'],
+            'fixed_price' => $data['fixed_price'],
+            'min_order' => $data['min_order'],
+            'delivery_radius' => $data['delivery_radius']
+        ]
+    );
         return response()->json($delivery, 201);
         
         
