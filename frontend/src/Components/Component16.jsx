@@ -56,7 +56,8 @@ const Component16 = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [error, setError] = useState(null)
-
+  const [message, setMessage] = useState(null);
+  const [type, setType] = useState(null);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -137,7 +138,10 @@ const handleSubmit = async (e) => {
 
 
     console.log("Provider créé:", response.data);
-    alert("Provider créé avec succès !");
+    setMessage("Votre demande a été soumise avec succès !");
+    setType("success");
+    setError(null);
+    setShowSuccess(true); 
     
     // Reset form
     setFormData({
@@ -145,15 +149,17 @@ const handleSubmit = async (e) => {
       ownerName: "",
       email: "",
       phone: "",
-      address: "",
-      password: ""
+      address: ""
     });
 
   } catch (err) {
-  console.log(err.response?.data);  // 🔹 hna ghadi tchouf keys li fail
-  alert(JSON.stringify(err.response?.data));
-}
+    console.error(err);
+    setMessage("Une erreur s'est produite lors de la soumission de votre demande. Veuillez réessayer.");
+    setType("error");
+    setError("There was an error submitting your application. Please try again.");
+    setShowSuccess(false);
   }
+};
   return (
     <div id='register'  className="bg-primary-light py-16 px-4">
       <div className="container">

@@ -5,7 +5,7 @@ import LaundryDetails from './components/LaundryDetails';
 import DeliverySettings from './components/DeliverySettings';
 import Services from './components/Services';
 import Products from './components/Products';
-
+const logo = '/images/imageLogo.png'
 function App() {
   // Changement ici : 'personal' au lieu de 'products'
   const [currentPage, setCurrentPage] = useState('personal');
@@ -32,16 +32,12 @@ function App() {
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
-          <div className="logo">
-            <div className="logo-icon">S
-              
-            </div>
-            <div>
-              <h1>SaaS Cloud</h1>
           
             </div>
-          </div>
-        </div>
+                <div className='header-left'>
+                        <img src={logo} alt="FreshFold Logo" style={{width: "45px", height: "45px",objectFit:"contain",display: "block",margin:"10px",borderRadius:'10px'}}/>
+                        <h1 className='site-title'>FreshFold</h1>
+                </div>
         
         <nav className="sidebar-nav">
           <button 

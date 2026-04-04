@@ -33,7 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::apiResource('providers', ProviderController::class);
 use App\Http\Controllers\LaundryController;
-Route::apiResource('laundries', LaundryController::class);
+Route::get('/laundries', [LaundryController::class, 'index']);
+Route::post('/laundries', [LaundryController::class, 'store']);
+
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 

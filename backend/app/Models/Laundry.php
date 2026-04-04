@@ -19,6 +19,7 @@ class Laundry extends Model
         'bigLogo',
         'provider_id',
         'email_verified_at',
+        'openingHours',
     ];
 
     public function provider()

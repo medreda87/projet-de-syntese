@@ -1,48 +1,35 @@
 import React, { useState } from 'react';
 import './LaundryDetails.css';
+import { FaCamera } from "react-icons/fa";
+import { IoBusiness } from "react-icons/io5";
+import API from '../api/axiosApi';
+import { FaCheckCircle } from "react-icons/fa";
+import { CiSaveDown2 } from "react-icons/ci";
+import { BsTelephone } from "react-icons/bs";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import { IoTimeSharp } from "react-icons/io5";
+import { BsFillInfoCircleFill } from "react-icons/bs";
+import { MdOutlineConnectWithoutContact } from "react-icons/md";
 
 const LaundryDetails = ({ setCurrentPage }) => {
   // State pour les données du formulaire
-  const [formData, setFormData] = useState({
-    laundryTitle: 'Blue Horizon Eco Cleaners',
-    email: 'contact@bluehorizon.com',
-    description: 'Professional eco-friendly laundry service dedicated to providing high-quality cleaning with environmentally safe products. We specialize in delicate fabrics, dry cleaning, and same-day service. Our state-of-the-art equipment ensures your garments receive the best care possible.',
-    phone: '+1 (555) 123-4567',
-    whatsapp: '+1 (555) 987-6543',
-    address: '123 Clean Street, Suite 100, San Francisco, CA 94105',
-    openingHours: 'Mon-Sat: 8:00 AM - 8:00 PM, Sun: 10:00 AM - 4:00 PM'
-  });
+
 
   // State pour les images
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [coverPreview, setCoverPreview] = useState('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1200&h=400&fit=crop');
   const [profilePreview, setProfilePreview] = useState('https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=150&h=150&fit=crop');
-  
+    const [formData, setFormData] = useState({
+    name: '',
+    address: '',
+    phone:'',
+    email: '',
+    description: '',
+    provider_id: 3,
+    openingHours: ''
+  });
   // State pour la galerie
-  const [gallery, setGallery] = useState([
-    {
-      id: 1,
-      title: 'Exterior View',
-      image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=400&h=400&fit=crop'
-    },
-    {
-      id: 2,
-      title: 'Interior Counter',
-      image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=400&h=400&fit=crop'
-    },
-    {
-      id: 3,
-      title: 'Washing Machines',
-      image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop'
-    },
-    {
-      id: 4,
-      title: 'Folding Area',
-      image: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400&h=400&fit=crop'
-    }
-  ]);
-
   // State pour les feedbacks
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,40 +69,59 @@ const LaundryDetails = ({ setCurrentPage }) => {
     }
   };
 
-  const handleGalleryUpload = () => {
-    const newId = gallery.length + 1;
-    const newItem = {
-      id: newId,
-      title: `New Photo ${newId}`,
-      image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop'
-    };
-    setGallery([...gallery, newItem]);
-  };
+  
+const handleSave = async () => {
+  if (!formData.name || !formData.address || !formData.phone) {
+    alert("Please fill in Name, Address, and Phone");
+    return;
+  }
 
-  const handleGalleryDelete = (id) => {
-    setGallery(gallery.filter(item => item.id !== id));
-  };
-
-  const handleSave = async () => {
+  try {
     setIsLoading(true);
-    // Simuler un appel API
-    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    const data = new FormData();
+    data.append('name', formData.name);
+    data.append('email', formData.email || '');
+    data.append('description', formData.description || '');
+    data.append('phone', formData.phone);
+    data.append('address', formData.address);
+    data.append('openingHours', formData.openingHours || '');
+    data.append('provider_id', formData.provider_id);
+
+    if (profilePhoto) data.append('logo', profilePhoto);
+    if (coverPhoto) data.append('bigLogo', coverPhoto);
+
+    const response = await API.post('/laundries', data, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
     setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 5000);
+  } catch (error) {
+    console.error('Error saving laundry details:', error.response?.data || error.message);
+    if (error.response?.status === 422) {
+      alert('Validation error: Please check your input fields.');
+    } else {
+      alert('An error occurred while saving. Please try again.');
+    }
+  } finally {
     setIsLoading(false);
-    // Auto-hide success message after 3 seconds
-    setTimeout(() => setIsSaved(false), 3000);
-  };
+  }
+};
+
+
 
   const handleDiscard = () => {
     if (window.confirm('Are you sure you want to discard all changes?')) {
       setFormData({
-        laundryTitle: 'Blue Horizon Eco Cleaners',
-        email: 'contact@bluehorizon.com',
-        description: 'Professional eco-friendly laundry service dedicated to providing high-quality cleaning with environmentally safe products. We specialize in delicate fabrics, dry cleaning, and same-day service. Our state-of-the-art equipment ensures your garments receive the best care possible.',
-        phone: '+1 (555) 123-4567',
-        whatsapp: '+1 (555) 987-6543',
-        address: '123 Clean Street, Suite 100, San Francisco, CA 94105',
-        openingHours: 'Mon-Sat: 8:00 AM - 8:00 PM, Sun: 10:00 AM - 4:00 PM'
+        coverPhoto: null,
+        profilePhoto: null,
+        name: '',
+        email: '',
+        description: '',
+        phone:'',
+        address: '',
+        openingHours: ''
       });
     }
   };
@@ -147,18 +153,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
 
       {/* Main Content */}
       <main className="app-main">
-        <div className="content-wrapper">
-          {/* Success Toast - Positionné EN HAUT, juste après le header, sans espace entre dashboard et laundry info */}
-          {isSaved && (
-            <div className="success-toast top-toast">
-              <span className="success-icon">✅</span>
-              <div>
-                <strong>Success!</strong>
-                <p>Your laundry information has been saved successfully.</p>
-              </div>
-              <button className="toast-close" onClick={() => setIsSaved(false)}>✕</button>
-            </div>
-          )}
+        <div>
 
           {/* Banner Section - Laundry Info commence directement ici */}
           <div className="banner-card">
@@ -175,7 +170,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
                     className="file-input"
                   />
                   <div className="upload-overlay">
-                    <span className="upload-icon">📸</span>
+                    <span className="upload-icon"><FaCamera/></span>
                     <span className="upload-text">Change Cover Photo</span>
                   </div>
                 </label>
@@ -194,52 +189,37 @@ const LaundryDetails = ({ setCurrentPage }) => {
                       className="file-input"
                     />
                     <div className="profile-overlay">
-                      <span className="edit-icon">✏️</span>
+                      <span className="edit-icon"><FaCamera/></span>
                     </div>
                   </label>
                 </div>
-                <div className="profile-info">
-                  <h2 className="shop-name">{formData.laundryTitle}</h2>
-                  <p className="shop-status">⭐ 4.9 ★ (328 reviews) • Verified Business</p>
-                </div>
+<div className="profile-info">
+  <h2 className="shop-name">{formData.name}</h2>
+
+  <div className="shop-meta">
+    <div className="rating">
+      <span className="star">★</span>
+      <span className="rating-value">4.9</span>
+      <span className="reviews">(328 reviews)</span>
+    </div>
+
+    <span className="divider"></span>
+
+    <div className="verified-badge">
+      ✔ Verified Business
+    </div>
+  </div>
+</div>
               </div>
             </div>
           </div>
 
-          {/* Tabs Section */}
-          <div className="tabs-container">
-            <button 
-              className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
-              onClick={() => setActiveTab('general')}
-            >
-              <span>📋</span> General Information
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'contact' ? 'active' : ''}`}
-              onClick={() => setActiveTab('contact')}
-            >
-              <span>📞</span> Contact Details
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'schedule' ? 'active' : ''}`}
-              onClick={() => setActiveTab('schedule')}
-            >
-              <span>⏰</span> Business Hours
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'gallery' ? 'active' : ''}`}
-              onClick={() => setActiveTab('gallery')}
-            >
-              <span>🖼️</span> Gallery
-            </button>
-          </div>
-
           {/* General Information Tab */}
-          {activeTab === 'general' && (
+          
             <div className="form-card">
               <div className="form-section-title">
-                <span className="title-icon">🏪</span>
-                <h3>Business Information</h3>
+                <span className="title-icon"><IoBusiness/></span>
+                <h2>Business Information</h2>
               </div>
               
               <div className="form-grid">
@@ -247,14 +227,14 @@ const LaundryDetails = ({ setCurrentPage }) => {
                   <label className="field-label">Laundry Business Name</label>
                   <input
                     type="text"
-                    name="laundryTitle"
+                    name="name"
                     className="field-input"
                     placeholder="Enter business name"
-                    value={formData.laundryTitle}
+                    value={formData.name}
                     onChange={handleInputChange}
                   />
-                  <p className="field-hint">This name will appear on customer invoices and receipts</p>
                 </div>
+                
                 
                 <div className="form-field">
                   <label className="field-label">Business Email</label>
@@ -262,7 +242,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
                     type="email"
                     name="email"
                     className="field-input"
-                    placeholder="business@example.com"
+                    placeholder="laundry@example.com"
                     value={formData.email}
                     onChange={handleInputChange}
                   />
@@ -278,25 +258,24 @@ const LaundryDetails = ({ setCurrentPage }) => {
                     value={formData.description}
                     onChange={handleInputChange}
                   ></textarea>
-                  <p className="field-hint">This description will be shown to customers</p>
                 </div>
               </div>
             </div>
-          )}
+          
 
           {/* Contact Details Tab */}
-          {activeTab === 'contact' && (
+          
             <div className="form-card">
               <div className="form-section-title">
-                <span className="title-icon">📱</span>
-                <h3>Contact Information</h3>
+                <span className="title-icon"><MdOutlineConnectWithoutContact/></span>
+                <h2>Contact Information</h2>
               </div>
               
               <div className="form-grid">
                 <div className="form-field">
                   <label className="field-label">Phone Number</label>
                   <div className="input-with-icon">
-                    <span className="input-leading-icon">📞</span>
+                    <span className="input-leading-icon"><BsTelephone/></span>
                     <input
                       type="tel"
                       name="phone"
@@ -307,27 +286,12 @@ const LaundryDetails = ({ setCurrentPage }) => {
                     />
                   </div>
                 </div>
-                
-                <div className="form-field">
-                  <label className="field-label">WhatsApp Business</label>
-                  <div className="input-with-icon">
-                    <span className="input-leading-icon">💬</span>
-                    <input
-                      type="tel"
-                      name="whatsapp"
-                      className="field-input-icon"
-                      placeholder="+1 (555) 000-0000"
-                      value={formData.whatsapp}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <p className="field-hint">Customers can contact you via WhatsApp</p>
-                </div>
+              
                 
                 <div className="form-field full-width">
                   <label className="field-label">Business Address</label>
                   <div className="input-with-icon">
-                    <span className="input-leading-icon">📍</span>
+                    <span className="input-leading-icon"><FaMapMarkerAlt/></span>
                     <input
                       type="text"
                       name="address"
@@ -340,21 +304,20 @@ const LaundryDetails = ({ setCurrentPage }) => {
                 </div>
               </div>
             </div>
-          )}
+          
 
           {/* Business Hours Tab */}
-          {activeTab === 'schedule' && (
             <div className="form-card">
               <div className="form-section-title">
-                <span className="title-icon">⏰</span>
-                <h3>Operating Hours</h3>
+                <span className="title-icon"><IoTimeSharp/></span>
+                <h2>Operating Hours</h2>
               </div>
               
               <div className="form-grid">
                 <div className="form-field full-width">
                   <label className="field-label">Opening Hours</label>
                   <div className="input-with-icon">
-                    <span className="input-leading-icon">🕒</span>
+                    <span className="input-leading-icon"><IoTimeSharp/></span>
                     <input
                       type="text"
                       name="openingHours"
@@ -369,7 +332,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
               </div>
               
               <div className="info-box">
-                <span className="info-icon">ℹ️</span>
+                <span className="info-icon"><BsFillInfoCircleFill/></span>
                 <div className="info-content">
                   <strong>Holiday Schedule</strong>
                   <p>Set special hours for holidays and special occasions</p>
@@ -377,55 +340,8 @@ const LaundryDetails = ({ setCurrentPage }) => {
                 </div>
               </div>
             </div>
-          )}
-
-          {/* Gallery Tab */}
-          {activeTab === 'gallery' && (
-            <div className="form-card">
-              <div className="form-section-title">
-                <span className="title-icon">🖼️</span>
-                <h3>Business Gallery</h3>
-                <button className="add-gallery-btn" onClick={handleGalleryUpload}>
-                  <span>➕</span> Add New Photo
-                </button>
-              </div>
-              
-              <div className="gallery-grid">
-                {gallery.map(item => (
-                  <div key={item.id} className="gallery-item-card">
-                    <div 
-                      className="gallery-item-image"
-                      style={{ backgroundImage: `url(${item.image})` }}
-                    >
-                      <button 
-                        className="gallery-delete-btn"
-                        onClick={() => handleGalleryDelete(item.id)}
-                        title="Delete photo"
-                      >
-                        <span>🗑️</span>
-                      </button>
-                    </div>
-                    <div className="gallery-item-info">
-                      <input
-                        type="text"
-                        className="gallery-item-title"
-                        value={item.title}
-                        onChange={(e) => {
-                          const updatedGallery = gallery.map(g => 
-                            g.id === item.id ? { ...g, title: e.target.value } : g
-                          );
-                          setGallery(updatedGallery);
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <p className="gallery-hint">Showcase your facility to build trust with customers. Add up to 20 photos.</p>
-            </div>
-          )}
-
+        
+         
           {/* Action Buttons */}
           <div className="action-bar">
             <button className="btn-secondary" onClick={handleDiscard}>
@@ -439,14 +355,25 @@ const LaundryDetails = ({ setCurrentPage }) => {
                 </>
               ) : (
                 <>
-                  <span>💾</span>
+                  <span><CiSaveDown2/></span>
                   Save All Changes
                 </>
               )}
             </button>
           </div>
+          
         </div>
       </main>
+        {isSaved && (
+            <div className="success-toast top-toast">
+              <span className="success-icon"><FaCheckCircle/></span>
+              <div>
+                <strong>Success!</strong>
+                <p>Your laundry information has been saved successfully.</p>
+              </div>
+              <button className="toast-close" onClick={() => setIsSaved(false)}>✕</button>
+            </div>
+          )}
     </div>
   );
 };
