@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 const Footer = ({
   brandName = "FreshFold",
@@ -27,11 +28,14 @@ const Footer = ({
     instagram: "https://instagram.com",
     email: "mailto:info@freshfold.com"
   }
+  
 }) => {
+
+  const {user, logout } = useAuth()
   return (
     <footer className="bg-[#1E2A36] text-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-6xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Brand Column */}
           <div className="lg:col-span-1">
             {/* Logo */}
@@ -100,19 +104,30 @@ const Footer = ({
           <div>
             <h3 className="text-white font-semibold mb-4">For Providers</h3>
             <ul className="space-y-3">
-              {providersLinks.map((link, index) => {
-                const providersLinkMap = {
-                  "Become a Provider": "/become-provider"
-                }
-                const route = providersLinkMap[link] || "#"
-                return (
-                  <li key={index}>
-                    <Link to={route} className="text-gray-400 hover:text-white transition-colors text-sm">
-                      {link}
-                    </Link>
-                  </li>
-                )
-              })}
+              {user?.role === 'provider' ? (
+                <li>
+                  <button
+                    onClick={logout}
+                    className="text-gray-400 hover:text-white transition-colors text-sm"
+                  >
+                    Logout
+                  </button>
+                </li>
+              ) : (
+                providersLinks.map((link, index) => {
+                  const providersLinkMap = {
+                    "Become a Provider": "/become-provider"
+                  }
+                  const route = providersLinkMap[link] || "#"
+                  return (
+                    <li key={index}>
+                      <Link to={route} className="text-gray-400 hover:text-white transition-colors text-sm">
+                        {link}
+                      </Link>
+                    </li>
+                  )
+                })
+              )}
             </ul>
           </div>
 
