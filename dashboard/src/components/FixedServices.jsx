@@ -61,24 +61,23 @@ const Services = ({ setCurrentPage }) => {
   }, []);
 
   // Fetch services
-  const fetchServices = useCallback(async () => {
+const fetchServices = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setError(null); 
     try {
-      const response = await API.get('/services');
-      // Map backend icon strings to enriched data
-      const enrichedServices = (response.data || []).map(service => ({
+      const response = await API.get(`/services/laundry/${getLaundryId()}`);
+      // Map icon string to React element for display
+      const servicesWithIcons = response.data.map((service) => ({
         ...service,
-        iconElement: iconMap[service.icon] || iconMap['laundry']
+        iconElement: iconMap[service.icon] || iconMap['laundry'], // default to laundry icon
       }));
-      setServices(enrichedServices);
+      setServices(servicesWithIcons);
     } catch (err) {
       console.error('Error fetching services:', err);
-      setError('Failed to load services. Please check backend.');
-    } finally {
-      setLoading(false);
+      setError(`Failed to load services: ${err.response?.data?.message || err.message}`);
     }
-  }, []);
+    setLoading(false);
+  }, [getLaundryId]);
 
   useEffect(() => {
     fetchServices();

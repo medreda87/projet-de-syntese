@@ -65,5 +65,39 @@ class ProductController extends Controller
         ->get();
         return response()->json($products);
     }
+    public function update(Request $request, Product $product)
+    {
+        $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'price' => 'sometimes|required|numeric',
+            'category_id' => 'sometimes|required|string|max:100',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'laundry_id' => 'nullable|exists:laundries,id',
+        ]);
 
+        if ($request->hasFile('image')) {
+            $imageName = Str::slug($request->name) . '_' . time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images/products'), $imageName);
+            $product->image = $imageName;
+        }
+
+        $product->update($request->only(['name', 'price', 'category_id', 'description', 'laundry_id']));
+
+        return response()->json(['message' => 'Product updated successfully']);
+    }
+    public function destroy(Product $product)
+    {
+        if ($product->image) {
+            $imagePath = public_path('images/products/' . $product->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        $product->delete();
+
+        return response()->json(['message' => 'Product deleted successfully']);
+
+}
 }

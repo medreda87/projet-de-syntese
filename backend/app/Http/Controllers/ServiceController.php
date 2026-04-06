@@ -85,4 +85,8 @@ class ServiceController extends Controller
 
         return response()->json(null, 204);
     }
+    public function getByLaundry($id){
+        $services = Service::where('laundry_id', $id)->get();
+        return response()->json($services);
+    }
 }

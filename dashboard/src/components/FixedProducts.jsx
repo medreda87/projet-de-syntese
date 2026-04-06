@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './Products.css';
 import API from '../api/axiosApi';
-
+import { FaPen } from "react-icons/fa6";
+import {FaDeleteLeft} from "react-icons/fa6";
+import { MdDelete } from 'react-icons/md';
+import { GoFileDirectoryFill } from "react-icons/go";
+import { IoMdAdd } from "react-icons/io";
+import { FaSearch } from 'react-icons/fa';
 const Products = ({ setCurrentPage }) => {
   // States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -117,13 +122,41 @@ const fetchProducts = useCallback(async () => {
     setIsModalOpen(true);
   };
 
+  const updateProduct = async (productId) => {
+    if (!validateForm()) return;
+
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData();
+    formData.append('name', newProduct.name.trim());
+    formData.append('price', parseFloat(newProduct.price));
+    formData.append('category_id', newProduct.category);
+    formData.append('description', newProduct.description.trim());
+    if (newProduct.image) formData.append('image', newProduct.image);
+    formData.append('laundry_id', getLaundryId());
+
+    try {
+      await API.put(`/products/${productId}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setSuccess('Product updated!');
+      setIsModalOpen(false);
+      fetchProducts(); // Refresh list
+    } catch (err) {
+      setError(err.response?.data?.message || 'Update failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const openEditModal = (product) => {
     setIsEditMode(true);
     setEditProductId(product.id);
     setNewProduct({
       name: product.name,
       price: product.price.toString(),
-      category: product.category,
+      category: product.category || '',
       description: product.description || '',
       image: null
     });
@@ -142,28 +175,22 @@ const fetchProducts = useCallback(async () => {
     const formData = new FormData();
     formData.append('name', newProduct.name.trim());
     formData.append('price', parseFloat(newProduct.price));
-    formData.append('category_id', newProduct.category); // controller expects 'category_id' string
+    formData.append('category_id', newProduct.category);
     formData.append('description', newProduct.description.trim());
     if (newProduct.image) formData.append('image', newProduct.image);
     formData.append('laundry_id', getLaundryId());
 
     try {
-      let savedProduct;
       if (isEditMode && editProductId) {
-        await API.put(`/products/${editProductId}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        savedProduct = { ...newProduct, id: editProductId, price: parseFloat(newProduct.price), imagePreview: imagePreview };
-        setProducts(products.map(p => p.id === editProductId ? savedProduct : p));
+        await updateProduct(editProductId);
       } else {
         const response = await API.post('/products', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        savedProduct = response.data;
-        setProducts([...products, savedProduct]);
+        setSuccess('Product created!');
+        setIsModalOpen(false);
+        fetchProducts();
       }
-      setSuccess(isEditMode ? 'Product updated!' : 'Product created!');
-      setIsModalOpen(false);
     } catch (err) {
       setError(err.response?.data?.message || 'Save failed');
     } finally {
@@ -244,7 +271,7 @@ const fetchProducts = useCallback(async () => {
         <div className="header-tabs"></div>
         <div className="header-actions">
           <div className="search-wrapper">
-            <span className="search-icon">🔍</span>
+            <span className="search-icon"><FaSearch/></span>
             <input
               type="text"
               className="search-input"
@@ -273,7 +300,7 @@ const fetchProducts = useCallback(async () => {
 
         {searchTerm && (
           <div className="search-info">
-            <span>🔍</span>
+            <span><FaSearch/></span>
             <p>Searching for: <strong>"{searchTerm}"</strong></p>
             <span className="search-results-count">{filteredProducts.length} result(s)</span>
           </div>
@@ -286,11 +313,12 @@ const fetchProducts = useCallback(async () => {
           </div>
           <div className="action-buttons">
             <button className="btn-secondary" onClick={() => setIsCategoryModalOpen(true)} disabled={loading}>
-              📁 Add Category
+              <GoFileDirectoryFill /> Add Category
             </button>
             <button className="btn-primary" onClick={openAddModal} disabled={loading}>
-              ➕ Add Product
+              <IoMdAdd/> Add Product
             </button>
+
           </div>
         </div>
 
@@ -331,8 +359,8 @@ const fetchProducts = useCallback(async () => {
                       </td>
                       <td>
                         <div className="action-buttons-cell">
-                          <button className="edit-action-btn" onClick={() => openEditModal(product)} disabled={loading}>✏️</button>
-                          <button className="delete-action-btn" onClick={() => handleDeleteClick(product)} disabled={loading}>🗑️</button>
+                          <button className="edit-action-btn" onClick={() => openEditModal(product)} disabled={loading}><FaPen/></button>
+                          <button className="delete-action-btn" onClick={() => handleDeleteClick(product)} disabled={loading}><MdDelete/></button>
                         </div>
                       </td>
                     </tr>
@@ -343,7 +371,7 @@ const fetchProducts = useCallback(async () => {
 
             {searchTerm && !hasSearchResults && (
               <div className="no-results">
-                <span>🔍</span>
+                <span><FaSearch/></span>
                 <p>No products found for "<strong>{searchTerm}</strong>"</p>
                 <button className="clear-search-btn" onClick={() => setSearchTerm('')}>Clear Search</button>
               </div>
