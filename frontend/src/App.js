@@ -20,7 +20,7 @@ import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 import AddLaundryForm from "./Components/AddlaundryForm";
 
-
+import FixedProducts from "./components/FixedProducts"; 
 
 
 const App = () => {

@@ -3,7 +3,8 @@ import './App.css';
 import PersonalInformation from './components/PersonalInformation';
 import LaundryDetails from './components/LaundryDetails';
 import DeliverySettings from './components/DeliverySettings';
-import Services from './components/Services';
+import FixedServices from './components/FixedServices';
+import FixedProducts from './components/FixedProducts';
 import Products from './components/Products';
 const logo = '/images/imageLogo.png'
 function App() {
@@ -19,9 +20,11 @@ function App() {
       case 'delivery':
         return <DeliverySettings setCurrentPage={setCurrentPage} />;
       case 'services':
-        return <Services setCurrentPage={setCurrentPage} />;
+        return <FixedServices setCurrentPage={setCurrentPage} />;
+
       case 'products':
-        return <Products setCurrentPage={setCurrentPage} />;
+        return <FixedProducts setCurrentPage={setCurrentPage} />;
+
       default:
         return <PersonalInformation setCurrentPage={setCurrentPage} />;
     }

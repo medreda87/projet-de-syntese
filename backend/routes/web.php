@@ -3,12 +3,10 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
 
-Route::apiResource('products', ProductController::class);
 Route::apiResource('categories', CategoryController::class);
 
 

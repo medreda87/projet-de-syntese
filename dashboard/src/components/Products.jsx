@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Products.css';
-
+import API from '../api/axiosApi';  
 const Products = ({ setCurrentPage }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
@@ -10,7 +10,7 @@ const Products = ({ setCurrentPage }) => {
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
-    category: '',
+    category_id: '',
     description: '',
     image: null
   });
@@ -25,7 +25,7 @@ const Products = ({ setCurrentPage }) => {
       name: 'Eco Detergent',
       price: 15.00,
       description: 'High efficiency concentrated pods for all machines.',
-      category: 'Laundry',
+      category_id: 'Laundry',
       image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=100&h=100&fit=crop'
     },
     {
@@ -33,7 +33,7 @@ const Products = ({ setCurrentPage }) => {
       name: 'Fabric Softener',
       price: 10.00,
       description: 'Lavender scent for fresh feeling clothes.',
-      category: 'Laundry',
+      category_id: 'Laundry',
       image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=100&h=100&fit=crop'
     },
     {
@@ -41,12 +41,12 @@ const Products = ({ setCurrentPage }) => {
       name: 'Stain Remover',
       price: 8.00,
       description: 'Instant action spray for tough stains.',
-      category: 'Cleaning',
+      category_id: 'Cleaning',
       image: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=100&h=100&fit=crop'
     }
   ]);
 
-  const [categories, setCategories] = useState(['Laundry', 'Cleaning', 'Accessories']);
+  const [categories, setCategories] = useState([]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -71,7 +71,7 @@ const Products = ({ setCurrentPage }) => {
     setNewProduct({
       name: '',
       price: '',
-      category: '',
+      category_id: '',
       description: '',
       image: null
     });
@@ -85,7 +85,7 @@ const Products = ({ setCurrentPage }) => {
     setNewProduct({
       name: product.name,
       price: product.price.toString(),
-      category: product.category,
+      category_id: product.category_id,
       description: product.description,
       image: null
     });
@@ -93,7 +93,7 @@ const Products = ({ setCurrentPage }) => {
     setIsModalOpen(true);
   };
 
-  const handleSaveProduct = (e) => {
+  const handleSaveProduct = async(e) => {
     e.preventDefault();
     if (newProduct.name && newProduct.price && newProduct.category) {
       const productData = {
@@ -101,9 +101,23 @@ const Products = ({ setCurrentPage }) => {
         name: newProduct.name,
         price: parseFloat(newProduct.price),
         description: newProduct.description,
-        category: newProduct.category,
+        category_id: newProduct.category_id,
         image: imagePreview || 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=100&h=100&fit=crop'
       };
+
+      console.log('Saving product:', productData);
+const formData = new FormData();
+formData.append('name', newProduct.name);
+formData.append('price', parseFloat(newProduct.price));
+formData.append('category_id', newProduct.category_id);
+formData.append('description', newProduct.description);
+formData.append('image', newProduct.image); // file
+formData.append('laundry_id', 5);
+
+await API.post('/products', formData, {
+  headers: { 'Content-Type': 'multipart/form-data' }
+});
+
 
       if (isEditMode) {
         setProducts(products.map(product => 
@@ -135,12 +149,28 @@ const Products = ({ setCurrentPage }) => {
     setProductToDelete(null);
   };
 
-  const handleAddCategory = () => {
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await API.get('/categories');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }
+  , []);
+
+  const handleAddCategory = async() => {
     if (newCategory.trim() && !categories.includes(newCategory)) {
       setCategories([...categories, newCategory]);
       setIsCategoryModalOpen(false);
       setNewCategory('');
     }
+
+    await API.post('/categories', { name: newCategory })
   };
 
   const highlightText = (text) => {
@@ -328,16 +358,16 @@ const Products = ({ setCurrentPage }) => {
               <div className="form-group">
                 <label className="form-label">Category</label>
                 <select
-                  name="category"
+                  name="category_id"
                   className="form-select"
-                  value={newProduct.category}
+                  value={newProduct.category_id}
                   onChange={handleInputChange}
                   required
                 >
                   <option value="">Select a category</option>
-                  {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
+                  {categories.map((cat, index) => (
+                    <option key={index} value={cat.id}>{cat.name}</option>
+                  ))  }
                 </select>
               </div>
 

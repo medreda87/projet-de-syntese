@@ -18,8 +18,8 @@ class LaundryController extends Controller
             $query->where('address', 'like', '%' . $request->address . '%');
         }
 
-        if ($request->has('provider_id')) {
-            $query->where('provider_id', $request->provider_id);
+        if($request->has('user_id')){
+            $query->where('user_id', $request->user_id);
         }
 
         $laundries = $query->get();
@@ -36,7 +36,7 @@ class LaundryController extends Controller
         'logo' => 'nullable|file|image',
         'bigLogo' => 'nullable|file|image',
         'openingHours' => 'nullable|string',
-        'provider_id' => 'required|exists:providers,id',
+        'user_id' => 'required|exists:users,id',
     ]);
 
     $data = $request->all();
@@ -50,7 +50,7 @@ class LaundryController extends Controller
     }
 
     $laundry = Laundry::updateOrCreate(
-        ['name' => $request->name, 'provider_id' => $request->provider_id],
+        ['name' => $request->name, 'user_id' => $request->user_id],
         $data
     );
 

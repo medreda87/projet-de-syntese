@@ -21,7 +21,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create'); 
+        $products = Product::all();
+        return response()->json($products);
     }
 
     /**
@@ -36,6 +37,7 @@ class ProductController extends Controller
             'category_id' => 'required|string|max:100',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'laundry_id' => 'nullable|exists:laundries,id',
         ]);
 
  
@@ -48,11 +50,20 @@ class ProductController extends Controller
         Product::create([
             'name' => $request->name,
             'price' => $request->price,
-            'category' => $request->category,
+            'category_id' => $request->category_id,
             'description' => $request->description,
             'image' => $imageName,
+            'laundry_id' => $request->laundry_id,
         ]);
 
-        return redirect()->route('products.index')->with('success', 'Product added successfully!');
+        return response()->json(['message' => 'Product created successfully']);
+
     }
+    public function getByLaundry($id){
+        $products = Product::with('category')
+        ->where('laundry_id', $id)
+        ->get();
+        return response()->json($products);
+    }
+
 }

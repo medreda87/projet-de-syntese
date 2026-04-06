@@ -13,6 +13,8 @@ class Service extends Model
         'name',
         'description',
         'price',
+        'laundry_id',
+        'unit',
     ];
     public function laundry()
     {
