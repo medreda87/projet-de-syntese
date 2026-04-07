@@ -30,10 +30,12 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'icon' => 'required|string',
+'icon' => 'nullable|string',
             'name' => 'required|string',
             'description' => 'required|string',
             'price' => 'required|numeric',
+'laundry_id' => 'nullable|exists:laundries,id',
+            'unit' => 'nullable|string',
         ]);
 
         $service = Service::create($request->all());
@@ -82,5 +84,9 @@ class ServiceController extends Controller
         $service->delete();
 
         return response()->json(null, 204);
+    }
+    public function getByLaundry($id){
+        $services = Service::where('laundry_id', $id)->get();
+        return response()->json($services);
     }
 }

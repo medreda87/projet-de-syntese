@@ -17,14 +17,14 @@ class Laundry extends Model
         'description',
         'logo',
         'bigLogo',
-        'provider_id',
+        'user_id',
         'email_verified_at',
         'openingHours',
     ];
 
-    public function provider()
+    public function user()
     {
-        return $this->belongsTo(Provider::class);
+        return $this->belongsTo(User::class);
     }
     public function services()
     {

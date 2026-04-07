@@ -26,7 +26,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
     phone:'',
     email: '',
     description: '',
-    provider_id: 3,
+    user_id: 1, 
     openingHours: ''
   });
   // State pour la galerie
@@ -86,7 +86,7 @@ const handleSave = async () => {
     data.append('phone', formData.phone);
     data.append('address', formData.address);
     data.append('openingHours', formData.openingHours || '');
-    data.append('provider_id', formData.provider_id);
+    data.append('user_id', formData.user_id);
 
     if (profilePhoto) data.append('logo', profilePhoto);
     if (coverPhoto) data.append('bigLogo', coverPhoto);

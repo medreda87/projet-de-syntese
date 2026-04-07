@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './DeliverySettings.css';
-
+import { FaSearch, FaUser, FaDollarSign, FaShoppingCart, FaMapMarkerAlt, FaCreditCard, FaGift, FaBirthdayCake, FaCog, FaMap, FaCheck } from 'react-icons/fa';
+import API from '../api/axiosApi';
 const DeliverySettings = ({ setCurrentPage }) => {
   const [deliveryType, setDeliveryType] = useState('distance');
   const [pricePerKm, setPricePerKm] = useState(5.50);
@@ -10,10 +11,21 @@ const DeliverySettings = ({ setCurrentPage }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSaved, setIsSaved] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2500);
+    await API.post('deliveries', {
+      laundry_id: 4,
+      type: deliveryType,
+      price_per_km: parseFloat(pricePerKm),
+      fixed_price: parseFloat(fixedPrice),
+      min_order: parseFloat(minOrderAmount),
+      delivery_radius: parseFloat(deliveryRadius) 
+    })
   };
+
+
+
 
   const handleDiscard = () => {
     setDeliveryType('distance');
@@ -64,7 +76,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
           <div className="config-details" id="distance-config">
             <label className="config-label">Price per kilometer (MAD)</label>
             <div className="input-with-icon">
-              <span className="input-icon">💰</span>
+              <FaDollarSign className="input-icon" />
               <input
                 type="number"
                 step="0.01"
@@ -81,7 +93,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
           <div className="config-details" id="fixed-config">
             <label className="config-label">Fixed Price (MAD)</label>
             <div className="input-with-icon">
-              <span className="input-icon">💰</span>
+              <FaDollarSign className="input-icon" />
               <input
                 type="number"
                 step="0.01"
@@ -98,7 +110,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
           <div className="config-details" id="threshold-config">
             <label className="config-label">Minimum Order Amount (MAD)</label>
             <div className="input-with-icon">
-              <span className="input-icon">🛒</span>
+              <FaShoppingCart className="input-icon" />
               <input
                 type="number"
                 step="0.01"
@@ -114,7 +126,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
         return (
           <div className="config-details" id="free-config">
             <div className="free-message">
-              <span className="free-icon">🎉</span>
+              <FaGift className="free-icon" />
               <p className="free-text">Delivery is completely free for all orders!</p>
             </div>
           </div>
@@ -156,7 +168,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
         
         <div className="header-actions">
           <div className="search-wrapper">
-            <span className="search-icon">🔍</span>
+<FaSearch className="search-icon" />
             <input
               type="text"
               className="search-input"
@@ -176,8 +188,8 @@ const DeliverySettings = ({ setCurrentPage }) => {
           <button className="icon-btn">
             🔔
           </button>
-          <div className="user-avatar">
-            👨
+<div className="user-avatar">
+            <FaUser />
           </div>
         </div>
       </div>
@@ -188,7 +200,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
           {/* Search Info */}
           {searchTerm && (
             <div className="search-info">
-              <span>🔍</span>
+              <FaSearch />
               <p>Searching for: <strong>"{searchTerm}"</strong></p>
             </div>
           )}
@@ -203,7 +215,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
             <div className="delivery-card" id="delivery-pricing">
               <div className="card-header-icon">
                 <div className="icon-circle">
-                  <span>⚙️</span>
+                  <FaCog />
                 </div>
                 <div>
                   <h3 className="card-title">Delivery Pricing Model</h3>
@@ -226,7 +238,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
                     />
                     <div className={`option-card ${deliveryType === 'distance' ? 'active' : ''}`}>
                       <div className="option-header">
-                        <span className="option-icon">📍</span>
+                        <FaMapMarkerAlt className="option-icon" />
                         <div className={`radio-dot ${deliveryType === 'distance' ? 'active' : ''}`}>
                           <div className="radio-inner"></div>
                         </div>
@@ -250,7 +262,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
                     />
                     <div className={`option-card ${deliveryType === 'fixed' ? 'active' : ''}`}>
                       <div className="option-header">
-                        <span className="option-icon">💳</span>
+                        <FaCreditCard className="option-icon" />
                         <div className={`radio-dot ${deliveryType === 'fixed' ? 'active' : ''}`}>
                           <div className="radio-inner"></div>
                         </div>
@@ -274,7 +286,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
                     />
                     <div className={`option-card ${deliveryType === 'threshold' ? 'active' : ''}`}>
                       <div className="option-header">
-                        <span className="option-icon">🎁</span>
+                        <FaGift className="option-icon" />
                         <div className={`radio-dot ${deliveryType === 'threshold' ? 'active' : ''}`}>
                           <div className="radio-inner"></div>
                         </div>
@@ -298,7 +310,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
                     />
                     <div className={`option-card ${deliveryType === 'free' ? 'active' : ''}`}>
                       <div className="option-header">
-                        <span className="option-icon">🎉</span>
+                        <FaBirthdayCake className="option-icon" />
                         <div className={`radio-dot ${deliveryType === 'free' ? 'active' : ''}`}>
                           <div className="radio-inner"></div>
                         </div>
@@ -325,7 +337,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
             <div className="additional-card" id="delivery-radius">
               <div className="additional-content">
                 <div className="additional-icon">
-                  <span>🗺️</span>
+                  <FaMap />
                 </div>
                 <div>
                   <p className="additional-title">Delivery Radius</p>
@@ -334,10 +346,10 @@ const DeliverySettings = ({ setCurrentPage }) => {
               </div>
               <div className="radius-control">
                 <input
-                  type="text"
+                  type="number"
                   className="radius-input"
                   value={deliveryRadius}
-                  onChange={(e) => setDeliveryRadius(e.target.value)}
+                  onChange={(e) => setDeliveryRadius(parseFloat(e.target.value))}
                 />
                 <span className="radius-unit">KM</span>
               </div>
@@ -351,7 +363,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
               if (!hasResults && !shouldShowConfig()) {
                 return (
                   <div className="search-no-results">
-                    <span>🔍</span>
+                    <FaSearch />
                     <p>No results found for "<strong>{searchTerm}</strong>"</p>
                     <p className="search-suggestion">Try searching for: distance, price, free, radius, delivery, kilometer</p>
                   </div>
@@ -371,9 +383,11 @@ const DeliverySettings = ({ setCurrentPage }) => {
             </button>
           </div>
 
+          {/* Save Confirmation - Affiché après sauvegarde */}
           {isSaved && (
-            <div className="success-message">
-              ✓ Delivery settings saved successfully!
+            <div className="save-confirmation">
+              <FaCheck />
+              <p>Settings saved successfully!</p>
             </div>
           )}
         </div>

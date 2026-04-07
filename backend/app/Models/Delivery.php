@@ -14,6 +14,7 @@ class Delivery extends Model
         'price_per_km',
         'fixed_price',
         'min_order',
+        'delivery_radius'
     ];
     public function laundry()
     {

@@ -44,9 +44,11 @@ use App\Http\Controllers\CommentController;
 
 Route::apiResource('categories', CategoryController::class);
 use App\Http\Controllers\ProductController;
+Route::get('/products/laundry/{id}', [ProductController::class, 'getByLaundry']);
 Route::apiResource('products', ProductController::class);
 use App\Http\Controllers\ServiceController;
 Route::apiResource('services', ServiceController::class);
+Route::get('/services/laundry/{id}', [ServiceController::class, 'getByLaundry']);
 use App\Http\Controllers\DeliveryController;
 Route::apiResource('deliveries', DeliveryController::class);
 
