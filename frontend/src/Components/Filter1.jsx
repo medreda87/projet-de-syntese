@@ -1,9 +1,10 @@
 import React from 'react'
 import { FaRegStar } from "react-icons/fa";
+import { IoSearchOutline, IoLocationOutline, IoOptionsOutline, IoCloseCircle } from "react-icons/io5";
+
 function Filter1(props) {
-    const buttons = ["All Services","Wash & Fold","Dry Cleaning","Ironing","Express Service",];
+    const buttons = ["All Services","Wash & Fold","Dry Cleaning","Ironing","Express Service"];
     
-    // List of cities
     const cities = [
       "All Cities",
       "Casablanca",
@@ -26,97 +27,86 @@ function Filter1(props) {
       "Settat",
       "Larache"
     ];
+
   return (
-    <div className='padd sm:block hidden'>
-        <div className='filter-bar'>
-          <div className='filter-input search'>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+    <div className='hidden sm:block px-4 md:px-8 py-5 max-w-7xl mx-auto'>
+      {/* Search row */}
+      <div className='flex flex-col md:flex-row gap-3 mb-4'>
+        {/* Search input */}
+        <div className='flex items-center gap-2.5 flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 focus-within:border-[#0EA5C9] focus-within:ring-2 focus-within:ring-[#0EA5C9]/10 transition-all'>
+          <IoSearchOutline className="text-[#62707D] text-lg flex-shrink-0" />
+          <input 
+            type="search" 
+            value={props.search} 
+            onChange={(e) => props.setSearch(e.target.value)} 
+            placeholder='Search laundry services...'
+            className="w-full bg-transparent border-none outline-none text-sm text-[#1E2A36] placeholder:text-[#62707D]/60"
+          />
+        </div>
+
+        {/* City select */}
+        <div className="flex items-center gap-2.5 bg-white border border-gray-200 rounded-xl px-4 py-3 md:w-64 focus-within:border-[#0EA5C9] focus-within:ring-2 focus-within:ring-[#0EA5C9]/10 transition-all">
+          <IoLocationOutline className="text-[#62707D] text-lg flex-shrink-0" />
+          <select 
+            value={props.selectedCity || "All Cities"} 
+            onChange={(e) => props.setSelectedCity && props.setSelectedCity(e.target.value)}
+            className="w-full bg-transparent border-none outline-none text-sm text-[#1E2A36] cursor-pointer appearance-none"
+          >
+            {cities.map((city) => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </select>
+          <svg className="w-4 h-4 text-[#62707D] flex-shrink-0 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
-            <input type="search" value={props.search} onChange={(e)=>props.setSearch(e.target.value)} placeholder='Search laundry services...'/>
-          </div>
+        </div>
 
-
-    <div className="filter-input location">
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1 1 18 0z"/>
-    <circle cx="12" cy="10" r="3"/>
-  </svg>
-    <select 
-      value={props.selectedCity || "All Cities"} 
-      onChange={(e) => props.setSelectedCity && props.setSelectedCity(e.target.value)}
-      className="location-select"
-      style={{
-        border: 'none',
-        outline: 'none',
-        background: 'transparent',
-        width: '100%',
-        fontSize: 'inherit',
-        color: 'inherit',
-        cursor: 'pointer'
-      }}
-    >
-      {cities.map((city) => (
-        <option key={city} value={city}>
-          {city}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <button className="filter-button" onClick={props.onhandleFilter}>
-    <svg 
-    className="filter-icon"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="4" y1="6" x2="20" y2="6"/>
-    <circle cx="10" cy="6" r="2"/>
-    <line x1="4" y1="12" x2="20" y2="12"/>
-    <circle cx="14" cy="12" r="2"/>
-    <line x1="4" y1="18" x2="20" y2="18"/>
-    <circle cx="8" cy="18" r="2"/>
-  </svg>
-    Filters
-  </button>
-  </div>
-    <div className="filters">
-      {buttons.map((btn) => (
-        <button
-          key={btn}
-          className={props.filter === btn ? "active" : ""}
-          onClick={() => props.setFilter(btn)}
+        {/* Filters button */}
+        <button 
+          className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#0EA5C9] to-[#0EA5C9] text-white rounded-xl px-6 py-3 text-sm font-semibold hover:shadow-lg hover:shadow-sky-200/50 hover:-translate-y-0.5 active:translate-y-0 transition-all whitespace-nowrap"
+          onClick={props.onhandleFilter}
         >
-          {btn}
+          <IoOptionsOutline className="text-base" />
+          Filters
         </button>
-      ))}
-      <button 
-      className="flex items-center gap-2"
-      onClick={() =>
-        props.setSortType(props.sortType === "rating" ? "reviews" : "rating")
-      }>
-        <FaRegStar/> Sort by {props.sortType === "rating" ? "Reviews" : "Rating"}
-      </button>
-      {props.isDirty && (
-        <button className="clear-btn" onClick={()=>props.handleClear()}>
-          ✖ Clear All
+      </div>
+
+      {/* Filter pills */}
+      <div className="flex flex-wrap items-center gap-2">
+        {buttons.map((btn) => (
+          <button
+            key={btn}
+            onClick={() => props.setFilter(btn)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              props.filter === btn 
+                ? "bg-[#0EA5C9] text-white shadow-sm" 
+                : "bg-white text-[#1E2A36] border border-gray-200 hover:border-[#0EA5C9]/40 hover:text-[#0EA5C9]"
+            }`}
+          >
+            {btn}
+          </button>
+        ))}
+
+        <div className="w-px h-6 bg-gray-200 mx-1" />
+
+        <button 
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-white text-[#1E2A36] border border-gray-200 hover:border-[#0EA5C9]/40 hover:text-[#0EA5C9] transition-all"
+          onClick={() =>
+            props.setSortType(props.sortType === "rating" ? "reviews" : "rating")
+          }
+        >
+          <FaRegStar className="text-xs" /> Sort by {props.sortType === "rating" ? "Reviews" : "Rating"}
         </button>
-      )}
-    </div>
+
+        {props.isDirty && (
+          <button 
+            className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 transition-colors ml-auto"
+            onClick={() => props.handleClear()}
+          >
+            <IoCloseCircle className="text-base" /> Clear All
+          </button>
+        )}
+      </div>
     </div>
   )
 }

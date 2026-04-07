@@ -1,16 +1,24 @@
-import React, { useState } from "react";
-import { Star, ChevronLeft, ChevronRight, LogIn, Pencil, Trash2, Check, X } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Star, ChevronLeft, ChevronRight, LogIn, Pencil, Trash2, Check, X, MessageCircle, Image, XCircle, ShieldAlert } from "lucide-react";
+import { Link, useLocation, useParams, useSearchParams } from "react-router-dom";
 import TitleSectionText from "./ui/TitleSectionText";
 import { useAuth } from "../contexts/AuthContext";
 import API from "../utils/api";
+
+const STORAGE_URL = "http://127.0.0.1:8000/storage/"
+
+const getImageUrl = (path) => {
+  if (!path) return null
+  if (path.startsWith('http')) return path
+  return STORAGE_URL + path
+}
 
 const Reviews = ({
   reviews = [],
   title = "Customer Reviews",
   showRatingSummary = true,
-  shopId = null,
-  variant = "default", // "default" for shop details, "testimonials" for home page
+  laundryId = null,
+  variant = "default",
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const reviewsPerPage = variant === "testimonials" ? 3 : 5;
@@ -18,25 +26,68 @@ const Reviews = ({
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
+  const [commentImage, setCommentImage] = useState(null);
+  const [commentImagePreview, setCommentImagePreview] = useState(null);
+  const [localReviews, setLocalReviews] = useState(reviews);
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState("");
+  const [replyImage, setReplyImage] = useState(null);
+  const [replyImagePreview, setReplyImagePreview] = useState(null);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [hasRamassage, setHasRamassage] = useState(false);
+  const [checkingRamassage, setCheckingRamassage] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const location = useLocation();
 
+  // Fetch comments from database
+  useEffect(() => {
+    if (laundryId && variant === "default") {
+      API.get(`/comments/laundry/${laundryId}`)
+        .then((res) => {
+          setLocalReviews(res.data);
+        })
+        .catch((err) => {
+          console.error("Error fetching comments:", err);
+          setLocalReviews(reviews);
+        });
+    } else {
+      setLocalReviews(reviews);
+    }
+  }, [laundryId]);
+
+  // Check if user has a ramassage for this laundry
+  useEffect(() => {
+    if (isAuthenticated && laundryId && variant === "default") {
+      setCheckingRamassage(true);
+      API.get(`/ramassages/check/${laundryId}`)
+        .then((res) => {
+          setHasRamassage(res.data.hasRamassage);
+        })
+        .catch(() => {
+          setHasRamassage(false);
+        })
+        .finally(() => {
+          setCheckingRamassage(false);
+        });
+    }
+  }, [isAuthenticated, laundryId]);
   // Calculate average rating
   const averageRating =
-    reviews.length > 0
+    localReviews.length > 0
       ? (
-          reviews.reduce((sum, review) => sum + review.rating, 0) /
-          reviews.length
+          localReviews.reduce((sum, review) => sum + (review.rating || 0), 0) /
+          localReviews.length
         ).toFixed(1)
       : 0;
 
   // Get paginated reviews
-  const paginatedReviews = reviews.slice(
+  const paginatedReviews = localReviews.slice(
     currentPage * reviewsPerPage,
     (currentPage + 1) * reviewsPerPage,
   );
 
-  const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+  const totalPages = Math.ceil(localReviews.length / reviewsPerPage);
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -62,31 +113,106 @@ const Reviews = ({
     });
   };
 
+  const handleImageChange = (e, type = 'comment') => {
+    const file = e.target.files[0];
+    if (file) {
+      if (type === 'reply') {
+        setReplyImage(file);
+        setReplyImagePreview(URL.createObjectURL(file));
+      } else {
+        setCommentImage(file);
+        setCommentImagePreview(URL.createObjectURL(file));
+      }
+    }
+  };
+
+  const clearImage = (type = 'comment') => {
+    if (type === 'reply') {
+      setReplyImage(null);
+      setReplyImagePreview(null);
+    } else {
+      setCommentImage(null);
+      setCommentImagePreview(null);
+    }
+  };
+
   const handleSubmitComments = async () => {
-    // Implement the logic to submit comments here
     if (comments.trim() === "") {
       setError({ comments: "Comment cannot be empty" });
       return;
     }
+    if (selectedRating === 0) {
+      setError({ comments: "Please select a rating" });
+      return;
+    }
 
-   await API.post("/comment" , {
-      comment: comments,
-      shop_id: shopId,
+    const formData = new FormData();
+    formData.append('comment', comments);
+    formData.append('laundryId', laundryId);
+    formData.append('rating', selectedRating);
+    if (commentImage) {
+      formData.append('image', commentImage);
+    }
+
+    await API.post("/comment", formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
     })
     .then((response) => {
-      console.log("Comment submitted successfully:", response.data);
+      const newComment = response.data.comment;
+      setLocalReviews(prev => [{
+        ...newComment,
+        customerName: user?.name,
+        name: user?.name,
+        date: newComment.created_at || new Date().toISOString(),
+        rating: newComment.rating || selectedRating,
+        replies: newComment.replies || [],
+      }, ...prev]);
       setComments("");
       setError("");
+      setCommentImage(null);
+      setCommentImagePreview(null);
+      setSelectedRating(0);
     })
     .catch((error) => {
       console.error("Error submitting comment:", error);
-      setError({ comments: "Failed to submit comment. Please try again." });
+      if (error.response?.status === 403) {
+        setError({ comments: "You must have a reservation before leaving a review." });
+      } else {
+        setError({ comments: "Failed to submit comment. Please try again." });
+      }
     });
+  };
 
-    console.log("Submitting comment:", { comment: comments, shop_id: shopId });
+  const handleSubmitReply = async (parentId) => {
+    if (replyText.trim() === "") return;
 
-    // You can use this to associate the comment with a specific shop
-    // You can make an API call to submit the comment to the backend
+    const formData = new FormData();
+    formData.append('comment', replyText);
+    formData.append('laundryId', laundryId);
+    formData.append('parent_id', parentId);
+    if (replyImage) {
+      formData.append('image', replyImage);
+    }
+
+    await API.post("/comment", formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    .then((response) => {
+      console.log("Reply submitted successfully:", response.data);
+      const newReply = response.data.comment;
+      setLocalReviews(prev => prev.map(r => 
+        r.id === parentId 
+          ? { ...r, replies: [...(r.replies || []), { ...newReply, name: user?.name }] }
+          : r
+      ));
+      setReplyingTo(null);
+      setReplyText("");
+      setReplyImage(null);
+      setReplyImagePreview(null);
+    })
+    .catch((error) => {
+      console.error("Error submitting reply:", error);
+    });
   };
 
   // Start editing a comment
@@ -209,23 +335,26 @@ const Reviews = ({
 
   // Default variant for shop details page
   return (
-    <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-[#1E2A36]">{title}</h2>
-        {showRatingSummary && reviews.length > 0 && (
-          <div className="flex items-center gap-2">
+    <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-[#1E2A36] tracking-tight">{title}</h2>
+          <div className="w-10 h-0.5 bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] rounded-full mt-2" />
+        </div>
+        {showRatingSummary && localReviews.length > 0 && (
+          <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 py-2">
             <div className="flex items-center gap-1">
               {renderStars(parseFloat(averageRating))}
             </div>
-            <span className="text-lg font-semibold text-[#1E2A36]">
+            <span className="text-lg font-bold text-[#1E2A36]">
               {averageRating}
             </span>
-            <span className="text-[#62707D]">({reviews.length} reviews)</span>
+            <span className="text-sm text-[#62707D]">({localReviews.length})</span>
           </div>
         )}
       </div>
 
-      {reviews.length === 0 ? (
+      {localReviews.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl text-gray-300 mb-4">★</div>
           <p className="text-[#62707D] text-lg">
@@ -243,14 +372,14 @@ const Reviews = ({
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0EA5C9] to-[#1BB38C] flex items-center justify-center text-white font-semibold">
-                      {review.customerName.charAt(0).toUpperCase()}
+                      {(review.name || review.customerName || review.user?.name || "?").charAt(0).toUpperCase()}
                     </div>
                     <div>
                       <p className="font-semibold text-[#1E2A36]">
-                        {review.customerName}
+                        {review.name || review.customerName || review.user?.name}
                       </p>
                       <p className="text-sm text-[#62707D]">
-                        {formatDate(review.date)}
+                        {formatDate(review.created_at || review.date)}
                       </p>
                     </div>
                   </div>
@@ -258,7 +387,7 @@ const Reviews = ({
                     <div className="flex items-center gap-1">
                       {renderStars(review.rating)}
                     </div>
-                    {isAuthenticated && user?.name === review.customerName && (
+                    {isAuthenticated && (user?.name === review.name || user?.name === review.customerName || user?.id === review.user_id) && (
                       <div className="flex items-center gap-1 ml-2">
                         <button
                           onClick={() => handleEditComment(review)}
@@ -302,15 +431,118 @@ const Reviews = ({
                     </div>
                   </div>
                 ) : (
-                  <p className="text-[#62707D] leading-relaxed">
-                    {review.comment}
-                  </p>
+                  <>
+                    <p className="text-[#62707D] leading-relaxed">
+                      {review.comment}
+                    </p>
+                    {review.image && (
+                      <div className="mt-3">
+                        <img
+                          src={getImageUrl(review.image)}
+                          alt="Comment attachment"
+                          className="max-w-xs max-h-48 rounded-lg object-cover border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => window.open(getImageUrl(review.image), '_blank')}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
                 {review.service && (
                   <div className="mt-3">
                     <span className="text-sm bg-[#E0F2FE] text-[#0EA5C9] px-3 py-1 rounded-lg">
                       Service: {review.service}
                     </span>
+                  </div>
+                )}
+
+                {/* Reply button */}
+                {isAuthenticated && (
+                  <button
+                    onClick={() => {
+                      setReplyingTo(replyingTo === review.id ? null : review.id);
+                      setReplyText("");
+                      setReplyImage(null);
+                      setReplyImagePreview(null);
+                    }}
+                    className="mt-3 inline-flex items-center gap-1.5 text-sm text-[#62707D] hover:text-[#0EA5C9] transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Reply
+                  </button>
+                )}
+
+                {/* Reply form */}
+                {replyingTo === review.id && (
+                  <div className="mt-3 ml-6 p-4 bg-[#F7F9FA] rounded-lg border border-gray-200">
+                    <p className="text-sm text-[#62707D] mb-2">
+                      Replying to <span className="font-semibold text-[#1E2A36]">{review.name || review.customerName}</span>
+                    </p>
+                    <textarea
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder="Write your reply..."
+                      className="w-full border border-gray-300 rounded-lg p-3 text-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] resize-none text-sm"
+                      rows={2}
+                    />
+                    {replyImagePreview && (
+                      <div className="relative inline-block mt-2">
+                        <img src={replyImagePreview} alt="Preview" className="max-w-[120px] max-h-[80px] rounded-lg object-cover border border-gray-200" />
+                        <button
+                          onClick={() => clearImage('reply')}
+                          className="absolute -top-2 -right-2 bg-white rounded-full shadow"
+                        >
+                          <XCircle className="w-5 h-5 text-red-500" />
+                        </button>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => handleSubmitReply(review.id)}
+                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-[#0EA5C9] text-white text-sm hover:bg-[#0EA5C9]/90 transition-colors"
+                      >
+                        Reply
+                      </button>
+                      <label className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-gray-200 text-[#1E2A36] text-sm hover:bg-gray-300 transition-colors cursor-pointer">
+                        <Image className="w-4 h-4" />
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, 'reply')} />
+                      </label>
+                      <button
+                        onClick={() => { setReplyingTo(null); setReplyText(""); clearImage('reply'); }}
+                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-gray-200 text-[#1E2A36] text-sm hover:bg-gray-300 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Replies */}
+                {review.replies && review.replies.length > 0 && (
+                  <div className="mt-4 ml-6 space-y-4 border-l-2 border-[#E0F2FE] pl-4">
+                    {review.replies.map((reply) => (
+                      <div key={reply.id} className="bg-[#F7F9FA] rounded-lg p-4">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0EA5C9] to-[#1BB38C] flex items-center justify-center text-white font-semibold text-xs">
+                            {(reply.name || reply.user?.name || "?").charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-[#1E2A36] text-sm">{reply.name || reply.user?.name}</p>
+                            <p className="text-xs text-[#62707D]">{formatDate(reply.created_at)}</p>
+                          </div>
+                        </div>
+                        <p className="text-[#62707D] text-sm leading-relaxed">{reply.comment}</p>
+                        {reply.image && (
+                          <div className="mt-2">
+                            <img
+                              src={getImageUrl(reply.image)}
+                              alt="Reply attachment"
+                              className="max-w-[200px] max-h-32 rounded-lg object-cover border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                              onClick={() => window.open(getImageUrl(reply.image), '_blank')}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -347,8 +579,38 @@ const Reviews = ({
         <div className="mt-4">
           <p className="font-bold text-xl mb-3">Add a comment</p>
           {isAuthenticated ? (
+            hasRamassage ? (
             <div>
               <p className="text-sm text-[#62707D] mb-2">Commenting as <span className="font-semibold text-[#1E2A36]">{user?.name}</span></p>
+              
+              {/* Star Rating Picker */}
+              <div className="mb-3">
+                <p className="text-sm font-medium text-[#1E2A36] mb-1">Your rating</p>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setSelectedRating(i + 1)}
+                      onMouseEnter={() => setHoverRating(i + 1)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      className="p-0.5 transition-transform hover:scale-110"
+                    >
+                      <Star
+                        className={`w-7 h-7 ${
+                          i < (hoverRating || selectedRating)
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "fill-gray-200 text-gray-200"
+                        } transition-colors`}
+                      />
+                    </button>
+                  ))}
+                  {selectedRating > 0 && (
+                    <span className="text-sm text-[#62707D] ml-2">{selectedRating}/5</span>
+                  )}
+                </div>
+              </div>
+
               <div className="mb-2">
                 <textarea
                   placeholder="add your comments here"
@@ -357,21 +619,47 @@ const Reviews = ({
                   onChange={(e) => {
                     setComments(e.target.value);
                   }}
-                  className="mb-0"
+                  className="w-full border border-gray-300 rounded-lg p-3 text-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] resize-none mb-0"
+                  rows={3}
                 ></textarea>
                 {error.comments && (
                   <p className="text-red-500 text-sm mt-1">{error.comments}</p>
                 )}
               </div>
-              <button
-                onClick={() => {
-                  handleSubmitComments();
-                }}
-                className="py-2 px-16 rounded-md hover:bg-[#1bb38dcf] bg-[#1BB38C] text-white"
-              >
-                Send
-              </button>
+              {commentImagePreview && (
+                <div className="relative inline-block mb-3">
+                  <img src={commentImagePreview} alt="Preview" className="max-w-[150px] max-h-[100px] rounded-lg object-cover border border-gray-200" />
+                  <button
+                    onClick={() => clearImage('comment')}
+                    className="absolute -top-2 -right-2 bg-white rounded-full shadow"
+                  >
+                    <XCircle className="w-5 h-5 text-red-500" />
+                  </button>
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    handleSubmitComments();
+                  }}
+                  className="py-2 px-16 rounded-md hover:bg-[#1bb38dcf] bg-[#1BB38C] text-white"
+                >
+                  Send
+                </button>
+                <label className="inline-flex items-center gap-1.5 py-2 px-4 rounded-md bg-gray-200 text-[#1E2A36] hover:bg-gray-300 transition-colors cursor-pointer">
+                  <Image className="w-4 h-4" />
+                  <span className="text-sm">Image</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, 'comment')} />
+                </label>
+              </div>
             </div>
+            ) : (
+              <div className="bg-amber-50 rounded-xl p-6 text-center border border-amber-200">
+                <ShieldAlert className="w-10 h-10 text-amber-500 mx-auto mb-3" />
+                <p className="text-[#1E2A36] font-semibold mb-1">Réservation requise</p>
+                <p className="text-[#62707D] text-sm">Vous devez avoir effectué une réservation (ramassage) dans cette laverie avant de pouvoir laisser un avis.</p>
+              </div>
+            )
           ) : (
             <div className="bg-[#F7F9FA] rounded-xl p-6 text-center border border-gray-200">
               <LogIn className="w-10 h-10 text-[#0EA5C9] mx-auto mb-3" />

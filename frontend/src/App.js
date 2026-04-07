@@ -44,7 +44,7 @@ const App = () => {
           <Route path="/legal" element={<Legal />} />
           <Route path="/privacy" element={<Legal />} />
           <Route path="/cookies" element={<Cookies />} />
-          <Route path="/shop/:id" element={<ShopDetail />} />
+          <Route path="/:title" element={<ShopDetail />} />
           <Route path="/admin" element={<AddLaundryForm />} />
 
           <Route path="/login" element={<SignIn />} />

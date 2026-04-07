@@ -9,6 +9,19 @@ class Ramassage extends Model
 {
     use HasFactory;
 
+    // fullName: allFormData.fullName,
+    // phoneNumber: allFormData.phoneNumber,
+    // pickupAddress: allFormData.pickupAddress,
+    // pickupDate: allFormData.pickupDate,
+    // pickupTime: allFormData.pickupTime,
+    // pickupLatitude: positionRamassage.latitude,
+    // pickupLongitude: positionRamassage.longitude,
+    // deliveryAddress: allFormData.deliveryAddress,
+    // deliveryDate: allFormData.deliveryDate,
+    // deliveryTime: allFormData.deliveryTime,
+    // deliveryLatitude: positionLivraison.latitude,
+    // deliveryLongitude: positionLivraison.longitude
+
     protected $fillable = [
         'user_id',
         'laundry_id',
@@ -25,6 +38,7 @@ class Ramassage extends Model
         'delivery_latitude',
         'delivery_longitude',
         'status',
+        'services' 
     ];
 
     public function user()

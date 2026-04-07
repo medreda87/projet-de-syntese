@@ -324,9 +324,6 @@ const isDirty =
   }
   return (
 <div className="main-content mx-auto">
-{/*  hada header deyalna */}
-  {/* <Header/> */}
-{/* hadi div deya filter kansardo fiha les props*/}
   <div style={{backgroundColor:'#f4f7f7', fontSize:"20px"}}>
     <Filter1 search={search} setSearch={setSearch}
       filter={filter} setFilter={setFilter}
@@ -336,34 +333,35 @@ const isDirty =
       selectedCity={selectedCity} setSelectedCity={setSelectedCity}
     />
   </div>
-{/* wehada howa li fih mesbanat daylna  */}
-  <div className='py-[50px]'>
-    <div>
+
+  <div className='px-4 md:px-8 py-10 max-w-7xl mx-auto'>
+    <div className="mb-6">
       {search
-        ? <h2 className='marge'>Results for "<span className='titre'>{search}</span>"</h2>
-        : <h2 className='marge'>All <span className='titre'>Laundry Shops</span></h2>}
-      <p className='marge'>{sortedLaundries.length} shops found</p>
+        ? <h2 className='text-2xl font-bold text-[#1E2A36]'>Results for "<span className='text-[#0EA5C9]'>{search}</span>"</h2>
+        : <h2 className='text-2xl font-bold text-[#1E2A36]'>All <span className='text-[#0EA5C9]'>Laundry Shops</span></h2>}
+      <p className='text-sm text-[#62707D] mt-1'>{sortedLaundries.length} shops found</p>
     </div>
 
-
-    
-
-    <div className='container-list grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1' >
+    <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5'>
       {sortedLaundries.map((re) => (
-       <div className='col-span-1'>
-         <Item1 key={re.id} {...re} />
+       <div key={re.id} className='col-span-1'>
+         <Item1 {...re} />
        </div>
       ))}
 
-    {/* benisba nehadi mili kan3emel search we sort we filter par les button 
-    mili maknjbro hta mesbana kayetla3na had div
-    */}
       {sortedLaundries.length===0 && (
-        <div className='empty-state'>
-          <button className='empty-icon'><IoSearchOutline/></button>
-          <h2 className='empty-title'>No shops found</h2>
-          <p className='empty-text'>Try adjusting your filters or search query</p>
-          <button className="empty-button" onClick={()=>handleClear()}> Clear Filters </button>
+        <div className='col-span-full flex flex-col items-center justify-center py-20 text-center'>
+          <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
+            <IoSearchOutline className="text-2xl text-[#62707D]" />
+          </div>
+          <h2 className='text-xl font-bold text-[#1E2A36] mb-2'>No shops found</h2>
+          <p className='text-[#62707D] text-sm mb-5 max-w-sm'>Try adjusting your filters or search query to find what you're looking for</p>
+          <button 
+            className="px-6 py-2.5 rounded-xl bg-[#0EA5C9] text-white text-sm font-semibold hover:bg-[#0EA5C9]/90 transition-colors" 
+            onClick={()=>handleClear()}
+          >
+            Clear Filters
+          </button>
         </div>
       )}
     </div>

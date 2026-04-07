@@ -8,7 +8,7 @@ class LaundryController extends Controller
 {
      public function index(Request $request)
     {
-        $query = Laundry::with('provider', 'services', 'categories.products');
+        $query = Laundry::with('provider', 'services', 'categories.products', 'delivery', 'comment');
 
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -24,6 +24,14 @@ class LaundryController extends Controller
 
         $laundries = $query->get();
         return response()->json($laundries);
+    }
+
+    public function show($id)
+    {
+        $laundry = Laundry::with('provider', 'services', 'categories.products', 'delivery', 'comment')
+            ->findOrFail($id);
+
+        return response()->json($laundry);
     }
    public function store(Request $request)
 {

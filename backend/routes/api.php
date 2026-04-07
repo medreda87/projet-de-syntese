@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/send-verification-code', [AuthController::class, 'sendCode']);
+Route::post('/verify-code', [AuthController::class, 'verifyCode']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -34,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::apiResource('providers', ProviderController::class);
 use App\Http\Controllers\LaundryController;
 Route::get('/laundries', [LaundryController::class, 'index']);
+Route::get('/laundries/{id}', [LaundryController::class, 'show']);
 Route::post('/laundries', [LaundryController::class, 'store']);
 
 use App\Http\Controllers\CategoryController;
@@ -49,11 +52,12 @@ Route::apiResource('deliveries', DeliveryController::class);
 
 
 Route::middleware('auth:sanctum')->apiResource('comment', CommentController::class);
+Route::get('/comments/laundry/{laundryId}', [CommentController::class, 'byLaundry']);
 
 use App\Http\Controllers\RamassageController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/ramassages', [RamassageController::class, 'index']);
-    Route::post('/ramassages', [RamassageController::class, 'store']);
     Route::get('/ramassages/{id}', [RamassageController::class, 'show']);
+    Route::get('/ramassages/check/{laundryId}', [RamassageController::class, 'checkForLaundry']);
 });
- 
+Route::post('/ramassages', [RamassageController::class, 'store']);

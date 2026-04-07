@@ -18,42 +18,47 @@ class RamassageController extends Controller
 
     public function store(Request $request)
     {
+
+
+       
         $request->validate([
             'laundry_id' => 'required|exists:laundries,id',
-            'full_name' => 'required|string',
-            'phone' => 'required|string',
-            'pickup_address' => 'required|string',
-            'pickup_date' => 'required|date',
-            'pickup_time' => 'required|string',
-            'pickup_latitude' => 'nullable|numeric',
-            'pickup_longitude' => 'nullable|numeric',
-            'delivery_address' => 'required|string',
-            'delivery_date' => 'required|date',
-            'delivery_time' => 'required|string',
-            'delivery_latitude' => 'nullable|numeric',
-            'delivery_longitude' => 'nullable|numeric',
-            'services' => 'required|array|min:1',
-            'services.*' => 'exists:services,id',
+            'user_id' => 'nullable',
+            'fullName' => 'required|string',
+            'phoneNumber' => 'required|string',
+            'pickupAddress' => 'required|string',
+            'pickupDate' => 'required|date',
+            'pickupTime' => 'required|string',
+            'pickupLatitude' => 'nullable|numeric',
+            'pickupLongitude' => 'nullable|numeric',
+            'deliveryAddress' => 'required|string',
+            'deliveryDate' => 'required|date',
+            'deliveryTime' => 'required|string',
+            'deliveryLatitude' => 'nullable|numeric',
+            'deliveryLongitude' => 'nullable|numeric',
+            'services' => 'required|array|min:0'
         ]);
 
         $ramassage = Ramassage::create([
-            'user_id' => $request->user()->id,
+            'user_id' => $request->user() ? $request->user()->id : null,
             'laundry_id' => $request->laundry_id,
-            'full_name' => $request->full_name,
-            'phone' => $request->phone,
-            'pickup_address' => $request->pickup_address,
-            'pickup_date' => $request->pickup_date,
-            'pickup_time' => $request->pickup_time,
-            'pickup_latitude' => $request->pickup_latitude,
-            'pickup_longitude' => $request->pickup_longitude,
-            'delivery_address' => $request->delivery_address,
-            'delivery_date' => $request->delivery_date,
-            'delivery_time' => $request->delivery_time,
-            'delivery_latitude' => $request->delivery_latitude,
-            'delivery_longitude' => $request->delivery_longitude,
+            'full_name' => $request->fullName,
+            'phone' => $request->phoneNumber,
+            'pickup_address' => $request->pickupAddress,
+            'pickup_date' => $request->pickupDate,
+            'pickup_time' => $request->pickupTime,
+            'pickup_latitude' => $request->pickupLatitude,
+            'pickup_longitude' => $request->pickupLongitude,
+            'delivery_address' => $request->deliveryAddress,
+            'delivery_date' => $request->deliveryDate,
+            'delivery_time' => $request->deliveryTime,
+            'delivery_latitude' => $request->deliveryLatitude,
+            'delivery_longitude' => $request->deliveryLongitude,
+            'status' => 'pending',
+            'services' => json_encode($request->services),
         ]);
+        $ramassage->save();
 
-        $ramassage->services()->attach($request->services);
 
         return response()->json([
             'success' => true,
@@ -68,5 +73,14 @@ class RamassageController extends Controller
             ->findOrFail($id);
 
         return response()->json($ramassage);
+    }
+
+    public function checkForLaundry(Request $request, $laundryId)
+    {
+        $hasRamassage = Ramassage::where('user_id', $request->user()->id)
+            ->where('laundry_id', $laundryId)
+            ->exists();
+
+        return response()->json(['hasRamassage' => $hasRamassage]);
     }
 }

@@ -5,6 +5,8 @@ import Button from './Button'
 import { FaArrowLeft, FaCheck, FaMapMarkerAlt, FaCheckCircle, FaTimes } from 'react-icons/fa'
 import LocationForm from './Location'
 import { sendEmail } from '../utils/send_email'
+import API from '../utils/api'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const Checkout = ({
   initialStep = 1,
@@ -34,11 +36,16 @@ const Checkout = ({
     deliveryDate: "",
     deliveryTime: ""
   })
+  const location = useLocation()
+
+  const selectedServices = location.state?.form ?? JSON.parse(localStorage.getItem('checkoutServices') || '[]')
+  const laundryId = location.state?.laundryId ?? JSON.parse(localStorage.getItem('checkoutLaundryId') || 'null')
 
   const [errors , setErros ] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [error, setError] = useState(null)
+  const navigate = useNavigate()
 
   const validate=(currentStep)=>{
     if(currentStep === 1 ){
@@ -110,7 +117,6 @@ const Checkout = ({
     latitude: 35.74804478729811,
     longitude: -5.818333625793458,
   });
-
   const [positionLivraison, setPositionLivraison] = useState({
     latitude: 35.74804478729811,
     longitude: -5.818333625793458,
@@ -204,15 +210,42 @@ const Checkout = ({
         address: `${allFormData.pickupAddress} → ${allFormData.deliveryAddress}`,
         subject: `New Order from ${allFormData.fullName}`,
         message: message
-      }).then(() => {
-        setIsSubmitting(false)
+      }).then(async () => {
+        setIsSubmitting(false)          
         setShowSuccess(true)
         setError(null)
+
+        const res =  await API.post("/ramassages", {
+          laundry_id: laundryId,  
+          fullName: allFormData.fullName,
+          phoneNumber: allFormData.phoneNumber,
+          pickupAddress: allFormData.pickupAddress,
+          pickupDate: allFormData.pickupDate,
+          pickupTime: allFormData.pickupTime,
+          pickupLatitude: positionRamassage.latitude,
+          pickupLongitude: positionRamassage.longitude,
+          deliveryAddress: allFormData.deliveryAddress,
+          deliveryDate: allFormData.deliveryDate,
+          deliveryTime: allFormData.deliveryTime,
+          deliveryLatitude: positionLivraison.latitude,
+          deliveryLongitude: positionLivraison.longitude,
+          services: selectedServices[0]
+        })
+
+
+        // Clear checkout data from localStorage
+        localStorage.removeItem('checkoutServices')
+        localStorage.removeItem('checkoutLaundryId')
         
         // Hide success message after 5 seconds
         setTimeout(() => {
           setShowSuccess(false)
+          navigate('/')
         }, 5000)
+
+         // Redirect to home or another page after successful submission
+
+        
         
         // Call onSubmit callback if provided
         if (onSubmit) {
