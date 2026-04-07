@@ -1,64 +1,39 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './Products.css';
 import API from '../api/axiosApi';
-import { FaPen } from "react-icons/fa6";
-import {FaDeleteLeft} from "react-icons/fa6";
-import { MdDelete } from 'react-icons/md';
-import { GoFileDirectoryFill } from "react-icons/go";
-import { IoMdAdd } from "react-icons/io";
-import { FaSearch } from 'react-icons/fa';
+import AlertModal from './AlertModal';
+import { Search, Plus, Pencil, Trash2, X, FolderPlus, ImagePlus } from 'lucide-react';
+
 const Products = ({ setCurrentPage }) => {
-  // States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editProductId, setEditProductId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [newProduct, setNewProduct] = useState({
-    name: '',
-    price: '',
-    category: '',
-    description: '',
-    image: null
-  });
+  const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', description: '', image: null });
   const [newCategory, setNewCategory] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [productToDelete, setProductToDelete] = useState(null);
 
-  // Data states
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-
-  // UI states (like Services)
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const successTimeoutRef = useRef(null);
+  const [formError, setFormError] = useState(null);
+  const [alert, setAlert] = useState({ isOpen: false, type: 'success', title: '', message: '' });
 
-  // Get laundry_id (consistent with Services)
   const getLaundryId = useCallback(() => parseInt(localStorage.getItem('laundry_id')) || 6, []);
 
-  // Fetch products
-const fetchProducts = useCallback(async () => {
-  setLoading(true);
-  setError(null);
-  try {
-    const laundryId = getLaundryId();
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await API.get(`/products/laundry/${getLaundryId()}`);
+      setProducts(response.data || []);
+    } catch (err) {
+      setAlert({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to load products' });
+    } finally {
+      setLoading(false);
+    }
+  }, [getLaundryId]);
 
-    const response = await API.get(`/products/laundry/${laundryId}`);
-
-    setProducts(response.data || []);
-
-  } catch (err) {
-    console.error('Error fetching products:', err);
-    setError('Failed to load products');
-  } finally {
-    setLoading(false);
-  }
-}, [getLaundryId]);
-
-  // Fetch categories
   const fetchCategories = useCallback(async () => {
     try {
       const response = await API.get('/categories');
@@ -68,18 +43,7 @@ const fetchProducts = useCallback(async () => {
     }
   }, []);
 
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, [fetchProducts, fetchCategories]);
-
-  // Auto-dismiss success
-  useEffect(() => {
-    if (success) {
-      successTimeoutRef.current = setTimeout(() => setSuccess(null), 4000);
-    }
-    return () => { if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current); };
-  }, [success]);
+  useEffect(() => { fetchProducts(); fetchCategories(); }, [fetchProducts, fetchCategories]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -94,22 +58,13 @@ const fetchProducts = useCallback(async () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewProduct(prev => ({ ...prev, [name]: value }));
-    if (error) setError(null);
+    if (formError) setFormError(null);
   };
 
   const validateForm = () => {
-    if (!newProduct.name.trim()) {
-      setError('Product name is required');
-      return false;
-    }
-    if (!newProduct.price || parseFloat(newProduct.price) <= 0) {
-      setError('Valid price required');
-      return false;
-    }
-    if (!newProduct.category) {
-      setError('Category is required');
-      return false;
-    }
+    if (!newProduct.name.trim()) { setFormError('Product name is required'); return false; }
+    if (!newProduct.price || parseFloat(newProduct.price) <= 0) { setFormError('Valid price required'); return false; }
+    if (!newProduct.category) { setFormError('Category is required'); return false; }
     return true;
   };
 
@@ -118,36 +73,8 @@ const fetchProducts = useCallback(async () => {
     setEditProductId(null);
     setNewProduct({ name: '', price: '', category: '', description: '', image: null });
     setImagePreview(null);
-    setError(null);
+    setFormError(null);
     setIsModalOpen(true);
-  };
-
-  const updateProduct = async (productId) => {
-    if (!validateForm()) return;
-
-    setLoading(true);
-    setError(null);
-
-    const formData = new FormData();
-    formData.append('name', newProduct.name.trim());
-    formData.append('price', parseFloat(newProduct.price));
-    formData.append('category_id', newProduct.category);
-    formData.append('description', newProduct.description.trim());
-    if (newProduct.image) formData.append('image', newProduct.image);
-    formData.append('laundry_id', getLaundryId());
-
-    try {
-      await API.put(`/products/${productId}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setSuccess('Product updated!');
-      setIsModalOpen(false);
-      fetchProducts(); // Refresh list
-    } catch (err) {
-      setError(err.response?.data?.message || 'Update failed');
-    } finally {
-      setLoading(false);
-    }
   };
 
   const openEditModal = (product) => {
@@ -158,19 +85,18 @@ const fetchProducts = useCallback(async () => {
       price: product.price.toString(),
       category: product.category || '',
       description: product.description || '',
-      image: null
+      image: null,
     });
     setImagePreview(product.image ? `/images/products/${product.image}` : null);
-    setError(null);
+    setFormError(null);
     setIsModalOpen(true);
   };
 
   const handleSaveProduct = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     setLoading(true);
-    setError(null);
+    setFormError(null);
 
     const formData = new FormData();
     formData.append('name', newProduct.name.trim());
@@ -182,46 +108,44 @@ const fetchProducts = useCallback(async () => {
 
     try {
       if (isEditMode && editProductId) {
-        await updateProduct(editProductId);
+        await API.put(`/products/${editProductId}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        setAlert({ isOpen: true, type: 'success', title: 'Updated', message: 'Product updated successfully!' });
       } else {
-        const response = await API.post('/products', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        setSuccess('Product created!');
-        setIsModalOpen(false);
-        fetchProducts();
+        await API.post('/products', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        setAlert({ isOpen: true, type: 'success', title: 'Created', message: 'Product created successfully!' });
       }
+      setIsModalOpen(false);
+      fetchProducts();
     } catch (err) {
-      setError(err.response?.data?.message || 'Save failed');
+      setFormError(err.response?.data?.message || 'Save failed');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteClick = (product) => {
-    setProductToDelete(product);
-    setShowDeleteConfirm(true);
+    setAlert({
+      isOpen: true,
+      type: 'warning',
+      title: 'Delete Product?',
+      message: `Are you sure you want to delete "${product.name}"? This cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      onConfirm: () => confirmDelete(product.id),
+    });
   };
 
-  const confirmDelete = async () => {
-    if (!productToDelete) return;
+  const confirmDelete = async (id) => {
     setLoading(true);
     try {
-      await API.delete(`/products/${productToDelete.id}`);
-      setProducts(products.filter(p => p.id !== productToDelete.id));
-      setSuccess('Product deleted!');
-    } catch (err) {
-      setError('Delete failed');
+      await API.delete(`/products/${id}`);
+      setProducts(products.filter(p => p.id !== id));
+      setAlert({ isOpen: true, type: 'success', title: 'Deleted', message: 'Product deleted successfully.' });
+    } catch {
+      setAlert({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to delete product.' });
     } finally {
-      setShowDeleteConfirm(false);
-      setProductToDelete(null);
       setLoading(false);
     }
-  };
-
-  const cancelDelete = () => {
-    setShowDeleteConfirm(false);
-    setProductToDelete(null);
   };
 
   const handleAddCategory = async () => {
@@ -229,11 +153,11 @@ const fetchProducts = useCallback(async () => {
     try {
       const response = await API.post('/categories', { name: newCategory.trim() });
       setCategories([...categories, response.data]);
-      setSuccess('Category added!');
+      setAlert({ isOpen: true, type: 'success', title: 'Added', message: 'Category added successfully!' });
       setIsCategoryModalOpen(false);
       setNewCategory('');
-    } catch (err) {
-      setError('Category add failed');
+    } catch {
+      setAlert({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to add category.' });
     }
   };
 
@@ -241,185 +165,146 @@ const fetchProducts = useCallback(async () => {
     if (!searchTerm || !text) return text;
     try {
       const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-      return text.split(regex).map((part, i) => 
-        regex.test(part) ? <mark key={i} className="search-highlight">{part}</mark> : part
-      );
-    } catch {
-      return text;
-    }
+      return text.split(regex).map((part, i) => regex.test(part) ? <mark key={i} className="prod-highlight">{part}</mark> : part);
+    } catch { return text; }
   };
 
-
-// get les products du backend la fonction show
-
-
-
-
-
-  const filteredProducts = products.filter(product =>
-    (product.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (product.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (product.category || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter(p =>
+    (p.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || (p.description || '').toLowerCase().includes(searchTerm.toLowerCase()) || (p.category || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const hasSearchResults = filteredProducts.length > 0;
-
   return (
-    <div className="products-container">
-      {/* Header */}
-      <div className="page-header">
-        <div className="header-tabs"></div>
-        <div className="header-actions">
-          <div className="search-wrapper">
-            <span className="search-icon"><FaSearch/></span>
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              disabled={loading}
-            />
-            {searchTerm && !loading && (
-              <button className="search-clear" onClick={() => setSearchTerm('')}>✕</button>
-            )}
-          </div>
-          <button className="icon-btn" disabled={loading}>🔔</button>
-          <div className="user-avatar" />
+    <div className="prod-page">
+      <AlertModal isOpen={alert.isOpen} onClose={() => setAlert({ ...alert, isOpen: false })} type={alert.type} title={alert.title} message={alert.message} confirmText={alert.confirmText} cancelText={alert.cancelText} onConfirm={alert.onConfirm} autoClose={alert.type === 'success'} />
+
+      {/* Topbar */}
+      <div className="prod-topbar">
+        <div>
+          <h1 className="prod-topbar-title">Products</h1>
+          <p className="prod-topbar-sub">Manage your product catalog ({products.length} items)</p>
+        </div>
+        <div className="prod-topbar-actions">
+          <button className="btn btn--outline" onClick={() => setIsCategoryModalOpen(true)} disabled={loading}><FolderPlus size={16} /> Add Category</button>
+          <button className="btn btn--primary" onClick={openAddModal} disabled={loading}><Plus size={16} /> Add Product</button>
         </div>
       </div>
 
-      <div className="products-content">
-        {error && <div className="error-message">{error}</div>}
-        {success && (
-          <div className="toast success-toast">
-            {success}
-            <button onClick={() => setSuccess(null)}>×</button>
-          </div>
-        )}
-
-        {searchTerm && (
-          <div className="search-info">
-            <span><FaSearch/></span>
-            <p>Searching for: <strong>"{searchTerm}"</strong></p>
-            <span className="search-results-count">{filteredProducts.length} result(s)</span>
-          </div>
-        )}
-
-        <div className="action-row">
-          <div>
-            <h3 className="section-title">Product Catalog</h3>
-            <p className="section-subtitle">Manage your inventory ({products.length} products)</p>
-          </div>
-          <div className="action-buttons">
-            <button className="btn-secondary" onClick={() => setIsCategoryModalOpen(true)} disabled={loading}>
-              <GoFileDirectoryFill /> Add Category
-            </button>
-            <button className="btn-primary" onClick={openAddModal} disabled={loading}>
-              <IoMdAdd/> Add Product
-            </button>
-
-          </div>
+      {/* Content */}
+      <div className="prod-body">
+        {/* Search */}
+        <div className="prod-search">
+          <Search size={16} />
+          <input type="text" placeholder="Search products..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} disabled={loading} />
+          {searchTerm && <button className="prod-search-clear" onClick={() => setSearchTerm('')}><X size={14} /></button>}
         </div>
 
-        {loading ? (
-          <div className="loading-state">
-            <div className="spinner"></div>
+        {searchTerm && (
+          <div className="prod-search-info">
+            <Search size={14} />
+            <span>Showing {filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''} for "<strong>{searchTerm}</strong>"</span>
+          </div>
+        )}
+
+        {/* Table */}
+        {loading && products.length === 0 ? (
+          <div className="prod-loading">
+            <div className="prod-spinner" />
             <p>Loading products...</p>
           </div>
         ) : (
-          <>
-            <div className="table-container">
-              <table className="products-table">
-                <thead>
-                  <tr>
-                    <th>Image</th>
-                    <th>Product Name</th>
-                    <th>Price</th>
-                    <th>Description</th>
-                    <th>Category</th>
-                    <th>Actions</th>
+          <div className="prod-table-wrap">
+            <table className="prod-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredProducts.map(product => (
+                  <tr key={product.id}>
+                    <td>
+                      <div className="prod-img">
+                        <img src={`http://localhost:8000/images/products/${product.image}`} alt={product.name} />
+                      </div>
+                    </td>
+                    <td className="prod-name">{highlightText(product.name)}</td>
+                    <td className="prod-price">${parseFloat(product.price).toFixed(2)}</td>
+                    <td className="prod-desc" title={product.description}>{highlightText(product.description || 'No description')}</td>
+                    <td><span className="prod-badge">{product.category?.name}</span></td>
+                    <td>
+                      <div className="prod-actions-cell">
+                        <button className="prod-action-btn" onClick={() => openEditModal(product)} disabled={loading} title="Edit"><Pencil size={14} /></button>
+                        <button className="prod-action-btn prod-action-btn--danger" onClick={() => handleDeleteClick(product)} disabled={loading} title="Delete"><Trash2 size={14} /></button>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {filteredProducts.map(product => (
-                    <tr key={product.id}>
-                      <td>
-                        <div className="product-image">
-                          <img src={`http://localhost:8000/images/products/${product.image}`} alt={product.name} />
-                        </div>
-                      </td>
-                      <td>{highlightText(product.name)}</td>
-                      <td>${parseFloat(product.price).toFixed(2)}</td>
-                      <td title={product.description}>{highlightText(product.description || 'No description')}</td>
-                      <td>
-                        <span className={`category-badge ${product.category === 'Laundry' ? 'badge-primary' : 'badge-secondary'}`}>
-                          {product.category?.name}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="action-buttons-cell">
-                          <button className="edit-action-btn" onClick={() => openEditModal(product)} disabled={loading}><FaPen/></button>
-                          <button className="delete-action-btn" onClick={() => handleDeleteClick(product)} disabled={loading}><MdDelete/></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {searchTerm && !hasSearchResults && (
-              <div className="no-results">
-                <span><FaSearch/></span>
-                <p>No products found for "<strong>{searchTerm}</strong>"</p>
-                <button className="clear-search-btn" onClick={() => setSearchTerm('')}>Clear Search</button>
+                ))}
+              </tbody>
+            </table>
+            {filteredProducts.length === 0 && (
+              <div className="prod-empty-table">
+                <Search size={24} />
+                <p>No products found{searchTerm ? ` for "${searchTerm}"` : ''}</p>
+                {searchTerm && <button className="btn-link" onClick={() => setSearchTerm('')}>Clear search</button>}
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
 
-      {/* Modals - same structure */}
+      {/* Product Modal */}
       {isModalOpen && (
-        <div className="modal-overlay" onClick={() => !loading && setIsModalOpen(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>{isEditMode ? 'Edit Product' : 'Add Product'}</h3>
-              <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
+        <div className="prod-modal-overlay" onClick={() => !loading && setIsModalOpen(false)}>
+          <div className="prod-modal" onClick={e => e.stopPropagation()}>
+            <div className="prod-modal-header">
+              <h2>{isEditMode ? 'Edit Product' : 'New Product'}</h2>
+              <button className="prod-modal-close" onClick={() => setIsModalOpen(false)}><X size={18} /></button>
             </div>
-            <form onSubmit={handleSaveProduct}>
-              <div className="form-row">
-                <div className="form-group">
+            <form onSubmit={handleSaveProduct} className="prod-modal-body">
+              {formError && <div className="prod-form-error">{formError}</div>}
+              <div className="prod-form-row">
+                <div className="prod-form-group">
                   <label>Name *</label>
-                  <input name="name" value={newProduct.name} onChange={handleInputChange} required />
+                  <input name="name" value={newProduct.name} onChange={handleInputChange} required disabled={loading} />
                 </div>
-                <div className="form-group">
-                  <label>Price ($)*</label>
-                  <input name="price" type="number" step="0.01" value={newProduct.price} onChange={handleInputChange} required />
+                <div className="prod-form-group">
+                  <label>Price ($) *</label>
+                  <input name="price" type="number" step="0.01" value={newProduct.price} onChange={handleInputChange} required disabled={loading} />
                 </div>
               </div>
-              <div className="form-group">
+              <div className="prod-form-group">
                 <label>Category *</label>
-                <select name="category" value={newProduct.category} onChange={handleInputChange} required>
+                <select name="category" value={newProduct.category} onChange={handleInputChange} required disabled={loading}>
                   <option value="">Select category</option>
                   {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                 </select>
               </div>
-              <div className="form-group">
+              <div className="prod-form-group">
                 <label>Description</label>
-                <textarea name="description" value={newProduct.description} onChange={handleInputChange} rows="3" />
+                <textarea name="description" value={newProduct.description} onChange={handleInputChange} rows="3" disabled={loading} />
               </div>
-              <div className="form-group">
+              <div className="prod-form-group">
                 <label>Image</label>
-                <input type="file" onChange={handleImageChange} accept="image/*" />
-                {imagePreview && <img src={imagePreview} alt="Preview" style={{width: '100px', height: '100px', objectFit: 'cover', marginTop: '0.5rem'}} />}
+                <label className="prod-upload-area">
+                  <input type="file" onChange={handleImageChange} accept="image/*" hidden />
+                  {imagePreview ? (
+                    <img src={imagePreview} alt="Preview" className="prod-upload-preview" />
+                  ) : (
+                    <div className="prod-upload-placeholder">
+                      <ImagePlus size={24} />
+                      <span>Click to upload</span>
+                    </div>
+                  )}
+                </label>
               </div>
-              <div className="form-actions">
-                <button type="button" className="btn-cancel" disabled={loading} onClick={() => setIsModalOpen(false)}>Cancel</button>
-                <button type="submit" className="btn-submit" disabled={loading}>
-                  {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Add Product')}
-                </button>
+              <div className="prod-modal-footer">
+                <button type="button" className="btn btn--outline" onClick={() => setIsModalOpen(false)} disabled={loading}>Cancel</button>
+                <button type="submit" className="btn btn--primary" disabled={loading}>{loading ? 'Saving...' : isEditMode ? 'Update' : 'Add Product'}</button>
               </div>
             </form>
           </div>
@@ -428,33 +313,21 @@ const fetchProducts = useCallback(async () => {
 
       {/* Category Modal */}
       {isCategoryModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal modal-sm">
-            <div className="modal-header">
-              <h3>Add Category</h3>
-              <button className="modal-close" onClick={() => setIsCategoryModalOpen(false)}>✕</button>
+        <div className="prod-modal-overlay" onClick={() => setIsCategoryModalOpen(false)}>
+          <div className="prod-modal prod-modal--sm" onClick={e => e.stopPropagation()}>
+            <div className="prod-modal-header">
+              <h2>Add Category</h2>
+              <button className="prod-modal-close" onClick={() => setIsCategoryModalOpen(false)}><X size={18} /></button>
             </div>
-            <div className="form-group">
-              <label>Name</label>
-              <input value={newCategory} onChange={(e) => setNewCategory(e.target.value)} />
-            </div>
-            <div className="form-actions">
-              <button className="btn-cancel" onClick={() => setIsCategoryModalOpen(false)}>Cancel</button>
-              <button className="btn-submit" onClick={handleAddCategory}>Add</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirm */}
-      {showDeleteConfirm && (
-        <div className="modal-overlay">
-          <div className="modal delete-modal">
-            <h3>Delete Product?</h3>
-            <p>Are you sure? <strong>{productToDelete?.name}</strong></p>
-            <div className="form-actions">
-              <button className="btn-cancel" onClick={cancelDelete}>Cancel</button>
-              <button className="btn-delete" onClick={confirmDelete} disabled={loading}>Delete</button>
+            <div className="prod-modal-body">
+              <div className="prod-form-group">
+                <label>Category Name</label>
+                <input value={newCategory} onChange={e => setNewCategory(e.target.value)} placeholder="Enter category name" />
+              </div>
+              <div className="prod-modal-footer">
+                <button className="btn btn--outline" onClick={() => setIsCategoryModalOpen(false)}>Cancel</button>
+                <button className="btn btn--primary" onClick={handleAddCategory}>Add Category</button>
+              </div>
             </div>
           </div>
         </div>
@@ -464,4 +337,3 @@ const fetchProducts = useCallback(async () => {
 };
 
 export default Products;
-

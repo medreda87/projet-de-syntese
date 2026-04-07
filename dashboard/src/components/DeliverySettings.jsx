@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './DeliverySettings.css';
-import { FaSearch, FaUser, FaDollarSign, FaShoppingCart, FaMapMarkerAlt, FaCreditCard, FaGift, FaBirthdayCake, FaCog, FaMap, FaCheck } from 'react-icons/fa';
+import { Search, DollarSign, ShoppingCart, MapPin, CreditCard, Gift, Cake, Settings2, Map, X, Bell, User } from 'lucide-react';
+import AlertModal from './AlertModal';
 import API from '../api/axiosApi';
+
 const DeliverySettings = ({ setCurrentPage }) => {
   const [deliveryType, setDeliveryType] = useState('distance');
   const [pricePerKm, setPricePerKm] = useState(5.50);
@@ -9,33 +11,42 @@ const DeliverySettings = ({ setCurrentPage }) => {
   const [minOrderAmount, setMinOrderAmount] = useState(50.00);
   const [deliveryRadius, setDeliveryRadius] = useState(25);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSaved, setIsSaved] = useState(false);
+  const [alert, setAlert] = useState({ isOpen: false, type: 'success', title: '', message: '' });
 
   const handleSave = async () => {
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2500);
-    await API.post('deliveries', {
-      laundry_id: 4,
-      type: deliveryType,
-      price_per_km: parseFloat(pricePerKm),
-      fixed_price: parseFloat(fixedPrice),
-      min_order: parseFloat(minOrderAmount),
-      delivery_radius: parseFloat(deliveryRadius) 
-    })
+    try {
+      await API.post('deliveries', {
+        laundry_id: 4,
+        type: deliveryType,
+        price_per_km: parseFloat(pricePerKm),
+        fixed_price: parseFloat(fixedPrice),
+        min_order: parseFloat(minOrderAmount),
+        delivery_radius: parseFloat(deliveryRadius)
+      });
+      setAlert({ isOpen: true, type: 'success', title: 'Saved!', message: 'Delivery settings saved successfully.' });
+    } catch {
+      setAlert({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to save delivery settings.' });
+    }
   };
-
-
-
 
   const handleDiscard = () => {
-    setDeliveryType('distance');
-    setPricePerKm(5.50);
-    setFixedPrice(10.00);
-    setMinOrderAmount(50.00);
-    setDeliveryRadius(25);
+    setAlert({
+      isOpen: true,
+      type: 'warning',
+      title: 'Discard Changes?',
+      message: 'All unsaved changes will be reset to defaults.',
+      confirmText: 'Discard',
+      cancelText: 'Keep Editing',
+      onConfirm: () => {
+        setDeliveryType('distance');
+        setPricePerKm(5.50);
+        setFixedPrice(10.00);
+        setMinOrderAmount(50.00);
+        setDeliveryRadius(25);
+      },
+    });
   };
 
-  // Données des sections pour la recherche
   const sections = [
     { id: 'delivery-pricing', title: 'Delivery Pricing Model', subtitle: 'Select the method that best fits your operational logistics.' },
     { id: 'distance-option', title: 'By Distance', subtitle: 'Dynamic pricing based on shop distance.' },
@@ -46,88 +57,85 @@ const DeliverySettings = ({ setCurrentPage }) => {
     { id: 'delivery-radius', title: 'Delivery Radius', subtitle: 'Define your service area boundary.' },
   ];
 
-  // Fonction pour vérifier si une section correspond à la recherche
   const matchesSearch = (texts) => {
     if (!searchTerm) return true;
     const searchLower = searchTerm.toLowerCase();
     return texts.some(text => text.toLowerCase().includes(searchLower));
   };
 
-  // Filtrer les sections
   const shouldShowSection = (sectionId) => {
     if (!searchTerm) return true;
     const section = sections.find(s => s.id === sectionId);
-    if (section) {
-      return matchesSearch([section.title, section.subtitle]);
-    }
+    if (section) return matchesSearch([section.title, section.subtitle]);
     return true;
   };
 
-  // Filtrer les options de livraison
   const shouldShowDeliveryOption = (optionTitle, optionDesc) => {
     if (!searchTerm) return true;
     return matchesSearch([optionTitle, optionDesc]);
   };
 
+  const shouldShowConfig = () => {
+    if (!searchTerm) return true;
+    const configTexts = [];
+    switch (deliveryType) {
+      case 'distance': configTexts.push('Price per kilometer', 'MAD', 'Google Maps API'); break;
+      case 'fixed': configTexts.push('Fixed Price', 'MAD', 'Flat rate'); break;
+      case 'threshold': configTexts.push('Minimum Order Amount', 'MAD', 'Free delivery'); break;
+      case 'free': configTexts.push('free for all orders'); break;
+      default: break;
+    }
+    return matchesSearch(configTexts);
+  };
+
+  const deliveryOptions = [
+    { value: 'distance', icon: MapPin, title: 'By Distance', desc: 'Dynamic pricing based on shop distance.' },
+    { value: 'fixed', icon: CreditCard, title: 'Fixed Price', desc: 'Flat rate regardless of destination.' },
+    { value: 'threshold', icon: Gift, title: 'Free Over Amount', desc: 'Incentivize larger orders.' },
+    { value: 'free', icon: Cake, title: 'Always Free', desc: 'Offer complimentary delivery.' },
+  ];
+
   const renderConfigDetails = () => {
-    switch(deliveryType) {
+    switch (deliveryType) {
       case 'distance':
         return (
-          <div className="config-details" id="distance-config">
-            <label className="config-label">Price per kilometer (MAD)</label>
-            <div className="input-with-icon">
-              <FaDollarSign className="input-icon" />
-              <input
-                type="number"
-                step="0.01"
-                className="config-input"
-                value={pricePerKm}
-                onChange={(e) => setPricePerKm(parseFloat(e.target.value))}
-              />
+          <div className="ds-config-details">
+            <label className="ds-config-label">Price per kilometer (MAD)</label>
+            <div className="ds-input-icon">
+              <DollarSign size={16} />
+              <input type="number" step="0.01" className="ds-config-input" value={pricePerKm} onChange={(e) => setPricePerKm(parseFloat(e.target.value))} />
             </div>
-            <p className="config-hint">Calculated automatically using Google Maps API distance.</p>
+            <p className="ds-config-hint">Calculated automatically using Google Maps API distance.</p>
           </div>
         );
       case 'fixed':
         return (
-          <div className="config-details" id="fixed-config">
-            <label className="config-label">Fixed Price (MAD)</label>
-            <div className="input-with-icon">
-              <FaDollarSign className="input-icon" />
-              <input
-                type="number"
-                step="0.01"
-                className="config-input"
-                value={fixedPrice}
-                onChange={(e) => setFixedPrice(parseFloat(e.target.value))}
-              />
+          <div className="ds-config-details">
+            <label className="ds-config-label">Fixed Price (MAD)</label>
+            <div className="ds-input-icon">
+              <DollarSign size={16} />
+              <input type="number" step="0.01" className="ds-config-input" value={fixedPrice} onChange={(e) => setFixedPrice(parseFloat(e.target.value))} />
             </div>
-            <p className="config-hint">Flat rate applied to all deliveries.</p>
+            <p className="ds-config-hint">Flat rate applied to all deliveries.</p>
           </div>
         );
       case 'threshold':
         return (
-          <div className="config-details" id="threshold-config">
-            <label className="config-label">Minimum Order Amount (MAD)</label>
-            <div className="input-with-icon">
-              <FaShoppingCart className="input-icon" />
-              <input
-                type="number"
-                step="0.01"
-                className="config-input"
-                value={minOrderAmount}
-                onChange={(e) => setMinOrderAmount(parseFloat(e.target.value))}
-              />
+          <div className="ds-config-details">
+            <label className="ds-config-label">Minimum Order Amount (MAD)</label>
+            <div className="ds-input-icon">
+              <ShoppingCart size={16} />
+              <input type="number" step="0.01" className="ds-config-input" value={minOrderAmount} onChange={(e) => setMinOrderAmount(parseFloat(e.target.value))} />
             </div>
-            <p className="config-hint">Free delivery for orders above this amount.</p>
+            <p className="ds-config-hint">Free delivery for orders above this amount.</p>
           </div>
         );
       case 'free':
         return (
-          <div className="config-details" id="free-config">
-            <div className="free-message">
-              <FaGift className="free-icon" />
-              <p className="free-text">Delivery is completely free for all orders!</p>
+          <div className="ds-config-details">
+            <div className="ds-free-message">
+              <Gift size={20} />
+              <p>Delivery is completely free for all orders!</p>
             </div>
           </div>
         );
@@ -136,260 +144,107 @@ const DeliverySettings = ({ setCurrentPage }) => {
     }
   };
 
-  // Vérifier si la configuration actuelle correspond à la recherche
-  const shouldShowConfig = () => {
-    if (!searchTerm) return true;
-    const configTexts = [];
-    
-    switch(deliveryType) {
-      case 'distance':
-        configTexts.push('Price per kilometer', 'MAD', 'Calculated automatically using Google Maps API distance');
-        break;
-      case 'fixed':
-        configTexts.push('Fixed Price', 'MAD', 'Flat rate applied to all deliveries');
-        break;
-      case 'threshold':
-        configTexts.push('Minimum Order Amount', 'MAD', 'Free delivery for orders above this amount');
-        break;
-      case 'free':
-        configTexts.push('Delivery is completely free for all orders');
-        break;
-    }
-    
-    return matchesSearch(configTexts);
-  };
-
   return (
-    <div className="delivery-settings-container">
-      {/* Header avec onglets */}
-      <div className="page-header">
-        <div className="header-tabs">
+    <div className="ds-page">
+      <AlertModal isOpen={alert.isOpen} onClose={() => setAlert({ ...alert, isOpen: false })} type={alert.type} title={alert.title} message={alert.message} confirmText={alert.confirmText} cancelText={alert.cancelText} onConfirm={alert.onConfirm} autoClose={alert.type === 'success'} />
+
+      {/* Topbar */}
+      <div className="ds-topbar">
+        <div>
+          <h1 className="ds-topbar-title">Delivery Settings</h1>
+          <p className="ds-topbar-sub">Configure shipping fees and delivery zones</p>
         </div>
-        
-        <div className="header-actions">
-          <div className="search-wrapper">
-<FaSearch className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search settings..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
-              <button 
-                className="search-clear"
-                onClick={() => setSearchTerm('')}
-              >
-                ✕
-              </button>
-            )}
+        <div className="ds-topbar-actions">
+          <div className="ds-search">
+            <Search size={16} />
+            <input type="text" placeholder="Search settings..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            {searchTerm && <button className="ds-search-clear" onClick={() => setSearchTerm('')}><X size={14} /></button>}
           </div>
-          <button className="icon-btn">
-            🔔
-          </button>
-<div className="user-avatar">
-            <FaUser />
-          </div>
+          <button className="ds-topbar-btn"><Bell size={18} /></button>
+          <button className="ds-topbar-btn"><User size={18} /></button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="delivery-content">
-        <div className="content-wrapper">
-          {/* Search Info */}
-          {searchTerm && (
-            <div className="search-info">
-              <FaSearch />
-              <p>Searching for: <strong>"{searchTerm}"</strong></p>
-            </div>
-          )}
-
-          <div className="page-title-section">
-            <h1 className="page-title">Delivery Settings</h1>
-            <p className="page-subtitle">Configure how you calculate and charge shipping fees for your laundry orders.</p>
+      {/* Content */}
+      <div className="ds-content">
+        {searchTerm && (
+          <div className="ds-search-info">
+            <Search size={14} />
+            <p>Searching for: <strong>"{searchTerm}"</strong></p>
           </div>
+        )}
 
-          {/* Delivery Type Section - Filtrable */}
-          {shouldShowSection('delivery-pricing') && (
-            <div className="delivery-card" id="delivery-pricing">
-              <div className="card-header-icon">
-                <div className="icon-circle">
-                  <FaCog />
-                </div>
-                <div>
-                  <h3 className="card-title">Delivery Pricing Model</h3>
-                  <p className="card-subtitle">Select the method that best fits your operational logistics.</p>
-                </div>
-              </div>
-
-              {/* Radio Options Grid - Filtrable */}
-              <div className="options-grid">
-                {/* Option 1: Distance */}
-                {shouldShowDeliveryOption('By Distance', 'Dynamic pricing based on shop distance.') && (
-                  <label className="option-label">
-                    <input
-                      type="radio"
-                      name="delivery-type"
-                      value="distance"
-                      checked={deliveryType === 'distance'}
-                      onChange={(e) => setDeliveryType(e.target.value)}
-                      className="option-radio"
-                    />
-                    <div className={`option-card ${deliveryType === 'distance' ? 'active' : ''}`}>
-                      <div className="option-header">
-                        <FaMapMarkerAlt className="option-icon" />
-                        <div className={`radio-dot ${deliveryType === 'distance' ? 'active' : ''}`}>
-                          <div className="radio-inner"></div>
-                        </div>
-                      </div>
-                      <span className="option-title">By Distance</span>
-                      <p className="option-description">Dynamic pricing based on shop distance.</p>
-                    </div>
-                  </label>
-                )}
-
-                {/* Option 2: Fixed Price */}
-                {shouldShowDeliveryOption('Fixed Price', 'Flat rate regardless of destination.') && (
-                  <label className="option-label">
-                    <input
-                      type="radio"
-                      name="delivery-type"
-                      value="fixed"
-                      checked={deliveryType === 'fixed'}
-                      onChange={(e) => setDeliveryType(e.target.value)}
-                      className="option-radio"
-                    />
-                    <div className={`option-card ${deliveryType === 'fixed' ? 'active' : ''}`}>
-                      <div className="option-header">
-                        <FaCreditCard className="option-icon" />
-                        <div className={`radio-dot ${deliveryType === 'fixed' ? 'active' : ''}`}>
-                          <div className="radio-inner"></div>
-                        </div>
-                      </div>
-                      <span className="option-title">Fixed Price</span>
-                      <p className="option-description">Flat rate regardless of destination.</p>
-                    </div>
-                  </label>
-                )}
-
-                {/* Option 3: Free Above Amount */}
-                {shouldShowDeliveryOption('Free Over Amount', 'Incentivize larger orders.') && (
-                  <label className="option-label">
-                    <input
-                      type="radio"
-                      name="delivery-type"
-                      value="threshold"
-                      checked={deliveryType === 'threshold'}
-                      onChange={(e) => setDeliveryType(e.target.value)}
-                      className="option-radio"
-                    />
-                    <div className={`option-card ${deliveryType === 'threshold' ? 'active' : ''}`}>
-                      <div className="option-header">
-                        <FaGift className="option-icon" />
-                        <div className={`radio-dot ${deliveryType === 'threshold' ? 'active' : ''}`}>
-                          <div className="radio-inner"></div>
-                        </div>
-                      </div>
-                      <span className="option-title">Free Over Amount</span>
-                      <p className="option-description">Incentivize larger orders.</p>
-                    </div>
-                  </label>
-                )}
-
-                {/* Option 4: Completely Free */}
-                {shouldShowDeliveryOption('Always Free', 'Offer complimentary delivery.') && (
-                  <label className="option-label">
-                    <input
-                      type="radio"
-                      name="delivery-type"
-                      value="free"
-                      checked={deliveryType === 'free'}
-                      onChange={(e) => setDeliveryType(e.target.value)}
-                      className="option-radio"
-                    />
-                    <div className={`option-card ${deliveryType === 'free' ? 'active' : ''}`}>
-                      <div className="option-header">
-                        <FaBirthdayCake className="option-icon" />
-                        <div className={`radio-dot ${deliveryType === 'free' ? 'active' : ''}`}>
-                          <div className="radio-inner"></div>
-                        </div>
-                      </div>
-                      <span className="option-title">Always Free</span>
-                      <p className="option-description">Offer complimentary delivery.</p>
-                    </div>
-                  </label>
-                )}
-              </div>
-
-              {/* Dynamic Input Section - Filtrable */}
-              {shouldShowConfig() && (
-                <div className="config-section">
-                  <h4 className="config-section-title">Configuration Details</h4>
-                  {renderConfigDetails()}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Additional Options Card - Filtrable */}
-          {shouldShowSection('delivery-radius') && (
-            <div className="additional-card" id="delivery-radius">
-              <div className="additional-content">
-                <div className="additional-icon">
-                  <FaMap />
-                </div>
-                <div>
-                  <p className="additional-title">Delivery Radius</p>
-                  <p className="additional-subtitle">Define your service area boundary.</p>
-                </div>
-              </div>
-              <div className="radius-control">
-                <input
-                  type="number"
-                  className="radius-input"
-                  value={deliveryRadius}
-                  onChange={(e) => setDeliveryRadius(parseFloat(e.target.value))}
-                />
-                <span className="radius-unit">KM</span>
+        {/* Pricing Model Card */}
+        {shouldShowSection('delivery-pricing') && (
+          <div className="ds-card">
+            <div className="ds-card-header">
+              <div className="ds-card-icon"><Settings2 size={20} /></div>
+              <div>
+                <h3 className="ds-card-title">Delivery Pricing Model</h3>
+                <p className="ds-card-sub">Select the method that best fits your operational logistics.</p>
               </div>
             </div>
-          )}
 
-          {/* Message quand aucun résultat trouvé */}
-          {searchTerm && (
-            (() => {
-              const hasResults = shouldShowSection('delivery-pricing') || shouldShowSection('delivery-radius');
-              if (!hasResults && !shouldShowConfig()) {
+            <div className="ds-options-grid">
+              {deliveryOptions.map((opt) => {
+                if (!shouldShowDeliveryOption(opt.title, opt.desc)) return null;
+                const Icon = opt.icon;
+                const isActive = deliveryType === opt.value;
                 return (
-                  <div className="search-no-results">
-                    <FaSearch />
-                    <p>No results found for "<strong>{searchTerm}</strong>"</p>
-                    <p className="search-suggestion">Try searching for: distance, price, free, radius, delivery, kilometer</p>
-                  </div>
+                  <label className="ds-option-label" key={opt.value}>
+                    <input type="radio" name="delivery-type" value={opt.value} checked={isActive} onChange={(e) => setDeliveryType(e.target.value)} className="ds-option-radio" />
+                    <div className={`ds-option-card${isActive ? ' active' : ''}`}>
+                      <div className="ds-option-top">
+                        <Icon size={22} />
+                        <div className={`ds-radio-dot${isActive ? ' active' : ''}`}><div className="ds-radio-inner" /></div>
+                      </div>
+                      <span className="ds-option-title">{opt.title}</span>
+                      <p className="ds-option-desc">{opt.desc}</p>
+                    </div>
+                  </label>
                 );
-              }
-              return null;
-            })()
-          )}
-
-          {/* Save Action - Toujours visible */}
-          <div className="action-buttons">
-            <button className="btn-discard" onClick={handleDiscard}>
-              Discard Changes
-            </button>
-            <button className="btn-save" onClick={handleSave}>
-              Save Settings
-            </button>
-          </div>
-
-          {/* Save Confirmation - Affiché après sauvegarde */}
-          {isSaved && (
-            <div className="save-confirmation">
-              <FaCheck />
-              <p>Settings saved successfully!</p>
+              })}
             </div>
-          )}
+
+            {shouldShowConfig() && (
+              <div className="ds-config-section">
+                <h4 className="ds-config-section-title">Configuration Details</h4>
+                {renderConfigDetails()}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Delivery Radius Card */}
+        {shouldShowSection('delivery-radius') && (
+          <div className="ds-radius-card">
+            <div className="ds-radius-left">
+              <div className="ds-card-icon"><Map size={20} /></div>
+              <div>
+                <p className="ds-radius-title">Delivery Radius</p>
+                <p className="ds-radius-sub">Define your service area boundary.</p>
+              </div>
+            </div>
+            <div className="ds-radius-control">
+              <input type="number" className="ds-radius-input" value={deliveryRadius} onChange={(e) => setDeliveryRadius(parseFloat(e.target.value))} />
+              <span className="ds-radius-unit">KM</span>
+            </div>
+          </div>
+        )}
+
+        {/* No results */}
+        {searchTerm && !shouldShowSection('delivery-pricing') && !shouldShowSection('delivery-radius') && !shouldShowConfig() && (
+          <div className="ds-no-results">
+            <Search size={24} />
+            <p>No results for "<strong>{searchTerm}</strong>"</p>
+            <p className="ds-no-results-hint">Try: distance, price, free, radius, delivery</p>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="ds-actions">
+          <button className="btn btn--outline" onClick={handleDiscard}>Discard Changes</button>
+          <button className="btn btn--primary" onClick={handleSave}>Save Settings</button>
         </div>
       </div>
     </div>

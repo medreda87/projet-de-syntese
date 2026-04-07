@@ -5,11 +5,24 @@ import LaundryDetails from './components/LaundryDetails';
 import DeliverySettings from './components/DeliverySettings';
 import FixedServices from './components/FixedServices';
 import FixedProducts from './components/FixedProducts';
-import Products from './components/Products';
-const logo = '/images/imageLogo.png'
+import { 
+  User, Store, Truck, Settings, Package, 
+  Menu, X, LogOut, ChevronRight
+} from 'lucide-react';
+
+const logo = '/images/imageLogo.png';
+
+const navItems = [
+  { key: 'personal', label: 'Personal Info', icon: User },
+  { key: 'laundry', label: 'Laundry Info', icon: Store },
+  { key: 'delivery', label: 'Delivery Settings', icon: Truck },
+  { key: 'services', label: 'Services', icon: Settings },
+  { key: 'products', label: 'Products', icon: Package },
+];
+
 function App() {
-  // Changement ici : 'personal' au lieu de 'products'
   const [currentPage, setCurrentPage] = useState('personal');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const renderPage = () => {
     switch(currentPage) {
@@ -21,87 +34,94 @@ function App() {
         return <DeliverySettings setCurrentPage={setCurrentPage} />;
       case 'services':
         return <FixedServices setCurrentPage={setCurrentPage} />;
-
       case 'products':
         return <FixedProducts setCurrentPage={setCurrentPage} />;
-
       default:
         return <PersonalInformation setCurrentPage={setCurrentPage} />;
     }
   };
 
+  const handleNav = (key) => {
+    setCurrentPage(key);
+    setSidebarOpen(false);
+  };
+
   return (
     <div className="app-layout">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${sidebarOpen ? 'sidebar--open' : ''}`}>
         <div className="sidebar-header">
-          
+          <div className="sidebar-brand">
+            <img src={logo} alt="FreshFold Logo" className="sidebar-logo" />
+            <div>
+              <h1 className="sidebar-title">FreshFold</h1>
+              <span className="sidebar-subtitle">Dashboard</span>
             </div>
-                <div className='header-left'>
-                        <img src={logo} alt="FreshFold Logo" style={{width: "45px", height: "45px",objectFit:"contain",display: "block",margin:"10px",borderRadius:'10px'}}/>
-                        <h1 className='site-title'>FreshFold</h1>
-                </div>
-        
+          </div>
+          <button className="sidebar-close" onClick={() => setSidebarOpen(false)}>
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="sidebar-section-label">Menu</div>
+
         <nav className="sidebar-nav">
-          <button 
-            className={`nav-link ${currentPage === 'personal' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('personal')}
-          >
-           
-            <span>👤Personal Info</span>
-          </button>
-          
-          <button 
-            className={`nav-link ${currentPage === 'laundry' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('laundry')}
-          >
-            
-            <span style={{fontWeight:"bold"}}>🧺 Laundry Info</span>
-          </button>
-          
-          <button 
-            className={`nav-link ${currentPage === 'delivery' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('delivery')}
-          >
-       
-            <span>🚚Delivery Settings</span>
-          </button>
-          
-          <button 
-            className={`nav-link ${currentPage === 'services' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('services')}
-          >
-         
-            <span>⚙️Services</span>
-          </button>
-          
-          <button 
-            className={`nav-link ${currentPage === 'products' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('products')}
-          >
-          
-            <span>📦Products</span>
-          </button>
+          {navItems.map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              className={`nav-link ${currentPage === key ? 'active' : ''}`}
+              onClick={() => handleNav(key)}
+            >
+              <span className="nav-link-icon">
+                <Icon size={20} />
+              </span>
+              <span className="nav-link-label">{label}</span>
+              {currentPage === key && <ChevronRight size={16} className="nav-link-arrow" />}
+            </button>
+          ))}
         </nav>
-        
+
         <div className="sidebar-footer">
           <div className="user-card">
-            <div className="user-avatar"></div>
+            <div className="user-avatar">
+              <User size={20} />
+            </div>
             <div className="user-info">
               <p className="user-name">Alex Rivera</p>
               <p className="user-role">Store Manager</p>
             </div>
-            <button className="user-settings">
-              <span className="material-symbols-outlined"></span>
+            <button className="user-logout" title="Logout">
+              <LogOut size={18} />
             </button>
           </div>
         </div>
       </aside>
-      
+
       {/* Main Content */}
-      <main className="main-content">
-        {renderPage()}
-      </main>
+      <div className="main-wrapper">
+        {/* Mobile top bar */}
+        <header className="mobile-topbar">
+          <button className="hamburger-btn" onClick={() => setSidebarOpen(true)}>
+            <Menu size={24} />
+          </button>
+          <div className="mobile-brand">
+            <img src={logo} alt="FreshFold" className="mobile-logo" />
+            <span>FreshFold</span>
+          </div>
+          <div className="mobile-avatar">
+            <User size={18} />
+          </div>
+        </header>
+
+        <main className="main-content">
+          {renderPage()}
+        </main>
+      </div>
     </div>
   );
 }
