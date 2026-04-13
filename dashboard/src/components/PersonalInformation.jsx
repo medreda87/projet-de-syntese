@@ -14,15 +14,7 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
   const [alert, setAlert] = useState({ open: false, type: 'success', title: '', message: '' });
 
 
-  useEffect(()=>{
-    const fetchUser=async()=>{
-      try{
-        const response=await API.get('/user-info');
-        if(user.id==response.data.id){
-          
-      }
-    }
-  })
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
