@@ -53,7 +53,7 @@ function LocationMarker({ position, setPosition, setAddressFromCoords }) {
 
 const LaundryDetails = ({ setCurrentPage }) => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-
+  
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [coverPreview, setCoverPreview] = useState('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1200&h=400&fit=crop');
@@ -150,12 +150,18 @@ const LaundryDetails = ({ setCurrentPage }) => {
       data.append('address', formData.address);
       data.append('openingHours', formData.openingHours || '');
       data.append('user_id', user.id);
+
+
+
       if (profilePhoto) data.append('logo', profilePhoto);
       if (coverPhoto) data.append('bigLogo', coverPhoto);
 
       const response = await API.post('/laundries', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+
+      localStorage.setItem('laundry', JSON.stringify(response.data));
+
 
       const laundry = response.data;
       setAlert({
@@ -185,6 +191,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
       setProfilePreview('https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=150&h=150&fit=crop');
       setMarkerPosition(null);
       setMapCenter([33.5731, -7.5898]);
+
     } catch (error) {
       console.error('Error saving laundry:', error.response?.data || error.message);
       setAlert({
@@ -263,6 +270,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
     try {
       const response = await API.get(`/laundries/${id}`);
       const laundry = response.data;
+      localStorage.setItem('laundry', JSON.stringify(response.data));
       setFormData({
         name: laundry.name,
         address: laundry.address,
@@ -274,6 +282,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
         bigLogo: laundry.bigLogo || '',
         logo: laundry.logo || '',
       });
+
 
       // Set image previews
       if (laundry.bigLogo) {
