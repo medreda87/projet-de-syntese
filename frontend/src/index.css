@@ -782,7 +782,7 @@
 /* Responsive */
 @media (max-width: 1024px) {
   .steps {
-    grid-template-columns: repeat(2, 1fr);
+    @apply flex-col;
   }
 }
 

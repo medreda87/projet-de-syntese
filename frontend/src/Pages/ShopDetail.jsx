@@ -1,12 +1,25 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { MdOutlineVerified } from "react-icons/md"
 import { IoLocationOutline, IoCallOutline, IoMailOutline, IoTimeOutline } from "react-icons/io5"
 import { FaTruck, FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa"
 import { IoArrowBack, IoChevronForward } from "react-icons/io5"
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import Reviews from '../Components/Reviews'
 import { useAuth } from '../contexts/AuthContext'
 import API from '../utils/api'
+
+// Fix Leaflet default icon
+if (typeof window !== 'undefined') {
+  delete L.Icon.Default.prototype._getIconUrl
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  })
+}
 
 const STORAGE_URL = "http://127.0.0.1:8000/storage/"
 
@@ -44,66 +57,26 @@ const ShopDetail = () => {
   const {idLaundry} = useAuth();
   const shopId = parseInt(idLaundry)
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const laundry_id = queryParams.get("laundry_id"); 
+
   const [selectedServices, setSelectedServices] = useState([])
-  const [shop, setShop] = useState(
-    {
-  id: 1,
-  name: "Clean & Fresh Laundry",
-  description: "Premium laundry service with over 10 years of experience. Fast, reliable, and affordable cleaning for all your garments.",
-  address: "123 Main Street, Tangier, Morocco",
-  phone: "+212 600-123456",
-  email: "contact@cleanfresh.ma",
-  delivery: true,
-  email_verified_at: "2024-01-01",
-  logo: "https://placehold.co/400x400?text=Logo",
-  bigLogo: "https://placehold.co/1200x500?text=Clean+%26+Fresh+Laundry",
-  services: [
-    { id: 1, name: "Washing",     price: "30 MAD", description: "Per kg",   icon: null },
-    { id: 2, name: "Ironing",     price: "15 MAD", description: "Per item", icon: null },
-    { id: 3, name: "Dry Cleaning",price: "60 MAD", description: "Per item", icon: null },
-    { id: 4, name: "Folding",     price: "10 MAD", description: "Per kg",   icon: null },
-  ],
-  categories: [
-    {
-      id: 1,
-      name: "Clothing",
-      products: [
-        { id: 1, name: "T-Shirt", price: "15 MAD", description: "Wash & fold", image: null },
-        { id: 2, name: "Jeans",   price: "25 MAD", description: "Wash & iron", image: null },
-        { id: 3, name: "Jacket",  price: "50 MAD", description: "Dry clean",   image: null },
-      ],
-    },
-    {
-      id: 2,
-      name: "Bedding",
-      products: [
-        { id: 4, name: "Bed Sheet", price: "40 MAD", description: "Wash & fold", image: null },
-        { id: 5, name: "Duvet",     price: "80 MAD", description: "Wash & dry",  image: null },
-      ],
-    },
-  ],
-  comment: [
-    { id: 1, rating: 5, comment: "Excellent service!", user: { name: "Ahmed" } },
-    { id: 2, rating: 4, comment: "Very clean and fast.", user: { name: "Sara" } },
-    { id: 3, rating: 5, comment: "Best laundry in town!", user: { name: "Karim" } },
-  ],
-}
-
-
-  )
+  const [shop, setShop] = useState(null)
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
 
+
+
   useEffect(()=>{
 
-    setSelectedServices([shop.services])
     const fetchShopDetails = async () => {
       try {
         setLoading(true)
-        const res = await API.get(`/laundries/${shopId}`);
+        const res = await API.get(`/laundries/${laundry_id}`);
         console.log("Fetched shop details:", res.data);
-        setShop(res.data);
-        setReviews(res.data.comment || []);
+        setShop(res.data.laundry);
+        setReviews(res.data.laundry.comments || []);
       } catch (error) {
         console.error("Error fetching shop details:", error);
       } finally {
@@ -111,7 +84,7 @@ const ShopDetail = () => {
       }
     }
     fetchShopDetails();
-  }, [shopId])
+  }, [laundry_id])
 
   if (loading) {
     return (
@@ -471,6 +444,39 @@ const ShopDetail = () => {
                   )}
                 </div>
               </div>
+
+              {/* Location Map */}
+              {shop.latitude && shop.longitude && (
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                  <h2 className="text-lg font-bold text-[#1E2A36] mb-4 flex items-center gap-2">
+                    <FaMapMarkerAlt className="text-[#0EA5C9]" /> Location
+                  </h2>
+                  <div className="rounded-xl overflow-hidden border border-gray-100" style={{ height: '250px' }}>
+                    <MapContainer
+                      center={[shop.latitude, shop.longitude]}
+                      zoom={15}
+                      style={{ height: '100%', width: '100%' }}
+                      scrollWheelZoom={false}
+                    >
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <Marker position={[shop.latitude, shop.longitude]}>
+                        <Popup>{shop.name}<br />{shop.address}</Popup>
+                      </Marker>
+                    </MapContainer>
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps?q=${shop.latitude},${shop.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 flex items-center justify-center gap-2 text-sm font-medium text-[#0EA5C9] hover:text-[#0EA5C9]/80 transition-colors"
+                  >
+                    <FaMapMarkerAlt className="text-xs" /> Open in Google Maps
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>

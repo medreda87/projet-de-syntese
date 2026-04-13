@@ -220,6 +220,7 @@ const Home = () => {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
   const [roleLoading, setRoleLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showDashboardPrompt, setShowDashboardPrompt] = useState(false);
 
   // Show role modal 2 seconds after page loads for new users without a role
@@ -235,11 +236,16 @@ const Home = () => {
   useEffect(() => {
     const getLaundries = async () => {
       try {
-        const response = await API.get("/laundry");
-        setLaundries(response.data);
+        const response = await API.get("/laundries");
+        console.log("Fetched laundries:", response.data);
+        setLaundries(response.data.data);
+          
+
       } catch (error) {
         console.error("Error fetching laundries:", error);
+
       }
+      setLoading(false);
     };
     getLaundries();
   }, []);
@@ -277,6 +283,7 @@ const Home = () => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         variants={containerVariants}
+        className="py-[70px]"
       >
         <motion.div className="container" variants={itemVariants}>
           <TitleSectionText
@@ -286,21 +293,28 @@ const Home = () => {
         </motion.div>
 
         <motion.div
-          className="container-list container"
+          className="container-list  container"
           variants={staggerContainerVariants}
         >
           <div className="grid lg:grid-cols-4 gap-4 md:grid-cols-3 grid-cols-1">
-            {laundries.map((re, index) => (
-              <motion.div
-                key={re.id}
-                className="col-span-1"
-                variants={itemVariants}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
+           {loading ? (
+              <div className="col-span-full flex flex-col items-center justify-center py-16">
+                <div className="w-12 h-12 border-4 border-gray-200 border-t-[#0EA5C9] rounded-full animate-spin"></div>
+                <p className="mt-4 text-[#62707D] text-sm">Loading laundries...</p>
+              </div>
+            ) : (
+               laundries?.map((re, index) => (
+               <motion.div
+                 key={re.id}
+                 className="col-span-1"
+                 variants={itemVariants}
+                 whileHover={{ scale: 1.02 }}
+                 transition={{ duration: 0.2 }}
               >
                 <Item1 {...re} />
               </motion.div>
-            ))}
+            ))
+           )}
           </div>
         </motion.div>
       </motion.section>
@@ -348,7 +362,11 @@ const Home = () => {
         viewport={{ once: true, amount: 0.3 }}
         variants={fadeInVariants}
       >
-        <Component20 />
+
+        {user?.role !== 'provider' && (
+          <Component20 />
+        )}
+
       </motion.div>
 
       {/* Role Selection Modal */}

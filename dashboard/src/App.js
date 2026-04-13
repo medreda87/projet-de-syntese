@@ -9,42 +9,24 @@ import {
   User, Store, Truck, Settings, Package, 
   Menu, X, LogOut, ChevronRight
 } from 'lucide-react';
+import { useAuth } from './context/AppProvider';
+import { Routes, Route, NavLink, Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 const logo = '/images/imageLogo.png';
 
 const navItems = [
-  { key: 'personal', label: 'Personal Info', icon: User },
-  { key: 'laundry', label: 'Laundry Info', icon: Store },
-  { key: 'delivery', label: 'Delivery Settings', icon: Truck },
-  { key: 'services', label: 'Services', icon: Settings },
-  { key: 'products', label: 'Products', icon: Package },
+  { path: '/personal', label: 'Personal Info', icon: User },
+  { path: '/laundry', label: 'Laundry Info', icon: Store },
+  { path: '/delivery', label: 'Delivery Settings', icon: Truck },
+  { path: '/services', label: 'Services', icon: Settings },
+  { path: '/products', label: 'Products', icon: Package },
 ];
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('personal');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const {user, logout} = useAuth();
+  const location = useLocation();
 
-  const renderPage = () => {
-    switch(currentPage) {
-      case 'personal':
-        return <PersonalInformation setCurrentPage={setCurrentPage} />;
-      case 'laundry':
-        return <LaundryDetails setCurrentPage={setCurrentPage} />;
-      case 'delivery':
-        return <DeliverySettings setCurrentPage={setCurrentPage} />;
-      case 'services':
-        return <FixedServices setCurrentPage={setCurrentPage} />;
-      case 'products':
-        return <FixedProducts setCurrentPage={setCurrentPage} />;
-      default:
-        return <PersonalInformation setCurrentPage={setCurrentPage} />;
-    }
-  };
-
-  const handleNav = (key) => {
-    setCurrentPage(key);
-    setSidebarOpen(false);
-  };
 
   return (
     <div className="app-layout">
@@ -71,18 +53,19 @@ function App() {
         <div className="sidebar-section-label">Menu</div>
 
         <nav className="sidebar-nav">
-          {navItems.map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              className={`nav-link ${currentPage === key ? 'active' : ''}`}
-              onClick={() => handleNav(key)}
+          {navItems.map(({ path, label, icon: Icon }) => (
+            <NavLink
+              key={path}
+              to={path}
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
             >
               <span className="nav-link-icon">
                 <Icon size={20} />
               </span>
               <span className="nav-link-label">{label}</span>
-              {currentPage === key && <ChevronRight size={16} className="nav-link-arrow" />}
-            </button>
+              {location.pathname === path && <ChevronRight size={16} className="nav-link-arrow" />}
+            </NavLink>
           ))}
         </nav>
 
@@ -92,10 +75,9 @@ function App() {
               <User size={20} />
             </div>
             <div className="user-info">
-              <p className="user-name">Alex Rivera</p>
-              <p className="user-role">Store Manager</p>
+              <p className="user-name">{user?.name}</p>
             </div>
-            <button className="user-logout" title="Logout">
+            <button className="user-logout" title="Logout" onClick={()=>{logout()}}>
               <LogOut size={18} />
             </button>
           </div>
@@ -119,7 +101,14 @@ function App() {
         </header>
 
         <main className="main-content">
-          {renderPage()}
+          <Routes>
+            <Route path="/" element={<Navigate to="/personal" replace />} />
+            <Route path="/personal" element={<PersonalInformation />} />
+            <Route path="/laundry" element={<LaundryDetails />} />
+            <Route path="/delivery" element={<DeliverySettings />} />
+            <Route path="/services" element={<FixedServices />} />
+            <Route path="/products" element={<FixedProducts />} />
+          </Routes>
         </main>
       </div>
     </div>

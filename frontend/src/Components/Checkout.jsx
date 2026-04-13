@@ -1,12 +1,56 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Icon from './ui/Icon'
 import Button from './Button'
-import { FaArrowLeft, FaCheck, FaMapMarkerAlt, FaCheckCircle, FaTimes } from 'react-icons/fa'
+import { FaArrowLeft, FaCheck, FaMapMarkerAlt, FaCheckCircle, FaTimes, FaInfoCircle } from 'react-icons/fa'
 import LocationForm from './Location'
 import { sendEmail } from '../utils/send_email'
 import API from '../utils/api'
 import { useLocation, useNavigate } from 'react-router-dom'
+
+// Parse openingHours string to get working day numbers (0=Sun, 1=Mon, ..., 6=Sat)
+const DAY_MAP = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 }
+
+const parseWorkingDays = (openingHours) => {
+  if (!openingHours) return [0, 1, 2, 3, 4, 5, 6] // all days if not specified
+  const text = openingHours.toLowerCase()
+  const workingDays = new Set()
+
+  // Match patterns like "Mon-Fri", "Mon-Sat", "Lun-Ven", "Lun-Sam"
+  const frDayMap = { 'lun': 1, 'mar': 2, 'mer': 3, 'jeu': 4, 'ven': 5, 'sam': 6, 'dim': 0 }
+  const allDayMap = { ...DAY_MAP, ...frDayMap }
+
+  const rangeRegex = /([a-zé]+)\s*[-–àa]\s*([a-zé]+)/gi
+  let match
+  while ((match = rangeRegex.exec(text)) !== null) {
+    const startDay = allDayMap[match[1].substring(0, 3)]
+    const endDay = allDayMap[match[2].substring(0, 3)]
+    if (startDay !== undefined && endDay !== undefined) {
+      let d = startDay
+      while (true) {
+        workingDays.add(d)
+        if (d === endDay) break
+        d = (d + 1) % 7
+      }
+    }
+  }
+
+  // Match individual days
+  for (const [key, val] of Object.entries(allDayMap)) {
+    if (text.includes(key)) workingDays.add(val)
+  }
+
+  return workingDays.size > 0 ? Array.from(workingDays) : [0, 1, 2, 3, 4, 5, 6]
+}
+
+const getTodayStr = () => {
+  const d = new Date()
+  return d.toISOString().split('T')[0]
+}
+
+const getDayName = (dayNum) => {
+  return ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'][dayNum]
+}
 
 const Checkout = ({
   initialStep = 1,
@@ -47,6 +91,35 @@ const Checkout = ({
   const [error, setError] = useState(null)
   const navigate = useNavigate()
 
+  const [laundry, setLaundry] = useState(null)
+  const [workingDays, setWorkingDays] = useState([0, 1, 2, 3, 4, 5, 6])
+
+  useEffect(() => {
+    if (laundryId) {
+      API.get(`/laundries/${laundryId}`).then(res => {
+        const l = res.data.laundry || res.data
+        setLaundry(l)
+        setWorkingDays(parseWorkingDays(l.openingHours))
+      }).catch(() => {})
+    }
+  }, [laundryId])
+
+  const isWorkingDay = (dateStr) => {
+    if (!dateStr) return true
+    const d = new Date(dateStr + 'T00:00:00')
+    return workingDays.includes(d.getDay())
+  }
+
+  const isNotPastDate = (dateStr) => {
+    if (!dateStr) return true
+    return dateStr >= getTodayStr()
+  }
+
+  const isDeliveryAfterPickup = (deliveryDate) => {
+    if (!deliveryDate || !allFormData.pickupDate) return true
+    return deliveryDate >= allFormData.pickupDate
+  }
+
   const validate=(currentStep)=>{
     if(currentStep === 1 ){
       if(!allFormData.fullName){
@@ -81,6 +154,19 @@ const Checkout = ({
         return false 
 
       }
+      else if(!isNotPastDate(allFormData.pickupDate)){
+        setErros({
+          ...errors , pickupDate :"La date de ramassage ne peut pas être dans le passé"
+        })
+        return false
+      }
+      else if(!isWorkingDay(allFormData.pickupDate)){
+        const d = new Date(allFormData.pickupDate + 'T00:00:00')
+        setErros({
+          ...errors , pickupDate :`La pressing ne travaille pas le ${getDayName(d.getDay())}`
+        })
+        return false
+      }
       else if(!allFormData.pickupTime){
         setErros({
           ...errors , pickupTime :"Please enter time of pickup"
@@ -103,6 +189,25 @@ const Checkout = ({
       })
       return false 
       
+    }
+    if(!isNotPastDate(allFormData.deliveryDate)){
+      setErros({
+        ...errors , deliveryDate :"La date de livraison ne peut pas être dans le passé"
+      })
+      return false
+    }
+    if(!isWorkingDay(allFormData.deliveryDate)){
+      const d = new Date(allFormData.deliveryDate + 'T00:00:00')
+      setErros({
+        ...errors , deliveryDate :`La pressing ne travaille pas le ${getDayName(d.getDay())}`
+      })
+      return false
+    }
+    if(!isDeliveryAfterPickup(allFormData.deliveryDate)){
+      setErros({
+        ...errors , deliveryDate :"La date de livraison doit être après la date de ramassage"
+      })
+      return false
     }
     if(!allFormData.deliveryTime){
       setErros({
@@ -459,6 +564,15 @@ const Checkout = ({
               <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
                 <h2 className="text-xl font-bold text-[#022545] mb-6">Détails de ramassage</h2>
                 
+                {laundry?.openingHours && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+                    <FaInfoCircle className="text-blue-500 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-blue-700">
+                      <span className="font-medium">Horaires de la pressing :</span> {laundry.openingHours}
+                    </p>
+                  </div>
+                )}
+
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <Icon icon={FaMapMarkerAlt} theme="primary" size="md" />
@@ -495,11 +609,26 @@ const Checkout = ({
                         type="date"
                         name="pickupDate"
                         value={allFormData.pickupDate}
-                        onChange={handleStep2Change}
-                        placeholder="mm/dd/yyyy"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                        min={getTodayStr()}
+                        onChange={(e) => {
+                          const val = e.target.value
+                          handleStep2Change(e)
+                          setErros(prev => ({ ...prev, pickupDate: null }))
+                          if (val && !isNotPastDate(val)) {
+                            setErros(prev => ({ ...prev, pickupDate: "La date ne peut pas être dans le passé" }))
+                          } else if (val && !isWorkingDay(val)) {
+                            const d = new Date(val + 'T00:00:00')
+                            setErros(prev => ({ ...prev, pickupDate: `La pressing ne travaille pas le ${getDayName(d.getDay())}` }))
+                          }
+                        }}
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent ${errors.pickupDate ? 'border-red-400' : 'border-gray-300'}`}
                       />
                     </div>
+                    {errors.pickupDate && (
+                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                        <FaInfoCircle className="flex-shrink-0" /> {errors.pickupDate}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#022545] mb-2">
@@ -541,6 +670,15 @@ const Checkout = ({
               <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
                 <h2 className="text-xl font-bold text-[#022545] mb-6">Détails de livraison</h2>
                 
+                {laundry?.openingHours && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+                    <FaInfoCircle className="text-blue-500 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-blue-700">
+                      <span className="font-medium">Horaires de la pressing :</span> {laundry.openingHours}
+                    </p>
+                  </div>
+                )}
+
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <Icon icon={FaMapMarkerAlt} theme="primary" size="md" />
@@ -576,11 +714,28 @@ const Checkout = ({
                         type="date"
                         name="deliveryDate"
                         value={allFormData.deliveryDate}
-                        onChange={handleStep3Change}
-                        placeholder="mm/dd/yyyy"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                        min={allFormData.pickupDate || getTodayStr()}
+                        onChange={(e) => {
+                          const val = e.target.value
+                          handleStep3Change(e)
+                          setErros(prev => ({ ...prev, deliveryDate: null }))
+                          if (val && !isNotPastDate(val)) {
+                            setErros(prev => ({ ...prev, deliveryDate: "La date ne peut pas être dans le passé" }))
+                          } else if (val && !isWorkingDay(val)) {
+                            const d = new Date(val + 'T00:00:00')
+                            setErros(prev => ({ ...prev, deliveryDate: `La pressing ne travaille pas le ${getDayName(d.getDay())}` }))
+                          } else if (val && !isDeliveryAfterPickup(val)) {
+                            setErros(prev => ({ ...prev, deliveryDate: "La date de livraison doit être après la date de ramassage" }))
+                          }
+                        }}
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent ${errors.deliveryDate ? 'border-red-400' : 'border-gray-300'}`}
                       />
                     </div>
+                    {errors.deliveryDate && (
+                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                        <FaInfoCircle className="flex-shrink-0" /> {errors.deliveryDate}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#022545] mb-2">

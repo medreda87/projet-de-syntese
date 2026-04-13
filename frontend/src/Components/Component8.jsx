@@ -48,7 +48,7 @@ function Component8() {
 
        
 
-      <div className="steps mt-[40px]">
+      <div className="steps mt-[40px] ">
         {steps.map((step) => (
           <div className="step-card" key={step.id}>
             <div className="step-number">{step.id}</div>

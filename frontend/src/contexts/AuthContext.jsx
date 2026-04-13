@@ -34,8 +34,8 @@ export const AuthProvider = ({ children }) => {
         const { user: userData, access_token } = res.data;
         setUser(userData);
         setIsAuthenticated(true);
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('token', access_token);
+        localStorage.setItem('userFreshFold', JSON.stringify(userData));
+        localStorage.setItem('tokenFreshFold', access_token);
         return { success: true };
       }
       return { success: false, message: res.data.message || 'Login failed' };
@@ -52,8 +52,8 @@ export const AuthProvider = ({ children }) => {
         const { user: userData, access_token } = res.data;
         setUser(userData);
         setIsAuthenticated(true);
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('token', access_token);
+        localStorage.setItem('userFreshFold', JSON.stringify(userData));
+        localStorage.setItem('tokenFreshFold', access_token);
         return { success: true };
       }
       return { success: false, message: res.data.message || 'Registration failed' };
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
         const updatedUser = res.data.user;
         console.log('Updated user:', updatedUser);
         setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        localStorage.setItem('userFreshFold', JSON.stringify(updatedUser));
         return { success: true };
       }
       return { success: false, message: res.data.message || 'Failed to update role' };
@@ -91,13 +91,10 @@ export const AuthProvider = ({ children }) => {
     }
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem('userFreshFold');
+    localStorage.removeItem('tokenFreshFold');
   };
 
-  
-
-  
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, updateRole, idLaundry, setIdLaundry }}>

@@ -3,8 +3,11 @@ import Component14 from '../Components/Component14'
 import Component21 from '../Components/Component21'
 import Component22 from '../Components/Component22'
 import Component20 from '../Components/Component20'
+import { useAuth } from '../contexts/AuthContext'
 
 const Contact = () => {
+
+  const {user} = useAuth()
   return (
     <main className="pt-20">
       <Component14
@@ -29,7 +32,11 @@ const Contact = () => {
       }}/>
 
       <Component22 />
-      <Component20 />
+       {
+        user.role === 'customer' && (
+           <Component20 />
+        )
+      }
     </main>
   )
 }

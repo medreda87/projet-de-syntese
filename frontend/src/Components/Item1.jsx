@@ -10,11 +10,12 @@ function Item1(props){
   
   const handleClick = () => {
     setIdLaundry(props.id);
-    const title = props.title.replace(/\s+/g, '_').toLowerCase();
+    const title = props.name.replace(/\s+/g, '_').toLowerCase();
     navigate(`/${title}?laundry_id=${props.id}`);
   }
   
   const isOpen = props.status !== "Closed"
+
   
   return (
     <div 
@@ -25,7 +26,7 @@ function Item1(props){
       <div className='relative overflow-hidden h-[200px]'>
         <img 
           src={props.image} 
-          alt={props.title} 
+          alt={props.name} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -49,15 +50,15 @@ function Item1(props){
         {/* Rating pill on image */}
         <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-sm">
           <span className="text-yellow-500 text-sm">★</span>
-          <span className="text-[#1E2A36] text-xs font-bold">{props.rating}</span>
-          <span className="text-[#62707D] text-xs">({props.reviews})</span>
+          <span className="text-[#1E2A36] text-xs font-bold">{Number(props.comments_avg_rating).toFixed(1)}</span>
+          <span className="text-[#62707D] text-xs">({props.comments_count})</span>
         </div>
       </div>
 
       {/* Content */}
       <div className='p-4 flex flex-col flex-1'>
         <h3 className='font-bold text-[#1E2A36] text-base mb-1.5 group-hover:text-[#0EA5C9] transition-colors leading-tight'>
-          {props.title}
+          {props.name}
         </h3>
         
         <p className='text-[#62707D] text-sm leading-relaxed mb-3 line-clamp-2 flex-1'>
@@ -66,10 +67,10 @@ function Item1(props){
 
         {/* Meta info */}
         <div className='flex items-center gap-3 text-xs text-[#62707D] mb-3'>
-          {props.location && (
+          {props.address && (
             <span className='flex items-center gap-1'>
               <IoLocationOutline className="text-[#0EA5C9] text-sm" />
-              {props.location}
+              {props.address}
             </span>
           )}
           {props.time && (
@@ -82,15 +83,15 @@ function Item1(props){
         
         {/* Service tags */}
         <div className='flex flex-wrap gap-1.5'>
-          {props.services.slice(0, 3).map((re, index) => (
+          {props.services?.map((re, index) => (
             <span 
               key={index} 
               className="text-[11px] font-medium text-[#0EA5C9] bg-sky-50 px-2.5 py-1 rounded-md"
             >
-              {re}
+              {re.name}
             </span>
           ))}
-          {props.services.length > 3 && (
+          {props.services?.length > 3 && (
             <span className="text-[11px] font-medium text-[#62707D] bg-gray-100 px-2.5 py-1 rounded-md">
               +{props.services.length - 3}
             </span>

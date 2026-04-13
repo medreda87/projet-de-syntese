@@ -15,8 +15,11 @@ import {
 } from 'react-icons/fa'
 import Component14 from '../Components/Component14'
 import Component20 from '../Components/Component20'
+import { useAuth } from '../contexts/AuthContext'
 
 const HowItWorks = () => {
+
+  const {user} = useAuth();
   return (
     <main>
 
@@ -94,7 +97,11 @@ const HowItWorks = () => {
         ]}
       />
       <Component24 />
-      <Component20 />
+      {
+        user.role === 'customer' && (
+           <Component20 />
+        )
+      }
     </main>
   )
 }
