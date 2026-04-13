@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 
 const logo = '/images/imageLogo.png';
+  const user =JSON.parse(localStorage.getItem('user') || '{}');
 
 const navItems = [
   { key: 'personal', label: 'Personal Info', icon: User },
@@ -92,7 +93,7 @@ function App() {
               <User size={20} />
             </div>
             <div className="user-info">
-              <p className="user-name">Alex Rivera</p>
+              <p className="user-name">{user.name}</p>
               <p className="user-role">Store Manager</p>
             </div>
             <button className="user-logout" title="Logout">

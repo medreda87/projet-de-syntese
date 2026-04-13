@@ -13,6 +13,7 @@ const Products = ({ setCurrentPage }) => {
   const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', description: '', image: null });
   const [newCategory, setNewCategory] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
+  const laundry = JSON.parse(localStorage.getItem('laundry') || '{}');
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -20,12 +21,12 @@ const Products = ({ setCurrentPage }) => {
   const [formError, setFormError] = useState(null);
   const [alert, setAlert] = useState({ isOpen: false, type: 'success', title: '', message: '' });
 
-  const getLaundryId = useCallback(() => parseInt(localStorage.getItem('laundry_id')) || 6, []);
+  const getLaundryId = laundry.id
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await API.get(`/products/laundry/${getLaundryId()}`);
+      const response = await API.get(`/products/laundry/${getLaundryId}`);
       setProducts(response.data || []);
     } catch (err) {
       setAlert({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to load products' });
@@ -104,7 +105,7 @@ const Products = ({ setCurrentPage }) => {
     formData.append('category_id', newProduct.category);
     formData.append('description', newProduct.description.trim());
     if (newProduct.image) formData.append('image', newProduct.image);
-    formData.append('laundry_id', getLaundryId());
+    formData.append('laundry_id', getLaundryId);
 
     try {
       if (isEditMode && editProductId) {
