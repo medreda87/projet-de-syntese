@@ -65,6 +65,7 @@ const ShopDetail = () => {
   const [shop, setShop] = useState(null)
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
 
 
@@ -112,17 +113,32 @@ const ShopDetail = () => {
     )
   }
 
-  const handleServiceSelect = (serviceId) => {
+  const handleServiceSelect = (service) => {
     setSelectedServices(prev => 
-      prev.includes(serviceId) 
-        ? prev.filter(s => s !== serviceId)
-        : [...prev, serviceId]
+      prev.includes(service) 
+        ? prev.filter(s => s.id !== service.id)
+        : [...prev, service]
     )
   }
 
   const avgRating = reviews.length > 0 
     ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
     : null
+
+  // Group products by category
+  const productsByCategory = (shop.products || []).reduce((acc, product) => {
+    const catName = product.category?.name || 'Other'
+    const catId = product.category?.id || 0
+    if (!acc[catId]) {
+      acc[catId] = { id: catId, name: catName, products: [] }
+    }
+    acc[catId].products.push(product)
+    return acc
+  }, {})
+  const groupedCategories = Object.values(productsByCategory)
+  const filteredCategories = selectedCategory === 'all'
+    ? groupedCategories
+    : groupedCategories.filter(cat => cat.id === selectedCategory)
 
   return (
     <main className="bg-[#F4F6F8]">
@@ -271,7 +287,7 @@ const ShopDetail = () => {
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => handleServiceSelect(service.id)}
+                          onChange={() => handleServiceSelect(service)}
                           className="sr-only"
                         />
                         {service.icon && (
@@ -294,31 +310,59 @@ const ShopDetail = () => {
               )}
 
               {/* Products by Category */}
-              {shop.categories && shop.categories.length > 0 && (
+              {groupedCategories.length > 0 && (
               <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
                 <SectionTitle subtitle="Browse our product catalogue">Products</SectionTitle>
+                {/* Category Filter */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <button
+                    onClick={() => setSelectedCategory('all')}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                      selectedCategory === 'all'
+                        ? 'bg-[#0EA5C9] text-white shadow-sm'
+                        : 'bg-gray-100 text-[#62707D] hover:bg-gray-200'
+                    }`}
+                  >
+                    All
+                  </button>
+                  {groupedCategories.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                        selectedCategory === cat.id
+                          ? 'bg-[#0EA5C9] text-white shadow-sm'
+                          : 'bg-gray-100 text-[#62707D] hover:bg-gray-200'
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
                 <div className="space-y-6">
-                  {shop.categories.map((category) => (
+                  {filteredCategories.map((category) => (
                     <div key={category.id}>
                       <h3 className="text-sm font-semibold text-[#62707D] uppercase tracking-wider mb-3 flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#0EA5C9]" />
                         {category.name}
                       </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {category.products && category.products.map((product) => (
-                          <div key={product.id} className="flex items-center gap-3 p-3.5 rounded-xl border border-gray-100 bg-gray-50/50 hover:border-[#0EA5C9]/20 hover:bg-white transition-all group">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        {category.products.map((product) => (
+                          <div key={product.id} className="rounded-2xl border border-gray-100 bg-white overflow-hidden hover:shadow-md transition-all group">
                             {product.image ? (
-                              <img src={getImageUrl(product.image)} alt={product.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+                              <img src={getImageUrl(product.image)} alt={product.name} className="w-full h-48 object-cover" />
                             ) : (
-                              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-sky-100 to-teal-50 flex items-center justify-center flex-shrink-0">
-                                <span className="text-lg">👕</span>
+                              <div className="w-full h-48 bg-gradient-to-br from-sky-50 to-teal-50 flex items-center justify-center">
+                                <span className="text-4xl">👕</span>
                               </div>
                             )}
-                            <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-[#1E2A36] text-sm truncate">{product.name}</p>
-                              {product.description && <p className="text-xs text-[#62707D] truncate">{product.description}</p>}
+                            <div className="p-3">
+                              <p className="font-bold text-[#1E2A36] text-base leading-tight">{product.name}</p>
+                              <span className="inline-block mt-2 px-4 py-1 rounded-full bg-[#0EA5C9] text-white text-sm font-semibold">
+                                {product.price} MAD
+                              </span>
+                              <p className="text-xs text-[#9CA3AF] mt-2">{shop.name}</p>
                             </div>
-                            <span className="text-[#0EA5C9] font-bold text-sm whitespace-nowrap">{product.price} MAD</span>
                           </div>
                         ))}
                       </div>
@@ -328,6 +372,145 @@ const ShopDetail = () => {
               </div>
               )}
 
+            <div className="space-y-5 lg:hidden block">
+              {/* Book Service Card */}
+              <div className="bg-white fixed z-10 bottom-[10px]  rounded-2xl p-6 border border-gray-100 shadow-sm w-[95%] ml-[2.5%] ">
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-lg font-bold text-[#1E2A36]">Book Service</h2>
+                  {selectedServices.length > 0 && (
+                    <span className="text-xs font-semibold bg-sky-50 text-[#0EA5C9] px-2.5 py-1 rounded-full">
+                      {selectedServices.length} selected
+                    </span>
+                  )}
+                </div>
+                <Link to="/checkout"
+                  state={{form : selectedServices , laundryId: shop.id}}
+                  onClick={() => {
+                    localStorage.setItem('checkoutServices', JSON.stringify(selectedServices));
+                    localStorage.setItem('checkoutLaundryId', JSON.stringify(shop.id));
+                  }}
+                >
+                <button
+                  className={`w-full py-3.5 rounded-xl font-semibold text-white text-sm transition-all flex items-center justify-center gap-2 ${
+                    selectedServices.length > 0
+                      ? "bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] hover:shadow-lg hover:shadow-sky-200/50 hover:-translate-y-0.5 active:translate-y-0"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  }`}
+                  disabled={selectedServices.length === 0}
+                >
+                  {selectedServices.length > 0 
+                    ? <>Book {selectedServices.length} Service{selectedServices.length > 1 ? 's' : ''} <IoChevronForward /></>
+                    : "Select Services Above"
+                  }
+                </button>
+                </Link>
+              </div>
+
+              {/* Contact Info Card */}
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                {shop.logo && (
+                  <div className="flex justify-center mb-4">
+                    <div className="relative">
+                      <img 
+                        src={getImageUrl(shop.logo)} 
+                        alt={shop.name} 
+                        className="w-16 h-16 rounded-xl object-cover" 
+                      />
+                      {shop.email_verified_at && (
+                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#0EA5C9] rounded-md flex items-center justify-center">
+                          <MdOutlineVerified className="text-white text-xs" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                <h2 className="text-lg font-bold text-[#1E2A36] mb-4 text-center">Contact Info</h2>
+                <div className="space-y-3.5">
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center flex-shrink-0">
+                      <IoLocationOutline className="text-[#0EA5C9] text-sm" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-[#62707D] mb-0.5">Location</p>
+                      <p className="text-[#1E2A36] text-sm font-medium leading-snug">{shop.address}</p>
+                    </div>
+                  </div>
+                  
+                  {shop.phone && (
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center flex-shrink-0">
+                      <IoCallOutline className="text-[#0EA5C9] text-sm" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-[#62707D] mb-0.5">Phone</p>
+                      <a href={`tel:${shop.phone}`} className="text-[#1E2A36] text-sm font-medium hover:text-[#0EA5C9] transition-colors">
+                        {shop.phone}
+                      </a>
+                    </div>
+                  </div>
+                  )}
+                  
+                  {shop.email && (
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center flex-shrink-0">
+                      <IoMailOutline className="text-[#0EA5C9] text-sm" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-[#62707D] mb-0.5">Email</p>
+                      <a href={`mailto:${shop.email}`} className="text-[#1E2A36] text-sm font-medium hover:text-[#0EA5C9] transition-colors truncate block">
+                        {shop.email}
+                      </a>
+                    </div>
+                  </div>
+                  )}
+
+                  {shop.openingHours && (
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center flex-shrink-0">
+                      <IoTimeOutline className="text-[#0EA5C9] text-sm" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-[#62707D] mb-0.5">Opening Hours</p>
+                      <p className="text-[#1E2A36] text-sm font-medium">{shop.openingHours}</p>
+                    </div>
+                  </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Location Map */}
+              {shop.latitude && shop.longitude && (
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                  <h2 className="text-lg font-bold text-[#1E2A36] mb-4 flex items-center gap-2">
+                    <FaMapMarkerAlt className="text-[#0EA5C9]" /> Location
+                  </h2>
+                  <div className="rounded-xl overflow-hidden border border-gray-100" style={{ height: '250px' }}>
+                    <MapContainer
+                      center={[shop.latitude, shop.longitude]}
+                      zoom={15}
+                      style={{ height: '100%', width: '100%' }}
+                      scrollWheelZoom={false}
+                    >
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <Marker position={[shop.latitude, shop.longitude]}>
+                        <Popup>{shop.name}<br />{shop.address}</Popup>
+                      </Marker>
+                    </MapContainer>
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps?q=${shop.latitude},${shop.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 flex items-center justify-center gap-2 text-sm font-medium text-[#0EA5C9] hover:text-[#0EA5C9]/80 transition-colors"
+                  >
+                    <FaMapMarkerAlt className="text-xs" /> Open in Google Maps
+                  </a>
+                </div>
+              )}
+            </div>
               {/* Customer Reviews Section */}
               <Reviews 
                 reviews={reviews}
@@ -339,9 +522,9 @@ const ShopDetail = () => {
             </div>
 
             {/* Right Sidebar */}
-            <div className="space-y-5">
+            <div className="space-y-5 lg:block hidden">
               {/* Book Service Card */}
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm sticky top-24">
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 z-10 shadow-sm sticky top-24">
                 <div className="flex items-center justify-between mb-5">
                   <h2 className="text-lg font-bold text-[#1E2A36]">Book Service</h2>
                   {selectedServices.length > 0 && (

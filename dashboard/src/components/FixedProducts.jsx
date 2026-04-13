@@ -13,6 +13,7 @@ const Products = ({ setCurrentPage }) => {
   const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', description: '', image: null });
   const [newCategory, setNewCategory] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
+  const laundry = JSON.parse(localStorage.getItem('laundry') || '{}');
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -20,12 +21,12 @@ const Products = ({ setCurrentPage }) => {
   const [formError, setFormError] = useState(null);
   const [alert, setAlert] = useState({ isOpen: false, type: 'success', title: '', message: '' });
 
-  const getLaundryId = useCallback(() => parseInt(localStorage.getItem('laundry_id')) || 6, []);
+  const getLaundryId = laundry.id
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await API.get(`/products/laundry/${getLaundryId()}`);
+      const response = await API.get(`/products/laundry/${getLaundryId}`);
       setProducts(response.data || []);
     } catch (err) {
       setAlert({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to load products' });
@@ -83,11 +84,11 @@ const Products = ({ setCurrentPage }) => {
     setNewProduct({
       name: product.name,
       price: product.price.toString(),
-      category: product.category || '',
+      category: product.category_id || '',
       description: product.description || '',
       image: null,
     });
-    setImagePreview(product.image ? `/images/products/${product.image}` : null);
+    setImagePreview(product.image ? `http://localhost:8000/images/products/${product.image}` : null);
     setFormError(null);
     setIsModalOpen(true);
   };
@@ -104,12 +105,15 @@ const Products = ({ setCurrentPage }) => {
     formData.append('category_id', newProduct.category);
     formData.append('description', newProduct.description.trim());
     if (newProduct.image) formData.append('image', newProduct.image);
-    formData.append('laundry_id', getLaundryId());
+    formData.append('laundry_id', getLaundryId);
 
     try {
       if (isEditMode && editProductId) {
-        await API.put(`/products/${editProductId}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-        setAlert({ isOpen: true, type: 'success', title: 'Updated', message: 'Product updated successfully!' });
+formData.append('_method', 'PUT');
+
+await API.post(`/products/${editProductId}`, formData, {
+  headers: { 'Content-Type': 'multipart/form-data' }
+});         setAlert({ isOpen: true, type: 'success', title: 'Updated', message: 'Product updated successfully!' });
       } else {
         await API.post('/products', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         setAlert({ isOpen: true, type: 'success', title: 'Created', message: 'Product created successfully!' });
@@ -170,7 +174,7 @@ const Products = ({ setCurrentPage }) => {
   };
 
   const filteredProducts = products.filter(p =>
-    (p.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || (p.description || '').toLowerCase().includes(searchTerm.toLowerCase()) || (p.category || '').toLowerCase().includes(searchTerm.toLowerCase())
+    (p.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || (p.description || '').toLowerCase().includes(searchTerm.toLowerCase()) || (p.category?.name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -289,18 +293,18 @@ const Products = ({ setCurrentPage }) => {
                 <textarea name="description" value={newProduct.description} onChange={handleInputChange} rows="3" disabled={loading} />
               </div>
               <div className="prod-form-group">
-                <label>Image</label>
-                <label className="prod-upload-area">
-                  <input type="file" onChange={handleImageChange} accept="image/*" hidden />
-                  {imagePreview ? (
-                    <img src={imagePreview} alt="Preview" className="prod-upload-preview" />
-                  ) : (
-                    <div className="prod-upload-placeholder">
-                      <ImagePlus size={24} />
-                      <span>Click to upload</span>
-                    </div>
-                  )}
-                </label>
+<label className="prod-upload-area">
+  <input type="file" onChange={handleImageChange} accept="image/*" hidden />
+
+  {imagePreview ? (
+    <img src={imagePreview} alt="Preview" className="prod-upload-preview" />
+  ) : (
+    <div className="prod-upload-placeholder">
+      <ImagePlus size={24} />
+      <span>Click to upload</span>
+    </div>
+  )}
+</label>
               </div>
               <div className="prod-modal-footer">
                 <button type="button" className="btn btn--outline" onClick={() => setIsModalOpen(false)} disabled={loading}>Cancel</button>

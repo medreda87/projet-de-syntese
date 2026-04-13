@@ -52,7 +52,7 @@ class LaundryController extends Controller
 
     public function show($id)
     {
-        $laundry = Laundry::with('user', 'services', 'delivery', 'comments' , 'products.categories')
+        $laundry = Laundry::with('user', 'services', 'delivery', 'comments' , 'products.category:id,name')
             ->findOrFail($id);
         
 

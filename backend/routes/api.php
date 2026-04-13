@@ -62,5 +62,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/ramassages', [RamassageController::class, 'index']);
     Route::get('/ramassages/{id}', [RamassageController::class, 'show']);
     Route::get('/ramassages/check/{laundryId}', [RamassageController::class, 'checkForLaundry']);
+    Route::get('/ramassages/laundry/{laundryId}', [RamassageController::class, 'getByLaundry']);
+    Route::put('/ramassages/{id}/status', [RamassageController::class, 'updateStatus']);
+    Route::delete('/ramassages/{id}', [RamassageController::class, 'destroy']);
 });
 Route::post('/ramassages', [RamassageController::class, 'store']);

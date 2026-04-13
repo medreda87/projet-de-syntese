@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './styles.css';
 import { User, Mail, Phone, MapPin, Shield, CreditCard, Bell, HelpCircle } from 'lucide-react';
 import AlertModal from './AlertModal';
@@ -10,8 +10,10 @@ const PersonalInformation = () => {
     phone: "+212- 687474748",
     address: "123 Tanger, Al_Madina, 134"
   });
-
+const user = JSON.parse(localStorage.getItem('user') || '{}');
   const [alert, setAlert] = useState({ open: false, type: 'success', title: '', message: '' });
+
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -55,7 +57,7 @@ const PersonalInformation = () => {
                 <label className="form-label">Full Name</label>
                 <div className="input-group">
                   <span className="input-icon"><User size={18} /></span>
-                  <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="form-input" />
+                  <input type="text" name="fullName" value={user.name} onChange={handleChange} className="form-input" />
                 </div>
               </div>
 
@@ -63,25 +65,25 @@ const PersonalInformation = () => {
                 <label className="form-label">Email Address</label>
                 <div className="input-group">
                   <span className="input-icon"><Mail size={18} /></span>
-                  <input type="email" name="email" value={formData.email} onChange={handleChange} className="form-input" />
+                  <input type="email" name="email" value={user.email} onChange={handleChange} className="form-input" />
                 </div>
               </div>
 
-              <div className="form-field form-field--full">
+              {/* <div className="form-field form-field--full">
                 <label className="form-label">Phone Number</label>
                 <div className="input-group">
                   <span className="input-icon"><Phone size={18} /></span>
                   <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="form-input" />
                 </div>
-              </div>
+              </div> */}
 
-              <div className="form-field form-field--full">
+              {/* <div className="form-field form-field--full">
                 <label className="form-label">Home Address</label>
                 <div className="input-group">
                   <span className="input-icon"><MapPin size={18} /></span>
                   <input type="text" name="address" value={formData.address} onChange={handleChange} className="form-input" />
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="form-footer">

@@ -83,4 +83,34 @@ class RamassageController extends Controller
 
         return response()->json(['hasRamassage' => $hasRamassage]);
     }
+
+    public function getByLaundry($laundryId)
+    {
+        $ramassages = Ramassage::where('laundry_id', $laundryId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($ramassages);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,picked_up,delivered,cancelled',
+        ]);
+
+        $ramassage = Ramassage::findOrFail($id);
+        $ramassage->status = $request->status;
+        $ramassage->save();
+
+        return response()->json(['success' => true, 'ramassage' => $ramassage]);
+    }
+
+    public function destroy($id)
+    {
+        $ramassage = Ramassage::findOrFail($id);
+        $ramassage->delete();
+
+        return response()->json(['success' => true]);
+    }
 }

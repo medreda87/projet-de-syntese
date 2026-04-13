@@ -5,6 +5,9 @@ import API from '../api/axiosApi';
 import AlertModal from './AlertModal';
 
 const LaundryDetails = ({ setCurrentPage }) => {
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [coverPreview, setCoverPreview] = useState('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1200&h=400&fit=crop');
@@ -15,7 +18,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
     phone: '',
     email: '',
     description: '',
-    user_id: 1,
+    user_id: user.id,
     openingHours: ''
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -50,43 +53,68 @@ const LaundryDetails = ({ setCurrentPage }) => {
     }
   };
 
-  const handleSave = async () => {
-    if (!formData.name || !formData.address || !formData.phone) {
-      setAlert({ open: true, type: 'warning', title: 'Missing Fields', message: 'Please fill in Name, Address, and Phone.' });
-      return;
-    }
+const handleSave = async () => {
+  if (!formData.name || !formData.address || !formData.phone) {
+    setAlert({
+      open: true,
+      type: 'warning',
+      title: 'Missing Fields',
+      message: 'Please fill in Name, Address, and Phone.'
+    });
+    return;
+  }
 
-    try {
-      setIsLoading(true);
-      const data = new FormData();
-      data.append('name', formData.name);
-      data.append('email', formData.email || '');
-      data.append('description', formData.description || '');
-      data.append('phone', formData.phone);
-      data.append('address', formData.address);
-      data.append('openingHours', formData.openingHours || '');
-      data.append('user_id', formData.user_id);
-      if (profilePhoto) data.append('logo', profilePhoto);
-      if (coverPhoto) data.append('bigLogo', coverPhoto);
+  try {
+    setIsLoading(true);
 
-      await API.post('/laundries', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setAlert({ open: true, type: 'success', title: 'Success!', message: 'Your laundry information has been saved successfully.' });
-    } catch (error) {
-      console.error('Error saving laundry details:', error.response?.data || error.message);
-      setAlert({
-        open: true,
-        type: 'error',
-        title: 'Save Failed',
-        message: error.response?.status === 422
-          ? 'Validation error. Please check your input fields.'
-          : 'An error occurred while saving. Please try again.'
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const data = new FormData();
+    data.append('name', formData.name);
+    data.append('email', formData.email || '');
+    data.append('description', formData.description || '');
+    data.append('phone', formData.phone);
+    data.append('address', formData.address);
+    data.append('openingHours', formData.openingHours || '');
+    data.append('user_id', formData.user_id);
+
+    if (profilePhoto) data.append('logo', profilePhoto);
+    if (coverPhoto) data.append('bigLogo', coverPhoto);
+
+
+    const response = await API.post('/laundries', data, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
+    const laundry = response.data;
+
+    const laundryId = laundry.id;
+    localStorage.setItem("laundry", JSON.stringify({
+      ...formData,
+      id: laundryId
+    }));
+
+    setAlert({
+      open: true,
+      type: 'success',
+      title: 'Success!',
+      message: 'Your laundry information has been saved successfully.'
+    });
+
+  } catch (error) {
+    console.error('Error saving laundry details:', error.response?.data || error.message);
+
+    setAlert({
+      open: true,
+      type: 'error',
+      title: 'Save Failed',
+      message: error.response?.status === 422
+        ? 'Validation error. Please check your input fields.'
+        : 'An error occurred while saving. Please try again.'
+    });
+
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleDiscard = () => {
     setAlert({
@@ -97,7 +125,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
       confirmText: 'Discard',
       cancelText: 'Keep Editing',
       onConfirm: () => {
-        setFormData({ name: '', email: '', description: '', phone: '', address: '', openingHours: '', user_id: 1 });
+        setFormData({ name: '', email: '', description: '', phone: '', address: '', openingHours: '', user_id: user.id });
         setAlert({ open: false });
       }
     });

@@ -5,14 +5,16 @@ import LaundryDetails from './components/LaundryDetails';
 import DeliverySettings from './components/DeliverySettings';
 import FixedServices from './components/FixedServices';
 import FixedProducts from './components/FixedProducts';
+import Ramassages from './components/Ramassages';
 import { 
   User, Store, Truck, Settings, Package, 
-  Menu, X, LogOut, ChevronRight
+  Menu, X, LogOut, ChevronRight, ClipboardList
 } from 'lucide-react';
 import { useAuth } from './context/AppProvider';
 import { Routes, Route, NavLink, Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 const logo = '/images/imageLogo.png';
+  const user =JSON.parse(localStorage.getItem('user') || '{}');
 
 const navItems = [
   { path: '/personal', label: 'Personal Info', icon: User },
@@ -20,6 +22,7 @@ const navItems = [
   { path: '/delivery', label: 'Delivery Settings', icon: Truck },
   { path: '/services', label: 'Services', icon: Settings },
   { path: '/products', label: 'Products', icon: Package },
+  { path: '/ramassages', label: 'Pickups', icon: ClipboardList },
 ];
 
 function App() {
@@ -75,7 +78,8 @@ function App() {
               <User size={20} />
             </div>
             <div className="user-info">
-              <p className="user-name">{user?.name}</p>
+              <p className="user-name">{user.name}</p>
+              <p className="user-role">Store Manager</p>
             </div>
             <button className="user-logout" title="Logout" onClick={()=>{logout()}}>
               <LogOut size={18} />
@@ -108,6 +112,7 @@ function App() {
             <Route path="/delivery" element={<DeliverySettings />} />
             <Route path="/services" element={<FixedServices />} />
             <Route path="/products" element={<FixedProducts />} />
+            <Route path="/ramassages" element={<Ramassages />} />
           </Routes>
         </main>
       </div>

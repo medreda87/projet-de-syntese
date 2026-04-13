@@ -17,6 +17,7 @@ const Services = ({ setCurrentPage }) => {
     cut: Scissors,
     shower: ShowerHead,
   };
+  const laundry = JSON.parse(localStorage.getItem('laundry') || '{}');
 
   const iconOptions = [
     { key: 'laundry', label: 'Laundry' },
@@ -41,12 +42,12 @@ const Services = ({ setCurrentPage }) => {
   const [alert, setAlert] = useState({ isOpen: false, type: 'success', title: '', message: '' });
   const successTimeoutRef = useRef(null);
 
-  const getLaundryId = useCallback(() => parseInt(localStorage.getItem('laundry_id')) || 5, []);
+  const getLaundryId = laundry.id
 
   const fetchServices = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await API.get(`/services/laundry/${getLaundryId()}`);
+      const response = await API.get(`/services/laundry/${getLaundryId}`);
       setServices(response.data);
     } catch (err) {
       setAlert({ isOpen: true, type: 'error', title: 'Error', message: `Failed to load services: ${err.response?.data?.message || err.message}` });
@@ -115,7 +116,7 @@ const Services = ({ setCurrentPage }) => {
       icon: selectedIconKey,
       unit: newService.unit === 'Per Item' ? '/ item' : newService.unit === 'Per KG' ? '/ kg' : newService.unit === 'Flat Rate' ? '/ service' : '/ load',
       price: parseFloat(newService.price),
-      laundry_id: getLaundryId(),
+      laundry_id: getLaundryId,
     };
     try {
       if (isEditMode && editServiceId) {

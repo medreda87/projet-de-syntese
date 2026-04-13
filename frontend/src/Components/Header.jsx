@@ -11,7 +11,7 @@ function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const { isAuthenticated, logout , user } = useAuth()
 
-
+    console.log("isAuthenticated"  , isAuthenticated)
     // Close menu when route changes
     useEffect(() => {
         setIsMenuOpen(false)
@@ -33,8 +33,7 @@ function Header() {
         { href: "/", label: "Home" },
         { href: "/shops", label: "Find Shops" },
         { href: "/how-it-works", label: "How It Works" },
-        { href: "/about", label: "About Us" }
-        
+        { href: "/about", label: "About Us" } 
     ]
 
     return (
@@ -72,7 +71,7 @@ function Header() {
                                 </a>
                             </li>
                         )}
-                        {user && user.role !== 'provider' && (
+                        { user?.role !== 'provider' && (
                             <li key="/become-provider">
                                 <Link 
                                     to="/become-provider" 

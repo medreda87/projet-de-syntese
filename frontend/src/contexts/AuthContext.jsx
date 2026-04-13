@@ -11,13 +11,15 @@ export const AuthProvider = ({ children }) => {
 
   // Load user from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    const stored = localStorage.getItem('userFreshFold');
+    const token = localStorage.getItem('tokenFreshFold');
+    
     if (stored && token) {
       try {
         const parsed = JSON.parse(stored);
         setUser(parsed);
         setIsAuthenticated(true);
+        console.log("Loaded user from localStorage:", isAuthenticated);
       } catch {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
@@ -97,7 +99,7 @@ export const AuthProvider = ({ children }) => {
 
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, updateRole, idLaundry, setIdLaundry }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, updateRole, idLaundry, setIdLaundry }}>
       {children}
     </AuthContext.Provider>
   );

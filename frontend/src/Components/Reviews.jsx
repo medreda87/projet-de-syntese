@@ -35,6 +35,7 @@ const Reviews = ({
   const [replyImagePreview, setReplyImagePreview] = useState(null);
   const [selectedRating, setSelectedRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [hasRamassage, setHasRamassage] = useState(false);
   const [checkingRamassage, setCheckingRamassage] = useState(false);
   const { isAuthenticated, user } = useAuth();
@@ -231,8 +232,14 @@ const Reviews = ({
   const handleSaveEdit = async (reviewId) => {
     if (editText.trim() === "") return;
 
-    // TODO: Make an API call to update the comment on the backend
-    // e.g. await fetch(`/api/reviews/${reviewId}`, { method: 'PUT', body: JSON.stringify({ comment: editText }) })
+    try {
+      await API.put(`/comment/${reviewId}`, { comment: editText });
+      setLocalReviews(prev =>
+        prev.map(r => r.id === reviewId ? { ...r, comment: editText } : r)
+      );
+    } catch (err) {
+      console.error("Failed to update comment:", err);
+    }
 
     setEditingId(null);
     setEditText("");
@@ -240,10 +247,18 @@ const Reviews = ({
 
   // Delete a comment
   const handleDeleteComment = async (reviewId) => {
-    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    setDeleteConfirmId(reviewId);
+  };
 
-    // TODO: Make an API call to delete the comment on the backend
-    // e.g. await fetch(`/api/reviews/${reviewId}`, { method: 'DELETE' })
+  const confirmDelete = async () => {
+    const reviewId = deleteConfirmId;
+    setDeleteConfirmId(null);
+    try {
+      await API.delete(`/comment/${reviewId}`);
+      setLocalReviews(prev => prev.filter(r => r.id !== reviewId));
+    } catch (err) {
+      console.error("Failed to delete comment:", err);
+    }
   };
 
   if (variant === "testimonials") {
@@ -336,6 +351,32 @@ const Reviews = ({
   // Default variant for shop details page
   return (
     <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirmId(null)}>
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-sm mx-4" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mx-auto mb-4">
+              <Trash2 className="w-6 h-6 text-red-500" />
+            </div>
+            <h3 className="text-lg font-bold text-[#1E2A36] text-center mb-2">Delete Comment</h3>
+            <p className="text-sm text-[#62707D] text-center mb-6">Are you sure you want to delete this comment? This action cannot be undone.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-[#1E2A36] font-medium text-sm hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 text-white font-medium text-sm hover:bg-red-600 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h2 className="text-xl font-bold text-[#1E2A36] tracking-tight">{title}</h2>

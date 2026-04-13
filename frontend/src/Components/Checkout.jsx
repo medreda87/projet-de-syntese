@@ -82,9 +82,9 @@ const Checkout = ({
   })
   const location = useLocation()
 
-  const selectedServices = location.state?.form ?? JSON.parse(localStorage.getItem('checkoutServices') || '[]')
-  const laundryId = location.state?.laundryId ?? JSON.parse(localStorage.getItem('checkoutLaundryId') || 'null')
-
+  const selectedServices = JSON.parse(localStorage.getItem('checkoutServices') || '[]')
+  const laundryId = location.state?.laundryId ?? JSON.parse(localStorage.getItem('checkoutLaundryId')  || 'null')
+  console.log(selectedServices)
   const [errors , setErros ] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -319,7 +319,7 @@ const Checkout = ({
         setIsSubmitting(false)          
         setShowSuccess(true)
         setError(null)
-
+        console.log(selectedServices)
         const res =  await API.post("/ramassages", {
           laundry_id: laundryId,  
           fullName: allFormData.fullName,
@@ -367,10 +367,10 @@ const Checkout = ({
 
   const renderProgressSteps = () => {
     return (
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         {/* Step 1 */}
-        <div className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-sm ${
             currentStep > 1 
               ? 'bg-[#0EA5C9] text-white' 
               : currentStep === 1 
@@ -379,13 +379,13 @@ const Checkout = ({
           }`}>
             {currentStep > 1 ? <Icon icon={FaCheck} theme="light" size="sm" /> : '1'}
           </div>
-          <span className="text-sm text-[#62707D]">Informations personnelles</span>
+          <span className="text-xs sm:text-sm text-[#62707D] hidden xs:inline">Infos</span>
         </div>
         <div className={`flex-1 h-0.5 ${currentStep > 1 ? 'bg-[#0EA5C9]' : 'bg-gray-300'}`}></div>
         
         {/* Step 2 */}
-        <div className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-sm ${
             currentStep > 2 
               ? 'bg-[#0EA5C9] text-white' 
               : currentStep === 2 
@@ -394,20 +394,20 @@ const Checkout = ({
           }`}>
             {currentStep > 2 ? <Icon icon={FaCheck} theme="light" size="sm" /> : '2'}
           </div>
-          <span className="text-sm text-[#62707D]">Ramassage</span>
+          <span className="text-xs sm:text-sm text-[#62707D] hidden xs:inline">Ramassage</span>
         </div>
         <div className={`flex-1 h-0.5 ${currentStep > 2 ? 'bg-[#0EA5C9]' : 'bg-gray-300'}`}></div>
         
         {/* Step 3 */}
-        <div className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-sm ${
             currentStep === 3 
               ? 'bg-[#0EA5C9] text-white' 
               : 'bg-gray-300 text-gray-600'
           }`}>
             3
           </div>
-          <span className="text-sm text-[#62707D]">Livraison</span>
+          <span className="text-xs sm:text-sm text-[#62707D] hidden xs:inline">Livraison</span>
         </div>
       </div>
     )
@@ -416,7 +416,7 @@ const Checkout = ({
   const renderOrderSummary = () => {
     return (
       <div className="lg:col-span-1">
-        <div className="bg-white border border-gray-200 rounded-lg p-6 sticky top-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 sticky top-4">
           <h2 className="text-xl font-bold text-[#022545] mb-4">Résumé de la commande</h2>
           
           {/* Delivery Info Box */}
@@ -435,7 +435,7 @@ const Checkout = ({
   }
 
   return (
-    <div className="bg-white min-h-screen py-8 px-4">
+    <div className="bg-white min-h-screen py-4 px-3 sm:py-8 sm:px-4">
       <div className="container mx-auto">
         {/* Success Message */}
         <AnimatePresence>
@@ -447,10 +447,10 @@ const Checkout = ({
               transition={{ duration: 0.3 }}
               className="mb-6 bg-gradient-to-r from-[#1BB38C] to-[#0EA5C9] text-white p-5 rounded-xl shadow-lg flex items-center gap-4"
             >
-              <FaCheckCircle className="w-7 h-7 flex-shrink-0" />
+              <FaCheckCircle className="w-5 h-5 sm:w-7 sm:h-7 flex-shrink-0" />
               <div className="flex-1">
-                <h4 className="font-semibold text-xl mb-1">Order Submitted Successfully!</h4>
-                <p className="text-sm text-white/90">Your order has been received. We'll process it and contact you soon.</p>
+                <h4 className="font-semibold text-base sm:text-xl mb-1">Order Submitted Successfully!</h4>
+                <p className="text-xs sm:text-sm text-white/90">Your order has been received. We'll process it and contact you soon.</p>
               </div>
               <button
                 onClick={() => setShowSuccess(false)}
@@ -489,23 +489,23 @@ const Checkout = ({
           )}
         </AnimatePresence>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2">
             {/* Header */}
-            <div className="mb-8">
-              <button onClick={handleBack} className="flex items-center gap-2 text-[#0EA5C9] mb-4 hover:underline">
+            <div className="mb-4 sm:mb-8">
+              <button onClick={handleBack} className="flex items-center gap-2 text-[#0EA5C9] mb-3 sm:mb-4 hover:underline text-sm">
                 <Icon icon={FaArrowLeft} theme="primary" size="sm" />
                 Back
               </button>
-              <h1 className="text-3xl font-bold text-[#022545] mb-6">Checkout</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#022545] mb-4 sm:mb-6">Checkout</h1>
               {renderProgressSteps()}
             </div>
 
             {/* Step 1: Personal Information */}
             {currentStep === 1 && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-xl font-bold text-[#022545] mb-6">Informations personnelles</h2>
+              <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold text-[#022545] mb-4 sm:mb-6">Informations personnelles</h2>
                 
                 <div className="space-y-4">
                   <div>
@@ -561,8 +561,8 @@ const Checkout = ({
 
             {/* Step 2: Pickup Details */}
             {currentStep === 2 && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
-                <h2 className="text-xl font-bold text-[#022545] mb-6">Détails de ramassage</h2>
+              <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 space-y-4 sm:space-y-6">
+                <h2 className="text-lg sm:text-xl font-bold text-[#022545] mb-4 sm:mb-6">Détails de ramassage</h2>
                 
                 {laundry?.openingHours && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
@@ -583,10 +583,18 @@ const Checkout = ({
                     type="text"
                     name="pickupAddress"
                     value={allFormData.pickupAddress}
-                    onChange={handleStep2Change}
+                    onChange={(e) => {
+                      handleStep2Change(e)
+                      if (errors.pickupAddress) setErros(prev => ({ ...prev, pickupAddress: null }))
+                    }}
                     placeholder="Votre adresse complète"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent mb-4"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent ${errors.pickupAddress ? 'border-red-400' : 'border-gray-300'}`}
                   />
+                  {errors.pickupAddress && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <FaInfoCircle className="flex-shrink-0" /> {errors.pickupAddress}
+                    </p>
+                  )}
                   
                  
                 </div>
@@ -650,25 +658,25 @@ const Checkout = ({
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-4">
-                  <Button onClick={handleNext} className="flex-1">
-                    Suivant
-                  </Button>
+                <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-4">
                   <button
                     onClick={handleBack}
-                    className="px-6 py-3 bg-gray-200 text-[#022545] rounded-lg hover:bg-gray-300 transition-colors flex items-center gap-2"
+                    className="w-full sm:w-auto px-6 py-3 bg-gray-200 text-[#022545] rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                   >
                     <Icon icon={FaArrowLeft} theme="dark" size="sm" />
                     Back
                   </button>
+                  <Button onClick={handleNext} className="flex-1">
+                    Suivant
+                  </Button>
                 </div>
               </div>
             )}
 
             {/* Step 3: Delivery Details */}
             {currentStep === 3 && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
-                <h2 className="text-xl font-bold text-[#022545] mb-6">Détails de livraison</h2>
+              <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 space-y-4 sm:space-y-6">
+                <h2 className="text-lg sm:text-xl font-bold text-[#022545] mb-4 sm:mb-6">Détails de livraison</h2>
                 
                 {laundry?.openingHours && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
@@ -689,10 +697,18 @@ const Checkout = ({
                     type="text"
                     name="deliveryAddress"
                     value={allFormData.deliveryAddress}
-                    onChange={handleStep3Change}
+                    onChange={(e) => {
+                      handleStep3Change(e)
+                      if (errors.deliveryAddress) setErros(prev => ({ ...prev, deliveryAddress: null }))
+                    }}
                     placeholder="Votre adresse complète"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent mb-4"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent ${errors.deliveryAddress ? 'border-red-400' : 'border-gray-300'}`}
                   />
+                  {errors.deliveryAddress && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <FaInfoCircle className="flex-shrink-0" /> {errors.deliveryAddress}
+                    </p>
+                  )}
                   
                 
                 </div>
@@ -757,7 +773,15 @@ const Checkout = ({
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-4">
+                <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-4">
+                  <button
+                    onClick={handleBack}
+                    disabled={isSubmitting}
+                    className="w-full sm:w-auto px-6 py-3 bg-gray-200 text-[#022545] rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Icon icon={FaArrowLeft} theme="dark" size="sm" />
+                    Back
+                  </button>
                   <Button 
                     onClick={handleFinalSubmit} 
                     className="flex-1"
@@ -775,14 +799,6 @@ const Checkout = ({
                       'Passer la commande'
                     )}
                   </Button>
-                  <button
-                    onClick={handleBack}
-                    disabled={isSubmitting}
-                    className="px-6 py-3 bg-gray-200 text-[#022545] rounded-lg hover:bg-gray-300 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Icon icon={FaArrowLeft} theme="dark" size="sm" />
-                    Back
-                  </button>
                 </div>
               </div>
             )}
