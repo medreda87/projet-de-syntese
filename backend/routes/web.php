@@ -14,7 +14,6 @@ Route::apiResource('categories', CategoryController::class);
 
 Route::resource("/user" , UserController::class);
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::get('/user-info', [AuthController::class, 'userInfo'])->middleware('auth:sanctum');
 Route::resource("comment" , CommentController::class);
-
 Route::post('/api/send-mail', [UserController::class, 'sendMail']);
