@@ -63,3 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/ramassages/check/{laundryId}', [RamassageController::class, 'checkForLaundry']);
 });
 Route::post('/ramassages', [RamassageController::class, 'store']);
+
+Route::get('/laundries/user/{userId}', [LaundryController::class, 'getLaundriesByUser']);
+Route::get('/laundries/{id}', [LaundryController::class, 'getLaundryById']);
