@@ -1,6 +1,7 @@
 import React from 'react'
 import TitleSectionText from './ui/TitleSectionText'
 import Button from './Button'
+import { Link } from 'react-router-dom'
 
 const Component20 = ({
   tagText = null,
@@ -30,7 +31,9 @@ const Component20 = ({
                 onClick={onPrimaryClick}
                 className="w-full sm:w-[50%] "
               >
-                {primaryButtonText}
+                <Link to="/signup">
+                  {primaryButtonText}
+                </Link>
               </Button>
              
             </div>

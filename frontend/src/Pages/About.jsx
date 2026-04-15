@@ -97,7 +97,7 @@ const About = () => {
       </motion.div>
 
       {
-        user.role === 'customer' && (
+        user?.role !== 'provider' && (
            <Component20 />
         )
       }

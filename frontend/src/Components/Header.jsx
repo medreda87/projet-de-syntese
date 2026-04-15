@@ -11,7 +11,6 @@ function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const { isAuthenticated, logout , user } = useAuth()
 
-    console.log("isAuthenticated"  , isAuthenticated)
     // Close menu when route changes
     useEffect(() => {
         setIsMenuOpen(false)

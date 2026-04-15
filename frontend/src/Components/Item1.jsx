@@ -25,7 +25,7 @@ function Item1(props){
       {/* Image */}
       <div className='relative overflow-hidden h-[200px]'>
         <img 
-          src={props.image} 
+          src={props.logo} 
           alt={props.name} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -43,7 +43,7 @@ function Item1(props){
               ? 'bg-emerald-500/90 text-white' 
               : 'bg-gray-500/90 text-white'
           }`}>
-            {props.status}
+            {props.is_active ? 'Open' : 'Closed'}
           </span>
         </div>
 

@@ -16,7 +16,6 @@ export const AppProvider = ({ children }) => {
         const userConnected = localStorage.getItem('user');
         const laundry = localStorage.getItem('laundry');
         
-        console.log('AuthProvider mounted. Token:', token, 'User:', userConnected);
         if(!token || !userConnected){
             setIsAuthenticated(false);
             //window.location.href = 'http://localhost:3000/login';
@@ -30,8 +29,9 @@ export const AppProvider = ({ children }) => {
     }, [])
 
     const logout = () => {
-        localStorage.removeItem('userFreshFold');
-        localStorage.removeItem('tokenFreshFold');
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('laundry');
         setUser(null);
         setIsAuthenticated(false);
         window.location.href = 'http://localhost:3000/login';

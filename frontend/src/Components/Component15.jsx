@@ -1,10 +1,11 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import Button from './Button'
 import Tag from './ui/Tag'
 import Icon from './ui/Icon'
 import { FaSearch, FaArrowRight } from 'react-icons/fa'
 
-const Component24 = ({
+const Component15 = ({
   tagText = "Rejoignez + 100 prestataires",
   titlePart1 = "Getting Started is ",
   titlePart2 = "Easy",
@@ -77,5 +78,5 @@ const Component24 = ({
   )
 }
 
-export default Component24
+export default Component15
 

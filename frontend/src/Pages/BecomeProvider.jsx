@@ -27,7 +27,6 @@ const BecomeProvider = () => {
         titlePart1="Ready to Get Started?"
         description="Fill out the form below and we'll get you set up in no time."
         onSubmit={(formData) => {
-          console.log('Provider application submitted:', formData)
         }}
         
       />

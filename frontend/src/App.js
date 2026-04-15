@@ -1,5 +1,6 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { useAuth } from "./contexts/AuthContext";
 import Header  from "./Components/Header";
 import Footer from "./Components/Footer";
 import CookieBanner from "./Components/CookieBanner";
@@ -18,6 +19,13 @@ import Checkout from "./Components/Checkout";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 import AddLaundryForm from "./Components/AddlaundryForm";
+
+const ProtectedRoute = ({ children, requiredRole }) => {
+  const { isAuthenticated, user } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (requiredRole && user?.role !== requiredRole) return <Navigate to="/" replace />;
+  return children;
+};
 
 
 
@@ -43,7 +51,11 @@ const App = () => {
           <Route path="/privacy" element={<Legal />} />
           <Route path="/cookies" element={<Cookies />} />
           <Route path="/:title" element={<ShopDetail />} />
-          <Route path="/admin" element={<AddLaundryForm />} />
+          <Route path="/admin" element={
+            <ProtectedRoute requiredRole="provider">
+              <AddLaundryForm />
+            </ProtectedRoute>
+          } />
 
           <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />

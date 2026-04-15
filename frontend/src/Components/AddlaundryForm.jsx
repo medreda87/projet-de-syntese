@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import API from "../utils/api";
 import {
   Save,
   Image as ImageIcon,
@@ -15,7 +18,11 @@ import {
 
 import "../AddLaundryForm.css";
 
-const AddLaundryForm = ({ onAddLaundry }) => {
+const AddLaundryForm = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     location: "",
@@ -59,29 +66,50 @@ const AddLaundryForm = ({ onAddLaundry }) => {
     setServices(services.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!user) {
+      setError("You must be logged in to create a laundry.");
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
 
-    onAddLaundry({
-      ...formData,
-      services,
-      image: preview,
-    });
+    try {
+      const data = new FormData();
+      data.append("name", formData.title);
+      data.append("address", formData.location);
+      data.append("description", formData.description);
+      data.append("openingHours", formData.time);
+      data.append("phone", formData.reviews || "");
+      data.append("user_id", user.id);
+      if (formData.image) {
+        data.append("logo", formData.image);
+      }
 
-    setFormData({
-      title: "",
-      location: "",
-      description: "",
-      rating: "",
-      reviews: "",
-      time: "",
-      image: null,
-      verified: false,
-      status: "Open",
-    });
+      await API.post("/laundries", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-    setServices([]);
-    setPreview(null);
+      setFormData({
+        title: "",
+        location: "",
+        description: "",
+        rating: "",
+        reviews: "",
+        time: "",
+        image: null,
+        verified: false,
+        status: "Open",
+      });
+      setServices([]);
+      setPreview(null);
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to create laundry. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -89,6 +117,12 @@ const AddLaundryForm = ({ onAddLaundry }) => {
       <h3>
         <Shirt size={24} color="#4fc2c8" /> Informations de la laverie
       </h3>
+
+      {error && (
+        <div style={{ background: "#fee2e2", color: "#dc2626", padding: "12px 16px", borderRadius: 8, marginBottom: 16 }}>
+          {error}
+        </div>
+      )}
 
       {/* NOM & ADRESSE */}
       <div className="row">
@@ -230,9 +264,9 @@ const AddLaundryForm = ({ onAddLaundry }) => {
 
       {/* ACTIONS */}
       <div className="actions">
-        <button type="reset" className="btn-cancel">Annuler</button>
-        <button type="submit" className="btn-save">
-          <Save size={16} /> Enregistrer
+        <button type="reset" className="btn-cancel" disabled={submitting}>Annuler</button>
+        <button type="submit" className="btn-save" disabled={submitting}>
+          <Save size={16} /> {submitting ? "Enregistrement..." : "Enregistrer"}
         </button>
       </div>
     </form>

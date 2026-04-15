@@ -2,32 +2,57 @@ import React, { useEffect, useState } from 'react';
 import './styles.css';
 import { User, Mail, Phone, MapPin, Shield, CreditCard, Bell, HelpCircle } from 'lucide-react';
 import AlertModal from './AlertModal';
+import API from '../api/axiosApi';
 
 const PersonalInformation = () => {
   const [formData, setFormData] = useState({
-    fullName: "Houda Rammach",
-    email: "houda@example.com",
-    phone: "+212- 687474748",
-    address: "123 Tanger, Al_Madina, 134"
+    fullName: "",
+    email: "",
   });
-const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const [alert, setAlert] = useState({ open: false, type: 'success', title: '', message: '' });
+  const [saving, setSaving] = useState(false);
 
-
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: user.name || "",
+        email: user.email || "",
+      });
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Saved:", formData);
-    setAlert({
-      open: true,
-      type: 'success',
-      title: 'Changes Saved!',
-      message: 'Your personal information has been updated successfully.'
-    });
+    setSaving(true);
+    try {
+      await API.put('/me', {
+        name: formData.fullName,
+        email: formData.email,
+      });
+      // Update localStorage with new user data
+      const updatedUser = { ...user, name: formData.fullName, email: formData.email };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setAlert({
+        open: true,
+        type: 'success',
+        title: 'Changes Saved!',
+        message: 'Your personal information has been updated successfully.'
+      });
+    } catch (err) {
+      setAlert({
+        open: true,
+        type: 'error',
+        title: 'Update Failed',
+        message: err.response?.data?.message || 'Failed to update your information.'
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -57,7 +82,7 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
                 <label className="form-label">Full Name</label>
                 <div className="input-group">
                   <span className="input-icon"><User size={18} /></span>
-                  <input type="text" name="fullName" value={user.name} onChange={handleChange} className="form-input" />
+                  <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="form-input" />
                 </div>
               </div>
 
@@ -65,7 +90,7 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
                 <label className="form-label">Email Address</label>
                 <div className="input-group">
                   <span className="input-icon"><Mail size={18} /></span>
-                  <input type="email" name="email" value={user.email} onChange={handleChange} className="form-input" />
+                  <input type="email" name="email" value={formData.email} onChange={handleChange} className="form-input" />
                 </div>
               </div>
 
@@ -90,7 +115,9 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
               <p className="form-footer-text">Your information is securely encrypted and stored.</p>
               <div className="form-footer-actions">
                 <button type="button" className="btn btn--outline">Cancel</button>
-                <button type="submit" className="btn btn--primary">Save Changes</button>
+                <button type="submit" className="btn btn--primary" disabled={saving}>
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
               </div>
             </div>
           </form>

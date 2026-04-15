@@ -59,8 +59,6 @@ export const sendEmail = (props) => {
     phone
   );
 
-  console.log("Sending email...");
-  
   return emailjs.send(
     "service_da54p3l",     // Service ID
     "template_dlr8gz6",    // Template ID

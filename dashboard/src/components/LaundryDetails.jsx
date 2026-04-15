@@ -240,7 +240,6 @@ const LaundryDetails = ({ setCurrentPage }) => {
     try {
       const response = await API.get(`/laundries/user/${user.id}`);
       setUserLaundries(response.data);
-      console.log('Fetched laundries:', response.data);
     } catch (error) {
       console.error('Error fetching laundries:', error.response?.data || error.message);
     }

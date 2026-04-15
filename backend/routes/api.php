@@ -60,13 +60,12 @@ Route::get('/comments/laundry/{laundryId}', [CommentController::class, 'byLaundr
 use App\Http\Controllers\RamassageController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/ramassages', [RamassageController::class, 'index']);
-    Route::get('/ramassages/{id}', [RamassageController::class, 'show']);
     Route::get('/ramassages/check/{laundryId}', [RamassageController::class, 'checkForLaundry']);
     Route::get('/ramassages/laundry/{laundryId}', [RamassageController::class, 'getByLaundry']);
+    Route::get('/ramassages/{id}', [RamassageController::class, 'show']);
     Route::put('/ramassages/{id}/status', [RamassageController::class, 'updateStatus']);
     Route::delete('/ramassages/{id}', [RamassageController::class, 'destroy']);
 });
 Route::post('/ramassages', [RamassageController::class, 'store']);
 
 Route::get('/laundries/user/{userId}', [LaundryController::class, 'getLaundriesByUser']);
-Route::get('/laundries/{id}', [LaundryController::class, 'getLaundryById']);

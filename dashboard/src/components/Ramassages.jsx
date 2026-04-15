@@ -239,6 +239,15 @@ const Ramassages = () => {
                     <span style={{ fontSize: 13, color: '#64748b' }}>{r.pickup_date} · {r.pickup_time}</span>
                   </div>
 
+                  {/* Price */}
+                  {r.total_price != null && (
+                    <div style={{ flex: '0 0 auto' }}>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: '#0ea5c9' }}>
+                        {parseFloat(r.total_price).toFixed(2)} DH
+                      </span>
+                    </div>
+                  )}
+
                   {/* Status Badge */}
                   <div style={{ flex: '0 0 auto' }}>
                     <span style={{
@@ -315,6 +324,29 @@ const Ramassages = () => {
                         )}
                       </div>
                     </div>
+
+                    {/* Pricing Summary */}
+                    {r.total_price != null && (
+                      <div style={{ marginTop: 16, padding: 16, borderRadius: 10, background: '#f0f9ff', border: '1px solid #bae6fd' }}>
+                        <h4 style={{ margin: '0 0 12px 0', fontSize: 14, fontWeight: 600, color: '#0284c7' }}>💰 Pricing</h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#475569' }}>
+                            <span>Services total</span>
+                            <span style={{ fontWeight: 500 }}>{parseFloat(r.services_total || 0).toFixed(2)} DH</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#475569' }}>
+                            <span>Delivery fee</span>
+                            <span style={{ fontWeight: 500, color: parseFloat(r.delivery_price) === 0 ? '#10b981' : '#475569' }}>
+                              {parseFloat(r.delivery_price) === 0 ? 'Free' : `${parseFloat(r.delivery_price || 0).toFixed(2)} DH`}
+                            </span>
+                          </div>
+                          <div style={{ borderTop: '1px solid #bae6fd', paddingTop: 8, marginTop: 4, display: 'flex', justifyContent: 'space-between', fontSize: 15, fontWeight: 700, color: '#0ea5c9' }}>
+                            <span>Total</span>
+                            <span>{parseFloat(r.total_price).toFixed(2)} DH</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Actions */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, flexWrap: 'wrap', gap: 12 }}>

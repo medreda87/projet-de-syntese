@@ -38,7 +38,10 @@ class Ramassage extends Model
         'delivery_latitude',
         'delivery_longitude',
         'status',
-        'services' 
+        'services',
+        'delivery_price',
+        'services_total',
+        'total_price',
     ];
 
     public function user()

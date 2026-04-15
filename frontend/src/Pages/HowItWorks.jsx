@@ -98,7 +98,7 @@ const HowItWorks = () => {
       />
       <Component24 />
       {
-        user.role === 'customer' && (
+        user?.role !== 'provider' && (
            <Component20 />
         )
       }

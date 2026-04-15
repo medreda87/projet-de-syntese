@@ -137,7 +137,6 @@ const handleSubmit = async (e) => {
   });
 
 
-    console.log("Provider créé:", response.data);
     setMessage("Votre demande a été soumise avec succès !");
     setType("success");
     setError(null);

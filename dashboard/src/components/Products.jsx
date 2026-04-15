@@ -105,7 +105,6 @@ const Products = ({ setCurrentPage }) => {
         image: imagePreview || 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=100&h=100&fit=crop'
       };
 
-      console.log('Saving product:', productData);
 const formData = new FormData();
 formData.append('name', newProduct.name);
 formData.append('price', parseFloat(newProduct.price));

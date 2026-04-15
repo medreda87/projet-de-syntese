@@ -70,12 +70,15 @@ const ShopDetail = () => {
 
 
   useEffect(()=>{
+    if (!laundry_id) {
+      setLoading(false)
+      return
+    }
 
     const fetchShopDetails = async () => {
       try {
         setLoading(true)
         const res = await API.get(`/laundries/${laundry_id}`);
-        console.log("Fetched shop details:", res.data);
         setShop(res.data.laundry);
         setReviews(res.data.laundry.comments || []);
       } catch (error) {
@@ -516,7 +519,7 @@ const ShopDetail = () => {
                 reviews={reviews}
                 title="Customer Reviews"
                 showRatingSummary={true}
-                laundryId={shopId}
+                laundryId={shop.id}
                 variant="default"
               />
             </div>

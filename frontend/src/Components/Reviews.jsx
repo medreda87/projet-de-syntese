@@ -199,7 +199,6 @@ const Reviews = ({
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     .then((response) => {
-      console.log("Reply submitted successfully:", response.data);
       const newReply = response.data.comment;
       setLocalReviews(prev => prev.map(r => 
         r.id === parentId 

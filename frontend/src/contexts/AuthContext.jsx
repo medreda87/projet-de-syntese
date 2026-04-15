@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
         const parsed = JSON.parse(stored);
         setUser(parsed);
         setIsAuthenticated(true);
-        console.log("Loaded user from localStorage:", isAuthenticated);
       } catch {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
@@ -31,7 +30,6 @@ export const AuthProvider = ({ children }) => {
     
     try {
       const res = await API.post('/login', credentials);
-      console.log('Login response:', res.data);
       if (res.data.success) {
         const { user: userData, access_token } = res.data;
         setUser(userData);
@@ -73,7 +71,6 @@ export const AuthProvider = ({ children }) => {
       const res = await API.put('/update-role', { role });
       if (res.data.success) {
         const updatedUser = res.data.user;
-        console.log('Updated user:', updatedUser);
         setUser(updatedUser);
         localStorage.setItem('userFreshFold', JSON.stringify(updatedUser));
         return { success: true };

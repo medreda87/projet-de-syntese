@@ -162,7 +162,6 @@ const LocationForm = ({ location, position, setPosition }) => {
               eventHandlers={{
                 dragend: (e) => {
                   const latlng = e.target.getLatLng();
-                  console.log(latlng);
                   setPosition({
                     ...position,
                     latitude: latlng.lat,

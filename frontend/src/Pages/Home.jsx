@@ -237,7 +237,6 @@ const Home = () => {
     const getLaundries = async () => {
       try {
         const response = await API.get("/laundries");
-        console.log("Fetched laundries:", response.data);
         setLaundries(response.data.data);
           
 
@@ -304,15 +303,13 @@ const Home = () => {
               </div>
             ) : (
                laundries?.map((re, index) => (
-               <motion.div
+               <div
                  key={re.id}
                  className="col-span-1"
-                 variants={itemVariants}
-                 whileHover={{ scale: 1.02 }}
-                 transition={{ duration: 0.2 }}
+                
               >
                 <Item1 {...re} />
-              </motion.div>
+              </div>
             ))
            )}
           </div>

@@ -84,7 +84,6 @@ const Checkout = ({
 
   const selectedServices = JSON.parse(localStorage.getItem('checkoutServices') || '[]')
   const laundryId = location.state?.laundryId ?? JSON.parse(localStorage.getItem('checkoutLaundryId')  || 'null')
-  console.log(selectedServices)
   const [errors , setErros ] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -93,6 +92,48 @@ const Checkout = ({
 
   const [laundry, setLaundry] = useState(null)
   const [workingDays, setWorkingDays] = useState([0, 1, 2, 3, 4, 5, 6])
+  const [deliveryPrice, setDeliveryPrice] = useState(null)
+
+  // Calculate services total from selected services
+  const servicesTotal = selectedServices.reduce((sum, s) => sum + (parseFloat(s.price) || 0), 0)
+
+  // Haversine distance calculation (km)
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLon = (lon2 - lon1) * Math.PI / 180
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) ** 2
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  }
+
+  // Compute delivery price based on laundry delivery settings
+  const computeDeliveryPrice = (laundryData, deliveryLat, deliveryLng) => {
+    const delivery = laundryData?.delivery
+    if (!delivery) return 0
+
+    switch (delivery.type) {
+      case 'free':
+        return 0
+      case 'fixed':
+        return delivery.fixed_price || 0
+      case 'free_above':
+        return servicesTotal >= (delivery.min_order || 0) ? 0 : (delivery.fixed_price || 0)
+      case 'distance': {
+        if (laundryData.latitude && laundryData.longitude && deliveryLat && deliveryLng) {
+          const dist = haversineDistance(
+            laundryData.latitude, laundryData.longitude,
+            deliveryLat, deliveryLng
+          )
+          return Math.round(dist * (delivery.price_per_km || 0) * 100) / 100
+        }
+        return 0
+      }
+      default:
+        return 0
+    }
+  }
 
   useEffect(() => {
     if (laundryId) {
@@ -227,6 +268,14 @@ const Checkout = ({
     longitude: -5.818333625793458,
   });
 
+  // Recalculate delivery price when delivery position or laundry changes
+  useEffect(() => {
+    if (laundry) {
+      const price = computeDeliveryPrice(laundry, positionLivraison.latitude, positionLivraison.longitude)
+      setDeliveryPrice(price)
+    }
+  }, [positionLivraison, laundry, servicesTotal])
+
   const handleStep1Change = (e) => {
     const { name, value, type, checked } = e.target
     setAllFormData({
@@ -319,7 +368,6 @@ const Checkout = ({
         setIsSubmitting(false)          
         setShowSuccess(true)
         setError(null)
-        console.log(selectedServices)
         const res =  await API.post("/ramassages", {
           laundry_id: laundryId,  
           fullName: allFormData.fullName,
@@ -334,7 +382,8 @@ const Checkout = ({
           deliveryTime: allFormData.deliveryTime,
           deliveryLatitude: positionLivraison.latitude,
           deliveryLongitude: positionLivraison.longitude,
-          services: selectedServices[0]
+          services: selectedServices,
+          servicesTotal: servicesTotal,
         })
 
 
@@ -414,21 +463,83 @@ const Checkout = ({
   }
 
   const renderOrderSummary = () => {
+    const delivery = laundry?.delivery
+    const total = servicesTotal + (deliveryPrice || 0)
+
+    const getDeliveryLabel = () => {
+      if (!delivery) return 'Non configurée'
+      switch (delivery.type) {
+        case 'free': return 'Gratuite'
+        case 'fixed': return `Fixe: ${delivery.fixed_price} DH`
+        case 'free_above': return servicesTotal >= (delivery.min_order || 0) 
+          ? 'Gratuite (min atteint)' 
+          : `${delivery.fixed_price} DH (gratuit dès ${delivery.min_order} DH)`
+        case 'distance': return `Par distance (${delivery.price_per_km} DH/km)`
+        default: return delivery.type
+      }
+    }
+
     return (
       <div className="lg:col-span-1">
         <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 sticky top-4">
           <h2 className="text-xl font-bold text-[#022545] mb-4">Résumé de la commande</h2>
           
-          {/* Delivery Info Box */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="flex items-start gap-3">
-              <Icon icon={FaCheck} theme="accent" size="md" className="text-green-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-bold text-green-700 mb-1">{orderSummary.deliveryInfo.title}</p>
-                <p className="text-sm text-green-600">{orderSummary.deliveryInfo.message}</p>
+          {/* Selected Services */}
+          {selectedServices.length > 0 && (
+            <div className="space-y-2 mb-4">
+              <h3 className="text-sm font-semibold text-[#022545]">Services sélectionnés</h3>
+              {selectedServices.map((service, index) => (
+                <div key={index} className="flex justify-between text-sm">
+                  <span className="text-[#62707D]">{service.name}</span>
+                  <span className="font-medium text-[#022545]">{parseFloat(service.price).toFixed(2)} DH</span>
+                </div>
+              ))}
+              <div className="border-t border-gray-100 pt-2 flex justify-between text-sm font-semibold">
+                <span className="text-[#022545]">Sous-total services</span>
+                <span className="text-[#022545]">{servicesTotal.toFixed(2)} DH</span>
               </div>
             </div>
+          )}
+
+          {/* Delivery Pricing */}
+          <div className="space-y-2 mb-4">
+            <h3 className="text-sm font-semibold text-[#022545]">Livraison</h3>
+            <div className="flex justify-between text-sm">
+              <span className="text-[#62707D]">{getDeliveryLabel()}</span>
+              <span className={`font-medium ${deliveryPrice === 0 ? 'text-green-600' : 'text-[#022545]'}`}>
+                {deliveryPrice === 0 ? 'Gratuit' : `${(deliveryPrice || 0).toFixed(2)} DH`}
+              </span>
+            </div>
           </div>
+
+          {/* Total */}
+          <div className="border-t-2 border-gray-200 pt-3">
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-bold text-[#022545]">Total</span>
+              <span className="text-lg font-bold text-[#0EA5C9]">{total.toFixed(2)} DH</span>
+            </div>
+          </div>
+
+          {/* Delivery Info Box */}
+          {delivery?.type === 'free_above' && servicesTotal < (delivery.min_order || 0) && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-4">
+              <div className="flex items-start gap-2">
+                <FaInfoCircle className="text-amber-500 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-700">
+                  Ajoutez <strong>{((delivery.min_order || 0) - servicesTotal).toFixed(2)} DH</strong> de services pour bénéficier de la livraison gratuite !
+                </p>
+              </div>
+            </div>
+          )}
+
+          {delivery?.type === 'free' && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-4">
+              <div className="flex items-start gap-2">
+                <Icon icon={FaCheck} theme="accent" size="md" className="text-green-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-green-600">Livraison gratuite pour cette pressing !</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )
