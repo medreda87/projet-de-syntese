@@ -114,4 +114,16 @@ class LaundryController extends Controller
             'cities' => $cities,
         ]);
     }
+// get toute les laundry d'un user 
+public function getLaundriesByUser($userId)
+{
+    $laundries = Laundry::where('user_id', $userId)->get();
+    return response()->json($laundries);
+}
+// get info d'un laundry par son id
+public function getLaundryById($id)
+{
+    $laundry=Laundry::findOrFail($id);
+    return response()->json($laundry);
+}
 }

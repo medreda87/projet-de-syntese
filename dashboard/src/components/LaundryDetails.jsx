@@ -10,7 +10,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useAuth } from '../context/AppProvider';
 
-// Fix Leaflet icon issue
+// Fix Leaflet icon
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -18,35 +18,38 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Component to handle map clicks and marker
+// Map marker component
 function LocationMarker({ position, setPosition, setAddressFromCoords }) {
-  const map = useMapEvents({
+  useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
-      setPosition([lat, lng]);
-      // Reverse geocode to get address
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.display_name) {
-            setAddressFromCoords(data.display_name);
-          }
-        })
-        .catch(err => console.error('Reverse geocoding error:', err));
-    },
-  });
-
-  return position ? <Marker position={position} draggable={true} eventHandlers={{
-    dragend(e) {
-      const { lat, lng } = e.target.getLatLng();
       setPosition([lat, lng]);
       fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`)
         .then(res => res.json())
         .then(data => {
           if (data.display_name) setAddressFromCoords(data.display_name);
-        });
-    }
-  }} /> : null;
+        })
+        .catch(err => console.error('Reverse geocoding error:', err));
+    },
+  });
+
+  return position ? (
+    <Marker
+      position={position}
+      draggable={true}
+      eventHandlers={{
+        dragend(e) {
+          const { lat, lng } = e.target.getLatLng();
+          setPosition([lat, lng]);
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.display_name) setAddressFromCoords(data.display_name);
+            });
+        },
+      }}
+    />
+  ) : null;
 }
 
 const LaundryDetails = ({ setCurrentPage }) => {
@@ -63,16 +66,21 @@ const LaundryDetails = ({ setCurrentPage }) => {
     email: '',
     description: '',
     user_id: user.id,
-    openingHours: ''
+    openingHours: '',
+    bigLogo: '',
+    logo: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState({ open: false, type: 'success', title: '', message: '' });
 
   // Map state
-  const [markerPosition, setMarkerPosition] = useState(null); // [lat, lng]
-  const [mapCenter, setMapCenter] = useState([33.5731, -7.5898]); // Default: Casablanca
+  const [markerPosition, setMarkerPosition] = useState(null);
+  const [mapCenter, setMapCenter] = useState([33.5731, -7.5898]);
 
-  // When address changes manually, optionally geocode and move map
+  // User's laundries list
+  const [userLaundries, setUserLaundries] = useState([]);
+
+  // Geocode address to move map
   const geocodeAddress = async (address) => {
     if (!address) return;
     try {
@@ -121,13 +129,14 @@ const LaundryDetails = ({ setCurrentPage }) => {
     }
   };
 
+  // Always create a new laundry (no update)
   const handleSave = async () => {
     if (!formData.name || !formData.address || !formData.phone) {
       setAlert({
         open: true,
         type: 'warning',
         title: 'Missing Fields',
-        message: 'Please fill in Name, Address, and Phone.'
+        message: 'Please fill in Name, Address, and Phone.',
       });
       return;
     }
@@ -141,35 +150,56 @@ const LaundryDetails = ({ setCurrentPage }) => {
       data.append('phone', formData.phone);
       data.append('address', formData.address);
       data.append('openingHours', formData.openingHours || '');
-      data.append('user_id', formData.user_id);
+      data.append('user_id', user.id);
+
+
+
       if (profilePhoto) data.append('logo', profilePhoto);
       if (coverPhoto) data.append('bigLogo', coverPhoto);
 
       const response = await API.post('/laundries', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      const laundry = response.data;
-      localStorage.setItem("laundry", JSON.stringify({
-        ...formData,
-        id: laundry.id
-      }));
+      localStorage.setItem('laundry', JSON.stringify(response.data));
 
+
+      const laundry = response.data;
       setAlert({
         open: true,
         type: 'success',
         title: 'Success!',
-        message: 'Your laundry information has been saved successfully.'
+        message: 'Your laundry has been created successfully.',
       });
+
+      // Refresh the list of laundries
+      fetchUserLaundries();
+
+      // Optionally reset form or keep it
+      // Reset form to clear
+      setFormData({
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        description: '',
+        openingHours: '',
+        user_id: user.id,
+        bigLogo: '',
+        logo: '',
+      });
+      setCoverPreview('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1200&h=400&fit=crop');
+      setProfilePreview('https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=150&h=150&fit=crop');
+      setMarkerPosition(null);
+      setMapCenter([33.5731, -7.5898]);
+
     } catch (error) {
-      console.error('Error saving laundry details:', error.response?.data || error.message);
+      console.error('Error saving laundry:', error.response?.data || error.message);
       setAlert({
         open: true,
         type: 'error',
         title: 'Save Failed',
-        message: error.response?.status === 422
-          ? 'Validation error. Please check your input fields.'
-          : 'An error occurred while saving. Please try again.'
+        message: error.response?.data?.message || 'An error occurred. Please try again.',
       });
     } finally {
       setIsLoading(false);
@@ -181,20 +211,107 @@ const LaundryDetails = ({ setCurrentPage }) => {
       open: true,
       type: 'warning',
       title: 'Discard Changes?',
-      message: 'Are you sure you want to discard all changes? This cannot be undone.',
+      message: 'Are you sure you want to discard all changes?',
       confirmText: 'Discard',
       cancelText: 'Keep Editing',
       onConfirm: () => {
-        setFormData({ name: '', email: '', description: '', phone: '', address: '', openingHours: '', user_id: user.id });
+        setFormData({
+          name: '',
+          address: '',
+          phone: '',
+          email: '',
+          description: '',
+          openingHours: '',
+          user_id: user.id,
+          bigLogo: '',
+          logo: '',
+        });
+        setCoverPreview('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1200&h=400&fit=crop');
+        setProfilePreview('https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=150&h=150&fit=crop');
         setMarkerPosition(null);
+        setMapCenter([33.5731, -7.5898]);
         setAlert({ open: false });
-      }
+      },
     });
   };
 
+  // Fetch user's laundries
+  const fetchUserLaundries = async () => {
+    try {
+      const response = await API.get(`/laundries/user/${user.id}`);
+      setUserLaundries(response.data);
+      console.log('Fetched laundries:', response.data);
+    } catch (error) {
+      console.error('Error fetching laundries:', error.response?.data || error.message);
+    }
+  };
+
+  // Load existing laundry data into the form (for viewing/editing before creating a new one)
+  const handleSelectLaundry = async (id) => {
+    if (!id) {
+      // "Create new" selected
+      setFormData({
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        description: '',
+        openingHours: '',
+        user_id: user.id,
+        bigLogo: '',
+        logo: '',
+      });
+      setCoverPreview('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1200&h=400&fit=crop');
+      setProfilePreview('https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=150&h=150&fit=crop');
+      setMarkerPosition(null);
+      setMapCenter([33.5731, -7.5898]);
+      return;
+    }
+
+    try {
+      const response = await API.get(`/laundries/${id}`);
+      const laundry = response.data;
+      localStorage.setItem('laundry', JSON.stringify(response.data));
+      setFormData({
+        name: laundry.name,
+        address: laundry.address,
+        phone: laundry.phone,
+        email: laundry.email || '',
+        description: laundry.description || '',
+        openingHours: laundry.openingHours || '',
+        user_id: user.id,
+        bigLogo: laundry.bigLogo || '',
+        logo: laundry.logo || '',
+      });
+
+
+      // Set image previews
+      if (laundry.bigLogo) {
+        setCoverPreview(`http://localhost:8000/storige/covers/${laundry.bigLogo}`);
+      } else {
+        setCoverPreview('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1200&h=400&fit=crop');
+      }
+      if (laundry.logo) {
+        setProfilePreview(`http://localhost:8000/images/logos/${laundry.logo}`);
+      } else {
+        setProfilePreview('https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=150&h=150&fit=crop');
+      }
+
+      // Move map to address
+      if (laundry.address) {
+        geocodeAddress(laundry.address);
+      }
+    } catch (error) {
+      console.error('Error fetching laundry details:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserLaundries();
+  }, [user.id]);
+
   return (
     <div className="laundry-page">
-      {/* Header */}
       <header className="laundry-topbar">
         <div>
           <h1 className="laundry-topbar-title">Laundry Details</h1>
@@ -206,8 +323,36 @@ const LaundryDetails = ({ setCurrentPage }) => {
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Styled dropdown */}
+
+
+
       <main className="laundry-main">
+
+        {userLaundries.length > 0 && (
+  <div className="laundry-card">
+      <div className="laundry-card-header">
+        <div className="laundry-card-icon">
+            <Building2 size={20} /></div>
+            <h3>Select laundry</h3>
+          </div>
+    <div className="laundry-field">
+    <label>Select Your Laundry</label>
+    <select
+      value=""
+      onChange={(e) => handleSelectLaundry(e.target.value)}
+    >
+      <option value=""> Create new laundry</option>
+      {userLaundries.map((laundry) => (
+        <option key={laundry.id} value={laundry.id}>
+           {laundry.name}
+        </option>
+      ))}
+    </select>
+    </div>
+
+  </div>
+)}
         {/* Banner */}
         <div className="laundry-banner">
           <div className="laundry-cover" style={{ backgroundImage: `url(${coverPreview})` }}>
@@ -241,7 +386,8 @@ const LaundryDetails = ({ setCurrentPage }) => {
         {/* Business Info */}
         <div className="laundry-card">
           <div className="laundry-card-header">
-            <div className="laundry-card-icon"><Building2 size={20} /></div>
+            <div className="laundry-card-icon">
+              <Building2 size={20} /></div>
             <h3>Business Information</h3>
           </div>
           <div className="laundry-form-grid">
@@ -281,8 +427,8 @@ const LaundryDetails = ({ setCurrentPage }) => {
                 <input type="text" name="address" placeholder="Full business address" value={formData.address} onChange={handleInputChange} />
               </div>
               <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn--small btn--outline"
                   onClick={() => geocodeAddress(formData.address)}
                 >
@@ -294,12 +440,11 @@ const LaundryDetails = ({ setCurrentPage }) => {
 
           {/* Map Section */}
           <div style={{ marginTop: '20px', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
-            <MapContainer 
-              center={mapCenter} 
-              zoom={13} 
+            <MapContainer
+              center={mapCenter}
+              zoom={13}
               style={{ height: '350px', width: '100%' }}
               whenReady={() => {
-                // If address already exists, try to geocode it on load
                 if (formData.address && !markerPosition) {
                   geocodeAddress(formData.address);
                 }
@@ -309,14 +454,14 @@ const LaundryDetails = ({ setCurrentPage }) => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-              <LocationMarker 
-                position={markerPosition} 
-                setPosition={setMarkerPosition} 
-                setAddressFromCoords={setAddressFromCoords} 
+              <LocationMarker
+                position={markerPosition}
+                setPosition={setMarkerPosition}
+                setAddressFromCoords={setAddressFromCoords}
               />
             </MapContainer>
             <div style={{ padding: '8px 12px', background: '#f8fafc', fontSize: '12px', color: '#475569' }}>
-              <MapPin size={16} /> Click on the map or drag the marker to set your laundry location. Address will update automatically.
+              <MapPin size={16} /> Click on the map or drag the marker to set your laundry location.
             </div>
           </div>
         </div>
@@ -351,7 +496,7 @@ const LaundryDetails = ({ setCurrentPage }) => {
         <div className="laundry-actions">
           <button className="btn btn--outline" onClick={handleDiscard}>Discard Changes</button>
           <button className="btn btn--primary" onClick={handleSave} disabled={isLoading}>
-            {isLoading ? 'Saving...' : <><Save size={16} /> Save All Changes</>}
+            {isLoading ? 'Saving...' : <><Save size={16} /> Create New Laundry</>}
           </button>
         </div>
       </main>

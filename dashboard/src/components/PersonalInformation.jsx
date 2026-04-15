@@ -35,7 +35,7 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
       {/* Page Header */}
       <div className="page-topbar">
         <div>
-          <h1 className="page-heading">Welcome back, Alex</h1>
+          <h1 className="page-heading">Welcome back,{user.name}</h1>
           <p className="page-heading-sub">Manage your profile and preferences here.</p>
         </div>
         <div className="topbar-actions">
