@@ -444,4 +444,110 @@
   .laundry-shop-name {
     font-size: 1.0625rem;
   }
+}/* Modern map container */
+.map-modern-container {
+  margin-top: 24px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease;
+}
+
+.map-modern-container:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.modern-map {
+  height: 320px;
+  width: 100%;
+  z-index: 1;
+}
+
+.map-instruction {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #1e293b;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Optional: make the marker popup nicer */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}/* Map container and button styles */
+.map-modern-container {
+  margin-top: 24px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease;
+  position: relative;
+}
+
+.map-modern-container:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.map-header-actions {
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid #eef2f6;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-locate {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border: none;
+  border-radius: 40px;
+  padding: 8px 18px;
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(59,130,246,0.3);
+}
+
+.btn-locate:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(59,130,246,0.4);
+}
+
+.btn-locate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.modern-map {
+  height: 320px;
+  width: 100%;
+  z-index: 1;
+}
+
+.map-instruction {
+  background: #f8fafc;
+  padding: 10px 16px;
+  font-size: 12px;
+  color: #334155;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+  font-weight: 500;
 }

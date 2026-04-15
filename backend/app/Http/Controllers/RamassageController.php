@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Laundry;
 use Illuminate\Http\Request;
 use App\Models\Ramassage;
 
@@ -38,6 +39,21 @@ class RamassageController extends Controller
             'deliveryLongitude' => 'nullable|numeric',
             'services' => 'required|array|min:0'
         ]);
+
+        $laundry = Laundry::with("deliverySettings")->find($request->laundry_id);
+        if (!$laundry) {
+            return response()->json(['success' => false, 'message' => 'Laundry not found.'], 404);
+        }
+
+
+        
+
+        $locationLaundry = [
+            'latitude' => $laundry->latitude,
+            'longitude' => $laundry->longitude,
+        ];
+
+        
 
         $ramassage = Ramassage::create([
             'user_id' => $request->user() ? $request->user()->id : null,

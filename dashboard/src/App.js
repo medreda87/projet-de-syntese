@@ -27,12 +27,39 @@ const navItems = [
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const {user, logout} = useAuth();
   const location = useLocation();
 
 
   return (
     <div className="app-layout">
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }} onClick={() => setShowLogoutModal(false)}>
+          <div style={{ background: '#fff', borderRadius: 16, padding: 24, width: '90%', maxWidth: 360, boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', background: '#fee2e2', margin: '0 auto 16px' }}>
+              <LogOut size={22} color="#ef4444" />
+            </div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1e293b', textAlign: 'center', margin: '0 0 8px' }}>Logout</h3>
+            <p style={{ fontSize: 14, color: '#64748b', textAlign: 'center', margin: '0 0 24px' }}>Are you sure you want to logout from the dashboard?</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                style={{ flex: 1, padding: '10px 16px', borderRadius: 10, border: '1px solid #e2e8f0', background: '#fff', color: '#1e293b', fontWeight: 500, fontSize: 14, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { setShowLogoutModal(false); logout(); }}
+                style={{ flex: 1, padding: '10px 16px', borderRadius: 10, border: 'none', background: '#ef4444', color: '#fff', fontWeight: 500, fontSize: 14, cursor: 'pointer' }}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
@@ -81,7 +108,7 @@ function App() {
               <p className="user-name">{user.name}</p>
               <p className="user-role">Store Manager</p>
             </div>
-            <button className="user-logout" title="Logout" onClick={()=>{logout()}}>
+            <button className="user-logout" title="Logout" onClick={() => setShowLogoutModal(true)}>
               <LogOut size={18} />
             </button>
           </div>

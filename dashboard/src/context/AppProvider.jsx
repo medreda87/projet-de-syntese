@@ -12,8 +12,9 @@ export const AppProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     
     useEffect(()=>{
-        const token = localStorage.getItem('tokenFreshFold');
-        const userConnected = localStorage.getItem('userFreshFold');
+        const token = localStorage.getItem('token');
+        const userConnected = localStorage.getItem('user');
+        const laundry = localStorage.getItem('laundry');
         
         console.log('AuthProvider mounted. Token:', token, 'User:', userConnected);
         if(!token || !userConnected){

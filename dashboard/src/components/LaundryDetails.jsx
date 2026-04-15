@@ -1,12 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LaundryDetails.css';
-import { Camera, Building2, Phone, MapPin, Clock, Info, Save, Bell, Settings } from 'lucide-react';
+import { Camera, Building2, Phone, MapPin, Clock, Info, Save, Bell, Settings, Crosshair } from 'lucide-react';
 import API from '../api/axiosApi';
 import AlertModal from './AlertModal';
 
-const LaundryDetails = ({ setCurrentPage }) => {
+// Leaflet imports
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { useAuth } from '../context/AppProvider';
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+// Fix Leaflet icon issue
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+// Component to handle map clicks and marker
+function LocationMarker({ position, setPosition, setAddressFromCoords }) {
+  const map = useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
+      setPosition([lat, lng]);
+      // Reverse geocode to get address
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.display_name) {
+            setAddressFromCoords(data.display_name);
+          }
+        })
+        .catch(err => console.error('Reverse geocoding error:', err));
+    },
+  });
+
+  return position ? <Marker position={position} draggable={true} eventHandlers={{
+    dragend(e) {
+      const { lat, lng } = e.target.getLatLng();
+      setPosition([lat, lng]);
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.display_name) setAddressFromCoords(data.display_name);
+        });
+    }
+  }} /> : null;
+}
+
+const LaundryDetails = ({ setCurrentPage }) => {
+  const {user} = useAuth();
 
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(null);
@@ -23,6 +67,30 @@ const LaundryDetails = ({ setCurrentPage }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState({ open: false, type: 'success', title: '', message: '' });
+
+  // Map state
+  const [markerPosition, setMarkerPosition] = useState(null); // [lat, lng]
+  const [mapCenter, setMapCenter] = useState([33.5731, -7.5898]); // Default: Casablanca
+
+  // When address changes manually, optionally geocode and move map
+  const geocodeAddress = async (address) => {
+    if (!address) return;
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`);
+      const data = await response.json();
+      if (data && data[0]) {
+        const { lat, lon } = data[0];
+        setMapCenter([parseFloat(lat), parseFloat(lon)]);
+        setMarkerPosition([parseFloat(lat), parseFloat(lon)]);
+      }
+    } catch (error) {
+      console.error('Geocoding error:', error);
+    }
+  };
+
+  const setAddressFromCoords = (address) => {
+    setFormData(prev => ({ ...prev, address }));
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,68 +121,60 @@ const LaundryDetails = ({ setCurrentPage }) => {
     }
   };
 
-const handleSave = async () => {
-  if (!formData.name || !formData.address || !formData.phone) {
-    setAlert({
-      open: true,
-      type: 'warning',
-      title: 'Missing Fields',
-      message: 'Please fill in Name, Address, and Phone.'
-    });
-    return;
-  }
+  const handleSave = async () => {
+    if (!formData.name || !formData.address || !formData.phone) {
+      setAlert({
+        open: true,
+        type: 'warning',
+        title: 'Missing Fields',
+        message: 'Please fill in Name, Address, and Phone.'
+      });
+      return;
+    }
 
-  try {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('email', formData.email || '');
+      data.append('description', formData.description || '');
+      data.append('phone', formData.phone);
+      data.append('address', formData.address);
+      data.append('openingHours', formData.openingHours || '');
+      data.append('user_id', formData.user_id);
+      if (profilePhoto) data.append('logo', profilePhoto);
+      if (coverPhoto) data.append('bigLogo', coverPhoto);
 
-    const data = new FormData();
-    data.append('name', formData.name);
-    data.append('email', formData.email || '');
-    data.append('description', formData.description || '');
-    data.append('phone', formData.phone);
-    data.append('address', formData.address);
-    data.append('openingHours', formData.openingHours || '');
-    data.append('user_id', formData.user_id);
+      const response = await API.post('/laundries', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
 
-    if (profilePhoto) data.append('logo', profilePhoto);
-    if (coverPhoto) data.append('bigLogo', coverPhoto);
+      const laundry = response.data;
+      localStorage.setItem("laundry", JSON.stringify({
+        ...formData,
+        id: laundry.id
+      }));
 
-
-    const response = await API.post('/laundries', data, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-
-    const laundry = response.data;
-
-    const laundryId = laundry.id;
-    localStorage.setItem("laundry", JSON.stringify({
-      ...formData,
-      id: laundryId
-    }));
-
-    setAlert({
-      open: true,
-      type: 'success',
-      title: 'Success!',
-      message: 'Your laundry information has been saved successfully.'
-    });
-
-  } catch (error) {
-    console.error('Error saving laundry details:', error.response?.data || error.message);
-
-    setAlert({
-      open: true,
-      type: 'error',
-      title: 'Save Failed',
-      message: error.response?.status === 422
-        ? 'Validation error. Please check your input fields.'
-        : 'An error occurred while saving. Please try again.'
-    });
-
-  } finally {
-    setIsLoading(false);
-  }
-};
+      setAlert({
+        open: true,
+        type: 'success',
+        title: 'Success!',
+        message: 'Your laundry information has been saved successfully.'
+      });
+    } catch (error) {
+      console.error('Error saving laundry details:', error.response?.data || error.message);
+      setAlert({
+        open: true,
+        type: 'error',
+        title: 'Save Failed',
+        message: error.response?.status === 422
+          ? 'Validation error. Please check your input fields.'
+          : 'An error occurred while saving. Please try again.'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleDiscard = () => {
     setAlert({
@@ -126,6 +186,7 @@ const handleSave = async () => {
       cancelText: 'Keep Editing',
       onConfirm: () => {
         setFormData({ name: '', email: '', description: '', phone: '', address: '', openingHours: '', user_id: user.id });
+        setMarkerPosition(null);
         setAlert({ open: false });
       }
     });
@@ -199,11 +260,11 @@ const handleSave = async () => {
           </div>
         </div>
 
-        {/* Contact Info */}
+        {/* Contact Info with Map */}
         <div className="laundry-card">
           <div className="laundry-card-header">
             <div className="laundry-card-icon"><Phone size={20} /></div>
-            <h3>Contact Information</h3>
+            <h3>Contact Information & Location</h3>
           </div>
           <div className="laundry-form-grid">
             <div className="laundry-field">
@@ -219,6 +280,43 @@ const handleSave = async () => {
                 <MapPin size={16} />
                 <input type="text" name="address" placeholder="Full business address" value={formData.address} onChange={handleInputChange} />
               </div>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button 
+                  type="button" 
+                  className="btn btn--small btn--outline"
+                  onClick={() => geocodeAddress(formData.address)}
+                >
+                  <Crosshair size={14} /> Locate on Map
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Map Section */}
+          <div style={{ marginTop: '20px', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+            <MapContainer 
+              center={mapCenter} 
+              zoom={13} 
+              style={{ height: '350px', width: '100%' }}
+              whenReady={() => {
+                // If address already exists, try to geocode it on load
+                if (formData.address && !markerPosition) {
+                  geocodeAddress(formData.address);
+                }
+              }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <LocationMarker 
+                position={markerPosition} 
+                setPosition={setMarkerPosition} 
+                setAddressFromCoords={setAddressFromCoords} 
+              />
+            </MapContainer>
+            <div style={{ padding: '8px 12px', background: '#f8fafc', fontSize: '12px', color: '#475569' }}>
+              <MapPin size={16} /> Click on the map or drag the marker to set your laundry location. Address will update automatically.
             </div>
           </div>
         </div>

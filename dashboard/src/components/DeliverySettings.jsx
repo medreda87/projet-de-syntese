@@ -16,7 +16,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
   const handleSave = async () => {
     try {
       await API.post('deliveries', {
-        laundry_id: 4,
+        laundry_id: JSON.parse(localStorage.getItem('laundry')).id,
         type: deliveryType,
         price_per_km: parseFloat(pricePerKm),
         fixed_price: parseFloat(fixedPrice),
