@@ -286,12 +286,12 @@ const LaundryDetails = ({ setCurrentPage }) => {
 
       // Set image previews
       if (laundry.bigLogo) {
-        setCoverPreview(`http://localhost:8000/storige/covers/${laundry.bigLogo}`);
+        setCoverPreview(`http://localhost:8000/storage/${laundry.bigLogo}`);
       } else {
         setCoverPreview('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1200&h=400&fit=crop');
       }
       if (laundry.logo) {
-        setProfilePreview(`http://localhost:8000/images/logos/${laundry.logo}`);
+        setProfilePreview(`http://localhost:8000/storage/${laundry.logo}`);
       } else {
         setProfilePreview('https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=150&h=150&fit=crop');
       }
