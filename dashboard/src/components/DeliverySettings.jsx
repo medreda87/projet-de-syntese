@@ -15,28 +15,15 @@ const DeliverySettings = ({ setCurrentPage }) => {
   const laundry = JSON.parse(localStorage.getItem('laundry') || '{}');
 
   const handleSave = async () => {
-    try {
-      if (deliveryType === 'threshold' && (!minOrderAmount || isNaN(minOrderAmount))) {
-  setAlert({
-    isOpen: true,
-    type: 'warning',
-    title: 'Missing value',
-    message: 'Please enter minimum order amount.'
-  });
-  return;
-}
       await API.post('deliveries', {
         laundry_id: JSON.parse(localStorage.getItem('laundry')).id,
         type: deliveryType,
-  price_per_km: deliveryType === 'distance' ? parseFloat(pricePerKm) : null,
-  fixed_price: deliveryType === 'fixed' ? parseFloat(fixedPrice) : null,
-  min_order: deliveryType === 'threshold' ? parseFloat(minOrderAmount) : null,
+        price_per_km: deliveryType === 'distance' ? parseFloat(pricePerKm) : null,
+        fixed_price: deliveryType === 'fixed' ? parseFloat(fixedPrice) : null,
+        min_order: deliveryType === 'free_above' ? parseFloat(minOrderAmount) : null,
         delivery_radius: parseFloat(deliveryRadius)
       });
       setAlert({ isOpen: true, type: 'success', title: 'Saved!', message: 'Delivery settings saved successfully.' });
-    } catch {
-      setAlert({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to save delivery settings.' });
-    }
   };
 
   const handleDiscard = () => {
@@ -61,7 +48,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
     { id: 'delivery-pricing', title: 'Delivery Pricing Model', subtitle: 'Select the method that best fits your operational logistics.' },
     { id: 'distance-option', title: 'By Distance', subtitle: 'Dynamic pricing based on shop distance.' },
     { id: 'fixed-option', title: 'Fixed Price', subtitle: 'Flat rate regardless of destination.' },
-    { id: 'threshold-option', title: 'Free Over Amount', subtitle: 'Incentivize larger orders.' },
+    { id: 'free_above-option', title: 'Free Over Amount', subtitle: 'Incentivize larger orders.' },
     { id: 'free-option', title: 'Always Free', subtitle: 'Offer complimentary delivery.' },
     { id: 'config-details', title: 'Configuration Details', subtitle: '' },
     { id: 'delivery-radius', title: 'Delivery Radius', subtitle: 'Define your service area boundary.' },
@@ -91,7 +78,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
     switch (deliveryType) {
       case 'distance': configTexts.push('Price per kilometer', 'MAD', 'Google Maps API'); break;
       case 'fixed': configTexts.push('Fixed Price', 'MAD', 'Flat rate'); break;
-      case 'threshold': configTexts.push('Minimum Order Amount', 'MAD', 'Free delivery'); break;
+      case 'free_above': configTexts.push('Minimum Order Amount', 'MAD', 'Free delivery'); break;
       case 'free': configTexts.push('free for all orders'); break;
       default: break;
     }
@@ -101,7 +88,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
   const deliveryOptions = [
     { value: 'distance', icon: MapPin, title: 'By Distance', desc: 'Dynamic pricing based on shop distance.' },
     { value: 'fixed', icon: CreditCard, title: 'Fixed Price', desc: 'Flat rate regardless of destination.' },
-    { value: 'threshold', icon: Gift, title: 'Free Over Amount', desc: 'Incentivize larger orders.' },
+    { value: 'free_above', icon: Gift, title: 'Free Over Amount', desc: 'Incentivize larger orders.' },
     { value: 'free', icon: Cake, title: 'Always Free', desc: 'Offer complimentary delivery.' },
   ];
 
@@ -129,7 +116,7 @@ const DeliverySettings = ({ setCurrentPage }) => {
             <p className="ds-config-hint">Flat rate applied to all deliveries.</p>
           </div>
         );
-      case 'threshold':
+      case 'free_above':
         return (
           <div className="ds-config-details">
             <label className="ds-config-label">Minimum Order Amount (MAD)</label>
