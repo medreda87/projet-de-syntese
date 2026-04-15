@@ -12,15 +12,25 @@ const DeliverySettings = ({ setCurrentPage }) => {
   const [deliveryRadius, setDeliveryRadius] = useState(25);
   const [searchTerm, setSearchTerm] = useState('');
   const [alert, setAlert] = useState({ isOpen: false, type: 'success', title: '', message: '' });
+  const laundry = JSON.parse(localStorage.getItem('laundry') || '{}');
 
   const handleSave = async () => {
     try {
+      if (deliveryType === 'threshold' && (!minOrderAmount || isNaN(minOrderAmount))) {
+  setAlert({
+    isOpen: true,
+    type: 'warning',
+    title: 'Missing value',
+    message: 'Please enter minimum order amount.'
+  });
+  return;
+}
       await API.post('deliveries', {
-        laundry_id: 4,
+        laundry_id: laundry.id,
         type: deliveryType,
-        price_per_km: parseFloat(pricePerKm),
-        fixed_price: parseFloat(fixedPrice),
-        min_order: parseFloat(minOrderAmount),
+  price_per_km: deliveryType === 'distance' ? parseFloat(pricePerKm) : null,
+  fixed_price: deliveryType === 'fixed' ? parseFloat(fixedPrice) : null,
+  min_order: deliveryType === 'threshold' ? parseFloat(minOrderAmount) : null,
         delivery_radius: parseFloat(deliveryRadius)
       });
       setAlert({ isOpen: true, type: 'success', title: 'Saved!', message: 'Delivery settings saved successfully.' });
