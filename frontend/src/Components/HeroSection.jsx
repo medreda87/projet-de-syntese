@@ -129,7 +129,7 @@ const HeroSection = () => {
           {/* Service Category Buttons */}
           <div className="flex flex-wrap gap-3 mb-16">
             {serviceCategories.map((category, index) => (
-             <Link to={`/shops/${category}`}>
+             <Link to={`/shops/${category.replace(/\s+/g, '_').toLowerCase()}`} key={index}>
                <button
                  key={index}
                  className="bg-gray-800/90 hover:bg-gray-700/90 backdrop-blur-sm text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-all duration-200 hover:scale-105 text-sm md:text-base font-medium"

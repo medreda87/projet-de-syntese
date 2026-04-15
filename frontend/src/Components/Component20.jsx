@@ -12,8 +12,8 @@ const Component20 = ({
   return (
     <div className="bg-white py-16 px-4">
       <div className="container mx-auto">
-        <div className="bg-gradient-to-b flex from-[#F1FAFD] to-[#E8F5F9] overflow-hidden rounded-2xl ">
-          <div className=" p-8 md:p-12 lg:p-16 w-[50%] max-w-3xl">
+        <div className="bg-gradient-to-b md:flex-row flex  flex-col  from-[#F1FAFD] to-[#E8F5F9] overflow-hidden rounded-2xl ">
+          <div className="md:order-0 order-2 p-8 md:p-12 lg:p-16 w-full md:w-[50%] max-w-3xl">
             {/* Title and Description using TitleSectionText */}
             <div className="">
               <TitleSectionText
@@ -35,7 +35,7 @@ const Component20 = ({
              
             </div>
           </div>
-          <div className='h-full w-[50%]'>
+          <div className='h-full md:order-0 w-full md:w-[50%]'>
             <img
               src="/images/community.png"
               className="w-full h-full"

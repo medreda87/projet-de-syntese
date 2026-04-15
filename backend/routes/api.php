@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::apiResource('providers', ProviderController::class);
 use App\Http\Controllers\LaundryController;
 Route::get('/laundries', [LaundryController::class, 'index']);
+Route::get('/laundries/filters', [LaundryController::class, 'filters']);
 Route::get('/laundries/{id}', [LaundryController::class, 'show']);
 Route::post('/laundries', [LaundryController::class, 'store']);
 
@@ -61,6 +62,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/ramassages', [RamassageController::class, 'index']);
     Route::get('/ramassages/{id}', [RamassageController::class, 'show']);
     Route::get('/ramassages/check/{laundryId}', [RamassageController::class, 'checkForLaundry']);
+    Route::get('/ramassages/laundry/{laundryId}', [RamassageController::class, 'getByLaundry']);
+    Route::put('/ramassages/{id}/status', [RamassageController::class, 'updateStatus']);
+    Route::delete('/ramassages/{id}', [RamassageController::class, 'destroy']);
 });
 Route::post('/ramassages', [RamassageController::class, 'store']);
 

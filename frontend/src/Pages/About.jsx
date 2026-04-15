@@ -8,6 +8,7 @@ import Component20 from '../Components/Component20'
 import Component21 from '../Components/Component21'
 import Component19 from '../Components/Component19'
 import Reviews from '../Components/Reviews'
+import { useAuth } from '../contexts/AuthContext'
 
 // Sample testimonials for About page
 const aboutTestimonials = [
@@ -61,6 +62,8 @@ const fadeInVariants = {
 };
 
 const About = () => {
+
+  const {user} = useAuth()
   return (
     <main >
       <Component14
@@ -93,7 +96,11 @@ const About = () => {
         />
       </motion.div>
 
-      <Component20 />
+      {
+        user.role === 'customer' && (
+           <Component20 />
+        )
+      }
     </main>
   )
 }

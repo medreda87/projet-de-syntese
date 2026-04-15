@@ -8,6 +8,7 @@ import AlertModal from './AlertModal';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useAuth } from '../context/AppProvider';
 
 // Fix Leaflet icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -52,8 +53,8 @@ function LocationMarker({ position, setPosition, setAddressFromCoords }) {
 }
 
 const LaundryDetails = ({ setCurrentPage }) => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  
+  const {user} = useAuth();
+
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [coverPreview, setCoverPreview] = useState('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1200&h=400&fit=crop');

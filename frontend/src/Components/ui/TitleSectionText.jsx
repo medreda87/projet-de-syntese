@@ -7,7 +7,7 @@ const TitleSectionText = ({
   descriptionClass
 }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-2 my-3">
       {/* Tag */}
       <div>
         {

@@ -4,14 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Laundry;
+use App\Models\Service;
 class LaundryController extends Controller
 {
      public function index(Request $request)
     {
-        $query = Laundry::with('provider', 'services', 'categories.products', 'delivery', 'comment');
 
+        $query = Laundry::query()->where('is_accepted', true)->with('services:id,laundry_id,name');
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        // Filter by city
+        if ($request->filled('city')) {
+            $query->where('city', $request->city);
+        }
+
+        // Filter by service name
+        if ($request->filled('service')) {
+            $query->whereHas('services', function ($q) use ($request) {
+                $q->where('name', $request->service);
+            });
         }
 
         if ($request->has('address')) {
@@ -22,16 +35,28 @@ class LaundryController extends Controller
             $query->where('user_id', $request->user_id);
         }
 
-        $laundries = $query->get();
+        // Filter by map bounds (sw_lat, sw_lng, ne_lat, ne_lng)
+        if ($request->has(['sw_lat', 'sw_lng', 'ne_lat', 'ne_lng'])) {
+            $query->whereNotNull('latitude')
+                  ->whereNotNull('longitude')
+                  ->whereBetween('latitude', [$request->sw_lat, $request->ne_lat])
+                  ->whereBetween('longitude', [$request->sw_lng, $request->ne_lng]);
+        }
+
+        $query->withAvg('comments', 'rating');
+        $query->withCount('comments');
+
+        $laundries = $query->paginate($request->get('per_page', 9));
         return response()->json($laundries);
     }
 
     public function show($id)
     {
-        $laundry = Laundry::with('provider', 'services', 'categories.products', 'delivery', 'comment')
+        $laundry = Laundry::with('user', 'services', 'delivery', 'comments' , 'products.category:id,name')
             ->findOrFail($id);
+        
 
-        return response()->json($laundry);
+        return response()->json(["laundry"=> $laundry]);
     }
    public function store(Request $request)
 {
@@ -62,8 +87,33 @@ class LaundryController extends Controller
         $data
     );
 
+    // Auto-accept if all required info is filled
+    $laundry->is_accepted = $laundry->checkAccepted();
+    $laundry->save();
+
     return response()->json($laundry);
 }
+
+    public function filters(Request $request)
+    {
+        $services = Service::select('name')
+            ->distinct()
+            ->orderBy('name')
+            ->pluck('name');
+
+        $cities = Laundry::where('is_accepted', true)
+            ->whereNotNull('city')
+            ->where('city', '!=', '')
+            ->select('city')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        return response()->json([
+            'services' => $services,
+            'cities' => $cities,
+        ]);
+    }
 // get toute les laundry d'un user 
 public function getLaundriesByUser($userId)
 {

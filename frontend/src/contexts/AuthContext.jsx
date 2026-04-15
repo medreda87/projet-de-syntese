@@ -11,13 +11,15 @@ export const AuthProvider = ({ children }) => {
 
   // Load user from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    const stored = localStorage.getItem('userFreshFold');
+    const token = localStorage.getItem('tokenFreshFold');
+    
     if (stored && token) {
       try {
         const parsed = JSON.parse(stored);
         setUser(parsed);
         setIsAuthenticated(true);
+        console.log("Loaded user from localStorage:", isAuthenticated);
       } catch {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
@@ -34,8 +36,8 @@ export const AuthProvider = ({ children }) => {
         const { user: userData, access_token } = res.data;
         setUser(userData);
         setIsAuthenticated(true);
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('token', access_token);
+        localStorage.setItem('userFreshFold', JSON.stringify(userData));
+        localStorage.setItem('tokenFreshFold', access_token);
         return { success: true };
       }
       return { success: false, message: res.data.message || 'Login failed' };
@@ -52,8 +54,8 @@ export const AuthProvider = ({ children }) => {
         const { user: userData, access_token } = res.data;
         setUser(userData);
         setIsAuthenticated(true);
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('token', access_token);
+        localStorage.setItem('userFreshFold', JSON.stringify(userData));
+        localStorage.setItem('tokenFreshFold', access_token);
         return { success: true };
       }
       return { success: false, message: res.data.message || 'Registration failed' };
@@ -73,7 +75,7 @@ export const AuthProvider = ({ children }) => {
         const updatedUser = res.data.user;
         console.log('Updated user:', updatedUser);
         setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        localStorage.setItem('userFreshFold', JSON.stringify(updatedUser));
         return { success: true };
       }
       return { success: false, message: res.data.message || 'Failed to update role' };
@@ -91,16 +93,13 @@ export const AuthProvider = ({ children }) => {
     }
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem('userFreshFold');
+    localStorage.removeItem('tokenFreshFold');
   };
 
-  
-
-  
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, updateRole, idLaundry, setIdLaundry }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, updateRole, idLaundry, setIdLaundry }}>
       {children}
     </AuthContext.Provider>
   );
