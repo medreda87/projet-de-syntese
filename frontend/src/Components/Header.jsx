@@ -61,7 +61,7 @@ function Header() {
                         {user && user.role === 'provider' && (
                             <li key="/dashboard">
                                 <a 
-                                    href="http://localhost:3001" 
+                                    href={`http://localhost:3001?token=${encodeURIComponent(localStorage.getItem('tokenFreshFold') || '')}&user=${encodeURIComponent(localStorage.getItem('userFreshFold') || '')}`}
                                     className="nav-link"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -137,7 +137,7 @@ function Header() {
                         {user && user.role === 'provider' && (
                             <li key="/dashboard-mobile">
                                 <a 
-                                    href="http://localhost:3001"
+                                    href={`http://localhost:3001?token=${encodeURIComponent(localStorage.getItem('tokenFreshFold') || '')}&user=${encodeURIComponent(localStorage.getItem('userFreshFold') || '')}`}
                                     className="mobile-nav-link"
                                     target="_blank"
                                     rel="noopener noreferrer"

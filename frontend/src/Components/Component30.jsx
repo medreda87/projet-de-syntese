@@ -37,15 +37,15 @@ const Component30 = ({
               {/* Icon Section - Only show if no image */}
               {!mission.image && (
                 <div className="mb-6">
-                  <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] flex items-center justify-center">
                     <Icon icon={mission.icon} theme="light" size="xl" />
                   </div>
                 </div>
               )}
               
-              <h3 className="text-2xl  font-bold text-[#1E2A36] mb-4" dangerouslySetInnerHTML={{__html:mission.title}} />
+              <h3 className="text-2xl  font-bold text-[#0F172A] mb-4" dangerouslySetInnerHTML={{__html:mission.title}} />
                 
-              <p className="text-[#62707D] leading-relaxed">
+              <p className="text-[#64748B] leading-relaxed">
                 {mission.description}
               </p>
             </div>
@@ -68,16 +68,16 @@ const Component30 = ({
               {/* Icon Section - Only show if no image */}
               {!vision.image && (
                 <div className="mb-6">
-                  <div className="w-16 h-16 rounded-xl bg-[#0EA5C9] flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-xl bg-[#0C8CE9] flex items-center justify-center">
                     <Icon icon={vision.icon} theme="light" size="xl" />
                   </div>
                 </div>
               )}
               
-              <h3 className="text-2xl font-bold text-[#1E2A36] mb-4" dangerouslySetInnerHTML={{__html: vision.title}}/>
+              <h3 className="text-2xl font-bold text-[#0F172A] mb-4" dangerouslySetInnerHTML={{__html: vision.title}}/>
                
              
-              <p className="text-[#62707D] leading-relaxed">
+              <p className="text-[#64748B] leading-relaxed">
                 {vision.description}
               </p>
             </div>

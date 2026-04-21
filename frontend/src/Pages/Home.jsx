@@ -8,6 +8,7 @@ import TitleSectionText from "../Components/ui/TitleSectionText";
 import Item1 from "../Components/Item1";
 import Component8 from "../Components/Component8";
 import Component31 from "../Components/Component31";
+import Component24 from "../Components/Component24";
 import Reviews from "../Components/Reviews";
 import axios from "axios";
 import API from "../utils/api";
@@ -282,7 +283,7 @@ const Home = () => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         variants={containerVariants}
-        className="py-[70px]"
+        className="py-20 md:py-24"
       >
         <motion.div className="container" variants={itemVariants}>
           <TitleSectionText
@@ -295,11 +296,11 @@ const Home = () => {
           className="container-list  container"
           variants={staggerContainerVariants}
         >
-          <div className="grid lg:grid-cols-4 gap-4 md:grid-cols-3 grid-cols-1">
+          <div className="grid lg:grid-cols-4 gap-5 md:grid-cols-3 grid-cols-1">
            {loading ? (
               <div className="col-span-full flex flex-col items-center justify-center py-16">
-                <div className="w-12 h-12 border-4 border-gray-200 border-t-[#0EA5C9] rounded-full animate-spin"></div>
-                <p className="mt-4 text-[#62707D] text-sm">Loading laundries...</p>
+                <div className="w-10 h-10 border-3 border-gray-200 border-t-[#0C8CE9] rounded-full animate-spin"></div>
+                <p className="mt-4 text-[#64748B] text-sm">Loading laundries...</p>
               </div>
             ) : (
                laundries?.map((re, index) => (
@@ -353,6 +354,16 @@ const Home = () => {
         <Reviews reviews={siteTestimonials} variant="testimonials" />
       </motion.div>
 
+      {/* FAQ Section */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+        variants={slideUpVariants}
+      >
+        <Component24 />
+      </motion.div>
+
       <motion.div
         initial="hidden"
         whileInView="visible"
@@ -371,10 +382,10 @@ const Home = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-[#1E2A36] mb-2">
+              <h2 className="text-2xl font-bold text-[#0F172A] mb-2">
                 Welcome to FreshFold!
               </h2>
-              <p className="text-[#62707D]">
+              <p className="text-[#64748B]">
                 How would you like to use our platform?
               </p>
             </div>
@@ -385,8 +396,8 @@ const Home = () => {
                 onClick={() => setSelectedRole("client")}
                 className={`flex flex-col items-center gap-3 p-5 border-2 rounded-xl transition-all ${
                   selectedRole === "client"
-                    ? "border-[#0EA5C9] bg-[#0EA5C9]/5 text-[#0EA5C9] shadow-md"
-                    : "border-gray-200 hover:border-gray-300 text-[#62707D]"
+                    ? "border-[#0C8CE9] bg-[#0C8CE9]/5 text-[#0C8CE9] shadow-md"
+                    : "border-gray-200 hover:border-gray-300 text-[#64748B]"
                 }`}
               >
                 <UserCheck className="w-8 h-8" />
@@ -400,8 +411,8 @@ const Home = () => {
                 onClick={() => setSelectedRole("provider")}
                 className={`flex flex-col items-center gap-3 p-5 border-2 rounded-xl transition-all ${
                   selectedRole === "provider"
-                    ? "border-[#0EA5C9] bg-[#0EA5C9]/5 text-[#0EA5C9] shadow-md"
-                    : "border-gray-200 hover:border-gray-300 text-[#62707D]"
+                    ? "border-[#0C8CE9] bg-[#0C8CE9]/5 text-[#0C8CE9] shadow-md"
+                    : "border-gray-200 hover:border-gray-300 text-[#64748B]"
                 }`}
               >
                 <Store className="w-8 h-8" />
@@ -415,10 +426,10 @@ const Home = () => {
             <button
               onClick={handleSelectRole}
               disabled={!selectedRole || roleLoading}
-              className={`w-full py-3 rounded-lg font-medium transition-colors ${
+              className={`w-full py-3 rounded-xl font-semibold transition-all ${
                 selectedRole
-                  ? "bg-[#0EA5C9] text-white hover:bg-[#0d94b8]"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  ? "bg-[#0C8CE9] text-white hover:bg-[#0A6FC2]"
+                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
               }`}
             >
               {roleLoading ? "Saving..." : "Continue"}
@@ -432,11 +443,11 @@ const Home = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
             <div className="text-center mb-6">
-              <LayoutDashboard className="w-12 h-12 text-[#0EA5C9] mx-auto mb-3" />
-              <h2 className="text-2xl font-bold text-[#1E2A36] mb-2">
+              <LayoutDashboard className="w-12 h-12 text-[#0C8CE9] mx-auto mb-3" />
+              <h2 className="text-2xl font-bold text-[#0F172A] mb-2">
                 Go to your Dashboard?
               </h2>
-              <p className="text-[#62707D]">
+              <p className="text-[#64748B]">
                 You can manage your laundry services from your provider
                 dashboard.
               </p>
@@ -445,16 +456,18 @@ const Home = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDashboardPrompt(false)}
-                className="flex-1 py-3 rounded-lg font-medium border-2 border-gray-200 text-[#62707D] hover:border-gray-300 transition-colors"
+                className="flex-1 py-3 rounded-xl font-medium border border-gray-200 text-[#64748B] hover:border-gray-300 transition-colors"
               >
                 Stay Here
               </button>
               <button
                 onClick={() => {
-                  window.open("http://localhost:3001", "_blank");
+                  const token = localStorage.getItem('tokenFreshFold') || '';
+                  const userData = localStorage.getItem('userFreshFold') || '';
+                  window.open(`http://localhost:3001?token=${encodeURIComponent(token)}&user=${encodeURIComponent(userData)}`, "_blank");
                   setShowDashboardPrompt(false);
                 }}
-                className="flex-1 py-3 rounded-lg font-medium bg-[#0EA5C9] text-white hover:bg-[#0d94b8] transition-colors"
+                className="flex-1 py-3 rounded-xl font-semibold bg-[#0C8CE9] text-white hover:bg-[#0A6FC2] transition-colors"
               >
                 Go to Dashboard
               </button>

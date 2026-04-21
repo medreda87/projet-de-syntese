@@ -48,20 +48,6 @@ class CommentController extends Controller
             "rating" => "nullable|integer|min:1|max:5",
         ]);
 
-        // Check if user has a ramassage for this laundry (only for top-level comments)
-        if (!$request->parent_id) {
-            $hasRamassage = \App\Models\Ramassage::where('user_id', $request->user()->id)
-                ->where('laundry_id', $request->laundryId)
-                ->exists();
-
-            if (!$hasRamassage) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You must have a reservation before leaving a review.'
-                ], 403);
-            }
-        }
-
         $data = [
             'user_id' => $request->user()->id,
             'laundry_id' => $request->laundryId,

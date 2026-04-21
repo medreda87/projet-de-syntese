@@ -9,8 +9,8 @@ const Tag = ({
   const baseClasses = "inline-block font-medium transition-colors duration-200"
   
   const variants = {
-    default: "bg-[#E0F2FE] text-[#0EA5C9] px-6 py-2 rounded-full",
-    outline: "border-2 border-gray-300 text-gray-700 px-4 py-2 rounded-lg"
+    default: "bg-[#0C8CE9]/8 text-[#0C8CE9] px-4 py-1.5 rounded-lg text-sm",
+    outline: "border border-gray-200 text-gray-600 px-4 py-1.5 rounded-lg text-sm"
   }
 
   return (

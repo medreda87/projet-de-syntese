@@ -8,14 +8,14 @@ const Component31 = ({
   image = "/images/about.png"
 }) => {
   return (
-    <div className="bg-white py-[150px]">
+    <div className="bg-white py-24 md:py-32">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left Column - Text Content */}
           <div className="text-left">
             {/* Tag */}
             {tagText && (
-              <div className="mb-6">
+              <div className="mb-5">
                 <Tag variant="default">
                   {tagText}
                 </Tag>
@@ -24,12 +24,12 @@ const Component31 = ({
             
             {/* Title */}
             <h2 
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1E2A36] mb-6 leading-tight title-section"
+              className="text-3xl md:text-4xl lg:text-[44px] font-extrabold text-[#0F172A] mb-6 leading-[1.15] tracking-[-0.03em] title-section"
               dangerouslySetInnerHTML={{ __html: titlePart1 }} 
             />
 
             {/* Description */}
-            <p className="text-lg md:text-xl text-[#62707D] leading-relaxed">
+            <p className="text-base md:text-lg text-[#64748B] leading-relaxed">
               {description}
             </p>
           </div>
@@ -40,7 +40,7 @@ const Component31 = ({
               <img 
                 src={image} 
                 alt="Who we are"
-                className="w-[90%] mr-[30px] h-auto rounded-lg shadow-lg object-cover"
+                className="w-full h-auto rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] object-cover"
               />
             </div>
           </div>

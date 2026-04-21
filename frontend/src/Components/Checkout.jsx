@@ -421,42 +421,42 @@ const Checkout = ({
         <div className="flex items-center gap-1.5 sm:gap-2">
           <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-sm ${
             currentStep > 1 
-              ? 'bg-[#0EA5C9] text-white' 
+              ? 'bg-[#0C8CE9] text-white' 
               : currentStep === 1 
-              ? 'bg-[#0EA5C9] text-white' 
+              ? 'bg-[#0C8CE9] text-white' 
               : 'bg-gray-300 text-gray-600'
           }`}>
             {currentStep > 1 ? <Icon icon={FaCheck} theme="light" size="sm" /> : '1'}
           </div>
-          <span className="text-xs sm:text-sm text-[#62707D] hidden xs:inline">Infos</span>
+          <span className="text-xs sm:text-sm text-[#64748B] hidden xs:inline">Infos</span>
         </div>
-        <div className={`flex-1 h-0.5 ${currentStep > 1 ? 'bg-[#0EA5C9]' : 'bg-gray-300'}`}></div>
+        <div className={`flex-1 h-0.5 ${currentStep > 1 ? 'bg-[#0C8CE9]' : 'bg-gray-300'}`}></div>
         
         {/* Step 2 */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-sm ${
             currentStep > 2 
-              ? 'bg-[#0EA5C9] text-white' 
+              ? 'bg-[#0C8CE9] text-white' 
               : currentStep === 2 
-              ? 'bg-[#0EA5C9] text-white' 
+              ? 'bg-[#0C8CE9] text-white' 
               : 'bg-gray-300 text-gray-600'
           }`}>
             {currentStep > 2 ? <Icon icon={FaCheck} theme="light" size="sm" /> : '2'}
           </div>
-          <span className="text-xs sm:text-sm text-[#62707D] hidden xs:inline">Ramassage</span>
+          <span className="text-xs sm:text-sm text-[#64748B] hidden xs:inline">Ramassage</span>
         </div>
-        <div className={`flex-1 h-0.5 ${currentStep > 2 ? 'bg-[#0EA5C9]' : 'bg-gray-300'}`}></div>
+        <div className={`flex-1 h-0.5 ${currentStep > 2 ? 'bg-[#0C8CE9]' : 'bg-gray-300'}`}></div>
         
         {/* Step 3 */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-sm ${
             currentStep === 3 
-              ? 'bg-[#0EA5C9] text-white' 
+              ? 'bg-[#0C8CE9] text-white' 
               : 'bg-gray-300 text-gray-600'
           }`}>
             3
           </div>
-          <span className="text-xs sm:text-sm text-[#62707D] hidden xs:inline">Livraison</span>
+          <span className="text-xs sm:text-sm text-[#64748B] hidden xs:inline">Livraison</span>
         </div>
       </div>
     )
@@ -490,7 +490,7 @@ const Checkout = ({
               <h3 className="text-sm font-semibold text-[#022545]">Services sélectionnés</h3>
               {selectedServices.map((service, index) => (
                 <div key={index} className="flex justify-between text-sm">
-                  <span className="text-[#62707D]">{service.name}</span>
+                  <span className="text-[#64748B]">{service.name}</span>
                   <span className="font-medium text-[#022545]">{parseFloat(service.price).toFixed(2)} DH</span>
                 </div>
               ))}
@@ -505,7 +505,7 @@ const Checkout = ({
           <div className="space-y-2 mb-4">
             <h3 className="text-sm font-semibold text-[#022545]">Livraison</h3>
             <div className="flex justify-between text-sm">
-              <span className="text-[#62707D]">{getDeliveryLabel()}</span>
+              <span className="text-[#64748B]">{getDeliveryLabel()}</span>
               <span className={`font-medium ${deliveryPrice === 0 ? 'text-green-600' : 'text-[#022545]'}`}>
                 {deliveryPrice === 0 ? 'Gratuit' : `${(deliveryPrice || 0).toFixed(2)} DH`}
               </span>
@@ -516,7 +516,7 @@ const Checkout = ({
           <div className="border-t-2 border-gray-200 pt-3">
             <div className="flex justify-between items-center">
               <span className="text-lg font-bold text-[#022545]">Total</span>
-              <span className="text-lg font-bold text-[#0EA5C9]">{total.toFixed(2)} DH</span>
+              <span className="text-lg font-bold text-[#0C8CE9]">{total.toFixed(2)} DH</span>
             </div>
           </div>
 
@@ -556,7 +556,7 @@ const Checkout = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="mb-6 bg-gradient-to-r from-[#1BB38C] to-[#0EA5C9] text-white p-5 rounded-xl shadow-lg flex items-center gap-4"
+              className="mb-6 bg-gradient-to-r from-[#06D6A0] to-[#0C8CE9] text-white p-5 rounded-xl shadow-lg flex items-center gap-4"
             >
               <FaCheckCircle className="w-5 h-5 sm:w-7 sm:h-7 flex-shrink-0" />
               <div className="flex-1">
@@ -605,7 +605,7 @@ const Checkout = ({
           <div className="lg:col-span-2">
             {/* Header */}
             <div className="mb-4 sm:mb-8">
-              <button onClick={handleBack} className="flex items-center gap-2 text-[#0EA5C9] mb-3 sm:mb-4 hover:underline text-sm">
+              <button onClick={handleBack} className="flex items-center gap-2 text-[#0C8CE9] mb-3 sm:mb-4 hover:underline text-sm">
                 <Icon icon={FaArrowLeft} theme="primary" size="sm" />
                 Back
               </button>
@@ -629,7 +629,7 @@ const Checkout = ({
                       name="fullName"
                       value={allFormData.fullName}
                       onChange={handleStep1Change}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                     />
                   </div>
 
@@ -643,7 +643,7 @@ const Checkout = ({
                       name="phoneNumber"
                       value={allFormData.phoneNumber}
                       onChange={handleStep1Change}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                     />
                   </div>
 
@@ -654,9 +654,9 @@ const Checkout = ({
                       name="saveInfo"
                       checked={allFormData.saveInfo}
                       onChange={handleStep1Change}
-                      className="w-5 h-5 text-[#0EA5C9] border-gray-300 rounded focus:ring-[#0EA5C9]"
+                      className="w-5 h-5 text-[#0C8CE9] border-gray-300 rounded focus:ring-[#0C8CE9]"
                     />
-                    <label htmlFor="saveInfo" className="text-sm text-[#62707D]">
+                    <label htmlFor="saveInfo" className="text-sm text-[#64748B]">
                       Enregistrer mes informations pour la prochaine fois
                     </label>
                   </div>
@@ -689,7 +689,7 @@ const Checkout = ({
                     <Icon icon={FaMapMarkerAlt} theme="primary" size="md" />
                     <h3 className="font-bold text-[#022545]">Adresse de Ramassage</h3>
                   </div>
-                  <p className="text-sm text-[#62707D] mb-3">Saisir l'adresse de ramassage manuellement</p>
+                  <p className="text-sm text-[#64748B] mb-3">Saisir l'adresse de ramassage manuellement</p>
                   <input
                     type="text"
                     name="pickupAddress"
@@ -699,7 +699,7 @@ const Checkout = ({
                       if (errors.pickupAddress) setErros(prev => ({ ...prev, pickupAddress: null }))
                     }}
                     placeholder="Votre adresse complète"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent ${errors.pickupAddress ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent ${errors.pickupAddress ? 'border-red-400' : 'border-gray-300'}`}
                   />
                   {errors.pickupAddress && (
                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -740,7 +740,7 @@ const Checkout = ({
                             setErros(prev => ({ ...prev, pickupDate: `La pressing ne travaille pas le ${getDayName(d.getDay())}` }))
                           }
                         }}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent ${errors.pickupDate ? 'border-red-400' : 'border-gray-300'}`}
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent ${errors.pickupDate ? 'border-red-400' : 'border-gray-300'}`}
                       />
                     </div>
                     {errors.pickupDate && (
@@ -757,7 +757,7 @@ const Checkout = ({
                       name="pickupTime"
                       value={allFormData.pickupTime}
                       onChange={handleStep2Change}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                     >
                       <option value="">Sélectionner --</option>
                       <option value="09:00">09:00</option>
@@ -803,7 +803,7 @@ const Checkout = ({
                     <Icon icon={FaMapMarkerAlt} theme="primary" size="md" />
                     <h3 className="font-bold text-[#022545]">Adresse de Livraison</h3>
                   </div>
-                  <p className="text-sm text-[#62707D] mb-3">Saisir l'adresse de livraison manuellement</p>
+                  <p className="text-sm text-[#64748B] mb-3">Saisir l'adresse de livraison manuellement</p>
                   <input
                     type="text"
                     name="deliveryAddress"
@@ -813,7 +813,7 @@ const Checkout = ({
                       if (errors.deliveryAddress) setErros(prev => ({ ...prev, deliveryAddress: null }))
                     }}
                     placeholder="Votre adresse complète"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent ${errors.deliveryAddress ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent ${errors.deliveryAddress ? 'border-red-400' : 'border-gray-300'}`}
                   />
                   {errors.deliveryAddress && (
                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -855,7 +855,7 @@ const Checkout = ({
                             setErros(prev => ({ ...prev, deliveryDate: "La date de livraison doit être après la date de ramassage" }))
                           }
                         }}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent ${errors.deliveryDate ? 'border-red-400' : 'border-gray-300'}`}
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent ${errors.deliveryDate ? 'border-red-400' : 'border-gray-300'}`}
                       />
                     </div>
                     {errors.deliveryDate && (
@@ -872,7 +872,7 @@ const Checkout = ({
                       name="deliveryTime"
                       value={allFormData.deliveryTime}
                       onChange={handleStep3Change}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                     >
                       <option value="">-- Sélectionner --</option>
                       <option value="09:00">09:00</option>

@@ -39,7 +39,7 @@ const Component27 = ({
           <div className="lg:col-span-2">
             {/* Header */}
             <div className="mb-8">
-              <button onClick={onBack} className="flex items-center gap-2 text-[#0EA5C9] mb-4 hover:underline">
+              <button onClick={onBack} className="flex items-center gap-2 text-[#0C8CE9] mb-4 hover:underline">
                 <Icon icon={FaArrowLeft} theme="primary" size="sm" />
                 Retour
               </button>
@@ -48,24 +48,24 @@ const Component27 = ({
               {/* Progress Steps */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#0EA5C9] text-white flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-[#0C8CE9] text-white flex items-center justify-center">
                     <Icon icon={FaCheck} theme="light" size="sm" />
                   </div>
-                  <span className="text-sm text-[#62707D]">Informations</span>
+                  <span className="text-sm text-[#64748B]">Informations</span>
                 </div>
-                <div className="flex-1 h-0.5 bg-[#0EA5C9]"></div>
+                <div className="flex-1 h-0.5 bg-[#0C8CE9]"></div>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#0EA5C9] text-white flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-[#0C8CE9] text-white flex items-center justify-center">
                     <Icon icon={FaCheck} theme="light" size="sm" />
                   </div>
-                  <span className="text-sm text-[#62707D]">Ramassage</span>
+                  <span className="text-sm text-[#64748B]">Ramassage</span>
                 </div>
-                <div className="flex-1 h-0.5 bg-[#0EA5C9]"></div>
+                <div className="flex-1 h-0.5 bg-[#0C8CE9]"></div>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#0EA5C9] text-white flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-full bg-[#0C8CE9] text-white flex items-center justify-center font-bold">
                     3
                   </div>
-                  <span className="text-sm text-[#62707D]">Livraison</span>
+                  <span className="text-sm text-[#64748B]">Livraison</span>
                 </div>
               </div>
             </div>
@@ -80,17 +80,17 @@ const Component27 = ({
                   <Icon icon={FaMapMarkerAlt} theme="primary" size="md" />
                   <h3 className="font-bold text-[#022545]">Adresse de Livraison</h3>
                 </div>
-                <p className="text-sm text-[#62707D] mb-3">Saisir l'adresse de livraison manuellement</p>
+                <p className="text-sm text-[#64748B] mb-3">Saisir l'adresse de livraison manuellement</p>
                 <input
                   type="text"
                   name="deliveryAddress"
                   value={form.deliveryAddress}
                   onChange={handleChange}
                   placeholder="Votre adresse complète"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent mb-4"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent mb-4"
                 />
                 
-                <p className="text-sm text-[#62707D] mb-3">Utiliser votre position actuelle en cliquant sur le bouton</p>
+                <p className="text-sm text-[#64748B] mb-3">Utiliser votre position actuelle en cliquant sur le bouton</p>
                 <Button
                   onClick={onUseCurrentLocation}
                   icon={<Icon icon={FaMapMarkerAlt} theme="light" size="sm" />}
@@ -102,7 +102,7 @@ const Component27 = ({
 
               {/* Map Section */}
               <div>
-                <p className="text-sm text-[#62707D] mb-3">
+                <p className="text-sm text-[#64748B] mb-3">
                   Choisir l'emplacement directement sur la carte en déplaçant le marqueur ou en cliquant
                 </p>
                 {mapComponent || (
@@ -125,7 +125,7 @@ const Component27 = ({
                       value={form.deliveryDate}
                       onChange={handleChange}
                       placeholder="mm/dd/yyyy"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                     />
                     <Icon icon={FaCheck} theme="primary" size="sm" className="absolute right-3 top-1/2 -translate-y-1/2" />
                   </div>
@@ -138,7 +138,7 @@ const Component27 = ({
                     name="deliveryTime"
                     value={form.deliveryTime}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                   >
                     <option value="">-- Sélectionner --</option>
                     <option value="09:00">09:00</option>

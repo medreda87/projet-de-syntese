@@ -7,7 +7,7 @@ const TitleSectionText = ({
   descriptionClass
 }) => {
   return (
-    <div className="space-y-2 my-3">
+    <div className="space-y-3 my-3">
       {/* Tag */}
       <div>
         {
@@ -17,9 +17,9 @@ const TitleSectionText = ({
         }
       </div>
       {/* Headline */}
-      <h2 className="text-3xl tracking-[-2px] title-section md:text-4xl lg:text-5xl font-semibold leading-tight" dangerouslySetInnerHTML={{__html : titlePart1}} />
+      <h2 className="text-3xl tracking-[-0.03em] title-section md:text-4xl lg:text-[44px] font-extrabold leading-[1.15]" dangerouslySetInnerHTML={{__html : titlePart1}} />
       {/* Description */}
-      <p className={`${descriptionClass} text-lg text-[#62707D] leading-relaxed max-w-xl`}>
+      <p className={`${descriptionClass} text-base md:text-lg text-[#64748B] leading-relaxed max-w-xl`}>
         {description}
       </p>
     </div>

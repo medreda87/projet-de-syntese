@@ -69,7 +69,7 @@ const Component18 = ({
                   <Tag variant={customersCard.tagVariant} className="mb-4">
                     {customersCard.tagText}
                   </Tag>
-                  <h3 className="text-2xl font-bold text-[#1E2A36] mb-6">
+                  <h3 className="text-2xl font-bold text-[#0F172A] mb-6">
                     {customersCard.heading}
                   </h3>
                 </div>
@@ -79,7 +79,7 @@ const Component18 = ({
                   {customersCard.benefits.map((benefit, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <Icon icon={FaCheck} theme="primary" size="md" className="flex-shrink-0 mt-0.5" />
-                      <span className="text-[#1E2A36]">{benefit}</span>
+                      <span className="text-[#0F172A]">{benefit}</span>
                     </li>
                   ))}
                 </ul>
@@ -127,10 +127,10 @@ const Component18 = ({
               {/* Text Content - Right Side */}
               <div className="p-8 flex flex-col order-2 lg:order-2">
                 <div className="mb-6">
-                  <Tag variant={providersCard.tagVariant} className="mb-4 bg-[#E8F5E9] text-[#1BB38C]">
+                  <Tag variant={providersCard.tagVariant} className="mb-4 bg-[#E8F5E9] text-[#06D6A0]">
                     {providersCard.tagText}
                   </Tag>
-                  <h3 className="text-2xl font-bold text-[#1E2A36] mb-6">
+                  <h3 className="text-2xl font-bold text-[#0F172A] mb-6">
                     {providersCard.heading}
                   </h3>
                 </div>
@@ -140,7 +140,7 @@ const Component18 = ({
                   {providersCard.benefits.map((benefit, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <Icon icon={FaCheck} theme="primary" size="md" className="flex-shrink-0 mt-0.5" />
-                      <span className="text-[#1E2A36]">{benefit}</span>
+                      <span className="text-[#0F172A]">{benefit}</span>
                     </li>
                   ))}
                 </ul>

@@ -19,8 +19,8 @@ const Component17 = ({
       label: "Average Rating"
     }
   ],
-  valueColor = "text-[#0EA5C9]",
-  labelColor = "text-[#1E2A36]",
+  valueColor = "text-[#0C8CE9]",
+  labelColor = "text-[#0F172A]",
   backgroundColor = "bg-[#F7F9FA]"
 }) => {
   return (

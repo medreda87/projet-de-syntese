@@ -58,17 +58,17 @@ const Component19 = ({
                     icon={IconComponent}
                     theme="primary"
                     size="xl"
-                    className="text-[#0EA5C9]"
+                    className="text-[#0C8CE9]"
                   />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-[#1E2A36] mb-3">
+                <h3 className="text-xl font-bold text-[#0F172A] mb-3">
                   {value.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-[#62707D] leading-relaxed text-sm">
+                <p className="text-[#64748B] leading-relaxed text-sm">
                   {value.description}
                 </p>
               </div>

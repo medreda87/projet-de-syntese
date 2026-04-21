@@ -37,7 +37,7 @@ const Component25 = ({
           <div className="lg:col-span-2">
             {/* Header */}
             <div className="mb-8">
-              <button onClick={onBack} className="flex items-center gap-2 text-[#0EA5C9] mb-4 hover:underline">
+              <button onClick={onBack} className="flex items-center gap-2 text-[#0C8CE9] mb-4 hover:underline">
                 <Icon icon={FaArrowLeft} theme="primary" size="sm" />
                 Retour
               </button>
@@ -46,10 +46,10 @@ const Component25 = ({
               {/* Progress Steps */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#0EA5C9] text-white flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-full bg-[#0C8CE9] text-white flex items-center justify-center font-bold">
                     {currentStep > 1 ? <Icon icon={FaCheck} theme="light" size="sm" /> : '1'}
                   </div>
-                  <span className="text-sm text-[#62707D]">Informations personnelles</span>
+                  <span className="text-sm text-[#64748B]">Informations personnelles</span>
                 </div>
                 <div className="flex-1 h-0.5 bg-gray-300"></div>
                 <div className="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-sm">2</div>
@@ -74,7 +74,7 @@ const Component25 = ({
                     name="fullName"
                     value={form.fullName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                   />
                 </div>
 
@@ -89,7 +89,7 @@ const Component25 = ({
                     name="phoneNumber"
                     value={form.phoneNumber}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                   />
                 </div>
 
@@ -101,9 +101,9 @@ const Component25 = ({
                     name="saveInfo"
                     checked={form.saveInfo}
                     onChange={handleChange}
-                    className="w-5 h-5 text-[#0EA5C9] border-gray-300 rounded focus:ring-[#0EA5C9]"
+                    className="w-5 h-5 text-[#0C8CE9] border-gray-300 rounded focus:ring-[#0C8CE9]"
                   />
-                  <label htmlFor="saveInfo" className="text-sm text-[#62707D]">
+                  <label htmlFor="saveInfo" className="text-sm text-[#64748B]">
                     Enregistrer mes informations pour la prochaine fois
                   </label>
                 </div>

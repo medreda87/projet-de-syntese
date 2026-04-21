@@ -52,15 +52,15 @@ function List1({
       <div className="px-4 md:px-8 py-10 max-w-7xl mx-auto">
         <div className="mb-6">
           {search ? (
-            <h2 className="text-2xl font-bold text-[#1E2A36]">
-              Results for "<span className="text-[#0EA5C9]">{search}</span>"
+            <h2 className="text-2xl font-bold text-[#0F172A]">
+              Results for "<span className="text-[#0C8CE9]">{search}</span>"
             </h2>
           ) : (
-            <h2 className="text-2xl font-bold text-[#1E2A36]">
-              All <span className="text-[#0EA5C9]">Laundry Shops</span>
+            <h2 className="text-2xl font-bold text-[#0F172A]">
+              All <span className="text-[#0C8CE9]">Laundry Shops</span>
             </h2>
           )}
-          <p className="text-sm text-[#62707D] mt-1">
+          <p className="text-sm text-[#64748B] mt-1">
             {total} shops found{" "}
             {totalPages > 1 && `— Page ${currentPage} of ${totalPages}`}
           </p>
@@ -68,7 +68,7 @@ function List1({
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="w-10 h-10 border-3 border-[#0EA5C9] border-t-transparent rounded-full animate-spin" />
+            <div className="w-10 h-10 border-3 border-[#0C8CE9] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -82,17 +82,17 @@ function List1({
               {laundries.length === 0 && (
                 <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
                   <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
-                    <IoSearchOutline className="text-2xl text-[#62707D]" />
+                    <IoSearchOutline className="text-2xl text-[#64748B]" />
                   </div>
-                  <h2 className="text-xl font-bold text-[#1E2A36] mb-2">
+                  <h2 className="text-xl font-bold text-[#0F172A] mb-2">
                     No shops found
                   </h2>
-                  <p className="text-[#62707D] text-sm mb-5 max-w-sm">
+                  <p className="text-[#64748B] text-sm mb-5 max-w-sm">
                     Try adjusting your filters or search query to find what
                     you're looking for
                   </p>
                   <button
-                    className="px-6 py-2.5 rounded-xl bg-[#0EA5C9] text-white text-sm font-semibold hover:bg-[#0EA5C9]/90 transition-colors"
+                    className="px-6 py-2.5 rounded-xl bg-[#0C8CE9] text-white text-sm font-semibold hover:bg-[#0C8CE9]/90 transition-colors"
                     onClick={handleClear}
                   >
                     Clear Filters
@@ -107,7 +107,7 @@ function List1({
                 <button
                   onClick={() => onPageChange(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="w-10 h-10 rounded-lg flex items-center justify-center border border-gray-200 text-[#1E2A36] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                  className="w-10 h-10 rounded-lg flex items-center justify-center border border-gray-200 text-[#0F172A] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
                 >
                   <MdNavigateBefore size={22} />
                 </button>
@@ -126,7 +126,7 @@ function List1({
                   }, [])
                   .map((page, idx) =>
                     page === "..." ? (
-                      <span key={`dots-${idx}`} className="px-1 text-[#62707D]">
+                      <span key={`dots-${idx}`} className="px-1 text-[#64748B]">
                         ...
                       </span>
                     ) : (
@@ -135,8 +135,8 @@ function List1({
                         onClick={() => onPageChange(page)}
                         className={`w-10 h-10 rounded-lg text-sm font-semibold transition-colors ${
                           currentPage === page
-                            ? "bg-[#0EA5C9] text-white"
-                            : "border border-gray-200 text-[#1E2A36] hover:bg-gray-100"
+                            ? "bg-[#0C8CE9] text-white"
+                            : "border border-gray-200 text-[#0F172A] hover:bg-gray-100"
                         }`}
                       >
                         {page}
@@ -149,7 +149,7 @@ function List1({
                     onPageChange(Math.min(totalPages, currentPage + 1))
                   }
                   disabled={currentPage === totalPages}
-                  className="w-10 h-10 rounded-lg flex items-center justify-center border border-gray-200 text-[#1E2A36] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                  className="w-10 h-10 rounded-lg flex items-center justify-center border border-gray-200 text-[#0F172A] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
                 >
                   <MdNavigateNext size={22} />
                 </button>

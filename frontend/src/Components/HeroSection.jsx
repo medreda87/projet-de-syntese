@@ -57,7 +57,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[92vh] flex items-center overflow-hidden">
       {/* Video Background */}
       {!videoError && (
         <video
@@ -68,94 +68,94 @@ const HeroSection = () => {
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
           style={{
-            transform: 'scale(1.1)',
+            transform: 'scale(1.05)',
             zIndex: 0
           }}
           poster="/images/Gemini_Generated_Image_24x83c24x83c24x8.png"
           onLoadedMetadata={(e) => {
-            e.target.playbackRate = 0.8; // Slightly slower for cinematic effect
-            e.target.play().catch((error) => {
-              console.log('Video autoplay failed:', error);
+            e.target.playbackRate = 0.8;
+            e.target.play().catch(() => {
               setVideoError(true);
             });
           }}
           onError={() => {
-            // Fallback to image if video fails to load
-            console.log('Video failed to load, using fallback image');
             setVideoError(true);
           }}
         >
           <source src="/images/Laundry_Pickup_Service_Video_Generation.mp4" type="video/mp4" />
-          {/* Fallback message for browsers that don't support video */}
           Your browser does not support the video tag.
         </video>
       )}
       
-      {/* Fallback Background Image */}
-      
-      
-      
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black  to-transparent" />
+      {/* Cinematic Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A]/90 via-[#0F172A]/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/40 to-transparent" />
 
       {/* Content */}
       <div className="container mx-auto px-4 py-20 relative z-10 w-full">
-        <div className="max-w-5xl">
-          {/* Headline - Left aligned */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-10 leading-tight">
-            <span className='text-primary'>FreshFold</span><br />
-            <span className="text-white">will take it from here</span>
+        <div className="max-w-3xl">
+          {/* Subtle badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-8">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+            <span className="text-white/80 text-sm font-medium">Trusted by 500+ laundry providers</span>
+          </div>
+
+          {/* Headline */}
+          <h1 className="text-4xl md:text-5xl lg:text-[64px] font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
+            Fresh clothes,<br />
+            <span className="bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] bg-clip-text text-transparent">delivered to your door</span>
           </h1>
 
-          {/* Search Bar - Centered */}
-          <form onSubmit={handleSearch} className="mb-8 ">
-            <div className="flex items-center bg-white px-2 py-0 rounded-xl overflow-hidden shadow-2xl">
+          <p className="text-lg md:text-xl text-white/70 mb-10 max-w-xl leading-relaxed">
+            Find, compare, and book the best local laundry services. Pickup, cleaning, and delivery — all in one place.
+          </p>
+
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="mb-8 max-w-2xl">
+            <div className="flex items-center bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl shadow-black/20 border border-white/20">
+              <Search className="w-5 h-5 text-gray-400 ml-5 flex-shrink-0" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search for any service..."
-                className="flex-1 px-6 py-5 text-gray-800 placeholder-gray-400 focus:outline-none w-full text-lg"
+                placeholder="Search for laundry services near you..."
+                className="flex-1 px-4 py-4 md:py-5 bg-transparent text-gray-800 placeholder-gray-400 focus:outline-none w-full text-base"
               />
               <button
                 type="submit"
-                className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-3 transition-colors duration-200 flex items-center justify-center rounded-xl"
+                className="bg-[#0C8CE9] hover:bg-[#0A6FC2] text-white px-6 py-3 md:py-4 mr-1.5 transition-all duration-200 flex items-center justify-center rounded-xl font-semibold text-sm gap-2"
               >
-                <Search className="w-6 h-6" />
+                Search
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </form>
 
-          {/* Service Category Buttons */}
-          <div className="flex flex-wrap gap-3 mb-16">
+          {/* Service Category Pills */}
+          <div className="flex flex-wrap gap-2">
             {serviceCategories.map((category, index) => (
              <Link to={`/shops/${category.replace(/\s+/g, '_').toLowerCase()}`} key={index}>
-               <button
-                 key={index}
-                 className="bg-gray-800/90 hover:bg-gray-700/90 backdrop-blur-sm text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-all duration-200 hover:scale-105 text-sm md:text-base font-medium"
+               <span
+                 className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white/90 px-4 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium border border-white/10 cursor-pointer"
                >
-                 <span>{category}</span>
-                 <ArrowRight className="w-4 h-4" />
-               </button>
+                 {category}
+               </span>
              </Link>
             ))}
           </div>
-
-          {/* Trusted By Section - Bottom Left */}
-          
         </div>
       </div>
 
       {/* Pause/Play Button - Bottom Right */}
       <button
         onClick={() => setIsPaused(!isPaused)}
-        className="absolute bottom-8 right-8 w-14 h-14 bg-gray-800/90 hover:bg-gray-700/90 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all duration-200 hover:scale-110 z-20 shadow-lg"
+        className="absolute bottom-8 right-8 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:scale-110 z-20"
         aria-label={isPaused ? 'Play' : 'Pause'}
       >
         {isPaused ? (
-          <Play className="w-6 h-6 ml-1" />
+          <Play className="w-5 h-5 ml-0.5" />
         ) : (
-          <Pause className="w-6 h-6" />
+          <Pause className="w-5 h-5" />
         )}
       </button>
     </section>

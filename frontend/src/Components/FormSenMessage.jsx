@@ -140,7 +140,7 @@ Address: ${formData.address}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] text-white py-4 rounded-lg text-lg disabled:opacity-60"
+            className="w-full bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] text-white py-4 rounded-lg text-lg disabled:opacity-60"
           >
             {loading ? "Sending..." : "Send Message"}
           </button>

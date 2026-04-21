@@ -11,38 +11,40 @@ const Component20 = ({
   onPrimaryClick,
 }) => {
   return (
-    <div className="bg-white py-16 px-4">
+    <div className="bg-white py-20 px-4">
       <div className="container mx-auto">
-        <div className="bg-gradient-to-b md:flex-row flex  flex-col  from-[#F1FAFD] to-[#E8F5F9] overflow-hidden rounded-2xl ">
-          <div className="md:order-0 order-2 p-8 md:p-12 lg:p-16 w-full md:w-[50%] max-w-3xl">
+        <div className="bg-gradient-to-br from-[#0C8CE9]/5 via-[#0C8CE9]/8 to-[#06D6A0]/5 overflow-hidden rounded-3xl border border-[#0C8CE9]/10">
+          <div className="flex flex-col md:flex-row">
+          <div className="md:order-0 order-2 p-8 md:p-12 lg:p-16 w-full md:w-[50%] flex flex-col justify-center">
             {/* Title and Description using TitleSectionText */}
-            <div className="">
+            <div>
               <TitleSectionText
                 titlePart1={titlePart1}
                 description={description}
-                descriptionClass="mx-auto"
+                descriptionClass=""
               />
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4  items-center mt-8">
+            <div className="flex flex-col sm:flex-row gap-4 items-start mt-8">
               <Button
                 variant="primary"
                 onClick={onPrimaryClick}
-                className="w-full sm:w-[50%] "
+                className="w-full sm:w-auto"
               >
                 <Link to="/signup">
                   {primaryButtonText}
                 </Link>
               </Button>
-             
             </div>
           </div>
-          <div className='h-full md:order-0 w-full md:w-[50%]'>
+          <div className='md:order-0 w-full md:w-[50%]'>
             <img
               src="/images/community.png"
-              className="w-full h-full"
+              className="w-full h-full object-cover"
+              alt="Join FreshFold community"
             />
+          </div>
           </div>
         </div>
       </div>

@@ -32,12 +32,12 @@ const Component15 = ({
 
             {/* Headline */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              <span className="text-[#1E2A36]">{titlePart1}</span>
-              <span className="text-[#0EA5C9]">{titlePart2}</span>
+              <span className="text-[#0F172A]">{titlePart1}</span>
+              <span className="text-[#0C8CE9]">{titlePart2}</span>
             </h1>
 
             {/* Description */}
-            <p className="text-lg text-[#62707D] leading-relaxed max-w-xl">
+            <p className="text-lg text-[#64748B] leading-relaxed max-w-xl">
               {description}
             </p>
 
@@ -56,16 +56,16 @@ const Component15 = ({
             {rightSideItems && rightSideItems.length > 0 && rightSideItems.map((item, index) => (
               <div key={index} className="flex gap-4">
                 {/* Icon Box */}
-                <div className="flex-shrink-0 w-12 h-12 bg-[#0EA5C9] rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-12 h-12 bg-[#0C8CE9] rounded-lg flex items-center justify-center">
                   <Icon icon={item.icon || FaSearch} theme="light" size="md" />
                 </div>
 
                 {/* Content */}
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-[#1E2A36] mb-2">
+                  <h3 className="text-xl font-bold text-[#0F172A] mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-[#62707D] leading-relaxed">
+                  <p className="text-[#64748B] leading-relaxed">
                     {item.description}
                   </p>
                 </div>

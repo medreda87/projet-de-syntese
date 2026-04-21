@@ -35,22 +35,22 @@ const Component3 = ({
       description: "Not satisfied? Free redo"
     }
   ],
-  backgroundColor = "bg-[#F7F9FA]",
-  iconBackgroundColor = "bg-[#E0F2FE]",
-  iconColor = "text-[#0EA5C9]",
-  titleColor = "text-[#1E2A36]",
-  descriptionColor = "text-[#62707D]"
+  backgroundColor = "bg-white",
+  iconBackgroundColor = "bg-[#0C8CE9]/8",
+  iconColor = "text-[#0C8CE9]",
+  titleColor = "text-[#0F172A]",
+  descriptionColor = "text-[#64748B]"
 }) => {
   return (
-    <div className={`${backgroundColor} border-b-2 py-10 `}>
+    <div className={`${backgroundColor} border-b border-gray-100 py-6`}>
       <div className="container mx-auto">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-2">
           {features.map((feature, index) => {
             const IconComponent = feature.icon
             return (
-              <div key={index} className="flex gap-2 items-center">
+              <div key={index} className="flex gap-2.5 items-center">
                 {/* Icon Container */}
-                <div className={`${iconBackgroundColor} rounded-md p-1 mb-3 flex items-center justify-center`}>
+                <div className={`${iconBackgroundColor} rounded-lg p-2 flex items-center justify-center flex-shrink-0`}>
                   <Icon
                     icon={IconComponent}
                     theme="primary"
@@ -61,12 +61,12 @@ const Component3 = ({
 
                 <div>
                   {/* Title */}
-                <h3 className={`font-medium ${titleColor}  text-sm md:text-[14px]`}>
+                <h3 className={`font-semibold ${titleColor} text-[13px] leading-tight`}>
                   {feature.title}
                 </h3>
 
                 {/* Description */}
-                <p className={`text-xs md:text-sm ${descriptionColor}`}>
+                <p className={`text-xs ${descriptionColor} mt-0.5`}>
                   {feature.description}
                 </p>
                 </div>

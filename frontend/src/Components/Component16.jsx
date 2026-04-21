@@ -181,7 +181,7 @@ const handleSubmit = async (e) => {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -20, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
-                className="absolute top-4 left-4 right-4 bg-gradient-to-r from-[#1BB38C] to-[#0EA5C9] text-white p-4 rounded-xl shadow-lg z-10 flex items-center gap-3"
+                className="absolute top-4 left-4 right-4 bg-gradient-to-r from-[#06D6A0] to-[#0C8CE9] text-white p-4 rounded-xl shadow-lg z-10 flex items-center gap-3"
               >
                 <FaCheckCircle className="w-6 h-6 flex-shrink-0" />
                 <div className="flex-1">
@@ -231,7 +231,7 @@ const handleSubmit = async (e) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Business Name */}
               <div>
-                <label htmlFor="businessName" className="block text-sm font-medium text-[#1E2A36] mb-2">
+                <label htmlFor="businessName" className="block text-sm font-medium text-[#0F172A] mb-2">
                   {formFields.businessName.label}
                 </label>
                 <input
@@ -241,13 +241,13 @@ const handleSubmit = async (e) => {
                   value={formData.businessName}
                   onChange={handleChange}
                   placeholder={formFields.businessName.placeholder}
-                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                 />
               </div>
 
               {/* Owner Name */}
               <div>
-                <label htmlFor="ownerName" className="block text-sm font-medium text-[#1E2A36] mb-2">
+                <label htmlFor="ownerName" className="block text-sm font-medium text-[#0F172A] mb-2">
                   {formFields.ownerName.label}
                 </label>
                 <input
@@ -257,13 +257,13 @@ const handleSubmit = async (e) => {
                   value={formData.ownerName}
                   onChange={handleChange}
                   placeholder={formFields.ownerName.placeholder}
-                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                 />
               </div>
 
               {/* Email Address */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-[#1E2A36] mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-[#0F172A] mb-2">
                   {formFields.email.label}
                 </label>
                 <input
@@ -273,12 +273,12 @@ const handleSubmit = async (e) => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder={formFields.email.placeholder}
-                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                 />
               </div>
               {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#1E2A36] mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-[#0F172A] mb-2">
                 {formFields.password.label}
               </label>
               <input
@@ -288,13 +288,13 @@ const handleSubmit = async (e) => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder={formFields.password.placeholder}
-                className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
               />
             </div>
 
               {/* Phone Number */}
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-[#1E2A36] mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-[#0F172A] mb-2">
                   {formFields.phone.label}
                 </label>
                 <input
@@ -304,14 +304,14 @@ const handleSubmit = async (e) => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder={formFields.phone.placeholder}
-                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                 />
               </div>
             </div>
 
             {/* Business Address - Full Width */}
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-[#1E2A36] mb-2">
+              <label htmlFor="address" className="block text-sm font-medium text-[#0F172A] mb-2">
                 {formFields.address.label}
               </label>
               <input
@@ -321,14 +321,14 @@ const handleSubmit = async (e) => {
                 value={formData.address}
                 onChange={handleChange}
                 placeholder={formFields.address.placeholder}
-                className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
               />
             </div>
 
             {/* Terms and Conditions */}
             <div className="bg-[#F7F9FA] rounded-lg p-4 flex items-start gap-3">
               <Icon icon={FaCheck} theme="primary" size="md" className="flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-[#62707D] leading-relaxed">
+              <p className="text-sm text-[#64748B] leading-relaxed">
                 {termsText}
               </p>
             </div>
@@ -339,7 +339,7 @@ const handleSubmit = async (e) => {
                 type="submit"
                 disabled={isSubmitting}
                 icon={!isSubmitting && <Icon icon={FaArrowRight} theme="light" size="sm" />}
-                className="w-full bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] hover:from-[#0d94b8] hover:to-[#16a077] text-white px-8 py-4 rounded-lg text-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] hover:from-[#0d94b8] hover:to-[#16a077] text-white px-8 py-4 rounded-lg text-lg disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <span className="flex items-center justify-center gap-2">

@@ -46,7 +46,7 @@ const Component9 = ({
 }) => {
 
   return (
-    <div className="bg-primary-light py-16 px-4">
+    <div className="bg-[#F8FAFC] py-20 md:py-28 px-4">
       <div className="container mx-auto">
         {/* Header Section */}
         <div className="mb-12 text-center">
@@ -60,31 +60,31 @@ const Component9 = ({
         </div>
 
         {/* Service Cards Grid - 3x2 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12 mb-12">
           {cards.map((card, index) => {
             const IconComponent = card.icon
             return (
               <div
                 key={index}
-                className="bg-white relative  rounded-xl shadow-sm px-6  py-[50px] hover:shadow-md transition-shadow duration-200"
+                className="bg-white relative rounded-2xl border border-gray-100 px-6 py-10 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-transparent hover:-translate-y-1 transition-all duration-300"
               >
                 {/* Icon */}
-                <div className="mb-4 left-[-10px] bg-primary-light rounded-xl p-3 top-[-10px] absolute">
+                <div className="mb-4 left-[-8px] bg-[#0C8CE9]/8 rounded-xl p-3 top-[-8px] absolute">
                   <Icon
                     icon={IconComponent}
                     theme="primary"
                     size="lg"
-                    className="text-[#0EA5C9]"
+                    className="text-[#0C8CE9]"
                   />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-text-dark mb-3">
+                <h3 className="text-lg font-bold text-[#0F172A] mb-2">
                   {card.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-[#62707D] leading-relaxed">
+                <p className="text-[#64748B] text-sm leading-relaxed">
                   {card.description}
                 </p>
               </div>

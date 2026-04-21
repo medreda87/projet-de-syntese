@@ -14,7 +14,7 @@ const Component14 = ({
         <div className={image ? 'text-left' : 'text-center'}>
           {/* About FreshFold Button */}
           <div className="mb-8">
-            <button className="bg-[#E0F2FE] hover:bg-[#BAE6FD] text-[#0EA5C9] font-medium px-6 py-2 rounded-full transition-colors duration-200">
+            <button className="bg-[#E0F2FE] hover:bg-[#BAE6FD] text-[#0C8CE9] font-medium px-6 py-2 rounded-full transition-colors duration-200">
               {buttonText}
             </button>
           </div>
@@ -24,7 +24,7 @@ const Component14 = ({
             dangerouslySetInnerHTML={{ __html: titlePart1 }} />
 
           {/* Descriptive Text */}
-          <p className={`text-lg md:text-xl text-[#62707D] leading-relaxed mb-12 ${image ? '' : 'max-w-2xl mx-auto'}`}>
+          <p className={`text-lg md:text-xl text-[#64748B] leading-relaxed mb-12 ${image ? '' : 'max-w-2xl mx-auto'}`}>
             {description}
           </p>
 
@@ -34,7 +34,7 @@ const Component14 = ({
               {steps.map((step, index) => (
                 <div key={index} className="flex items-center gap-2">
                   {/* Step Number Circle */}
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#0EA5C9] flex items-center justify-center">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#0C8CE9] flex items-center justify-center">
                     <span className="text-white font-medium text-md">{index + 1}</span>
                   </div>
                   {/* Step Text */}

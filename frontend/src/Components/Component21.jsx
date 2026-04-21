@@ -26,19 +26,19 @@ const Component21 = ({
           {/* Email Us Card */}
           <div className="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="mb-6">
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] flex items-center justify-center">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] flex items-center justify-center">
                 <Icon icon={FaEnvelope} theme="light" size="xl" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-[#1E2A36] mb-2">
+            <h3 className="text-xl font-bold text-[#0F172A] mb-2">
               {emailCard.title}
             </h3>
-            <p className="text-[#62707D] text-sm mb-4">
+            <p className="text-[#64748B] text-sm mb-4">
               {emailCard.subtitle}
             </p>
             <a 
               href={`mailto:${emailCard.contact}`}
-              className="text-[#0EA5C9] hover:text-[#1BB38C] transition-colors duration-200"
+              className="text-[#0C8CE9] hover:text-[#06D6A0] transition-colors duration-200"
             >
               {emailCard.contact}
             </a>
@@ -47,19 +47,19 @@ const Component21 = ({
           {/* Call Us Card */}
           <div className="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="mb-6">
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] flex items-center justify-center">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] flex items-center justify-center">
                 <Icon icon={FaPhone} theme="light" size="xl" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-[#1E2A36] mb-2">
+            <h3 className="text-xl font-bold text-[#0F172A] mb-2">
               {phoneCard.title}
             </h3>
-            <p className="text-[#62707D] text-sm mb-4">
+            <p className="text-[#64748B] text-sm mb-4">
               {phoneCard.subtitle}
             </p>
             <a 
               href={`tel:${phoneCard.contact.replace(/\s/g, '')}`}
-              className="text-[#0EA5C9] hover:text-[#1BB38C] transition-colors duration-200"
+              className="text-[#0C8CE9] hover:text-[#06D6A0] transition-colors duration-200"
             >
               {phoneCard.contact}
             </a>
@@ -68,21 +68,21 @@ const Component21 = ({
           {/* Visit Us Card */}
           <div className="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="mb-6">
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] flex items-center justify-center">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] flex items-center justify-center">
                 <Icon icon={FaMapMarkerAlt} theme="light" size="xl" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-[#1E2A36] mb-2">
+            <h3 className="text-xl font-bold text-[#0F172A] mb-2">
               {visitCard.title}
             </h3>
-            <p className="text-[#62707D] text-sm mb-4">
+            <p className="text-[#64748B] text-sm mb-4">
               {visitCard.subtitle}
             </p>
             <a 
               href={`https://maps.google.com/?q=${encodeURIComponent(visitCard.contact)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#0EA5C9] hover:text-[#1BB38C] transition-colors duration-200"
+              className="text-[#0C8CE9] hover:text-[#06D6A0] transition-colors duration-200"
             >
               {visitCard.contact}
             </a>

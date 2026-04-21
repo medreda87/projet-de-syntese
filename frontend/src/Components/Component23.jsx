@@ -92,14 +92,14 @@ const Component23 = ({
                 className={`group flex gap-5 transition-all duration-300 ${
                   isProviderVariant 
                     ? 'bg-white py-5 px-6 rounded-2xl shadow-lg hover:shadow-xl border-l-4 border-primary hover:scale-[1.02] hover:-translate-y-1' 
-                    : 'bg-white py-4 px-5 rounded-xl shadow-md hover:shadow-lg border border-[#0EA5C9]/20 hover:border-[#0EA5C9]/40 hover:scale-[1.01]'
+                    : 'bg-white py-4 px-5 rounded-xl shadow-md hover:shadow-lg border border-[#0C8CE9]/20 hover:border-[#0C8CE9]/40 hover:scale-[1.01]'
                 }`}
               >
                 {/* Icon Box */}
                 <div className={`flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${
                   isProviderVariant 
                     ? 'bg-gradient-to-br from-primary to-accent shadow-lg' 
-                    : 'bg-gradient-to-br from-[#0EA5C9] to-primary shadow-md'
+                    : 'bg-gradient-to-br from-[#0C8CE9] to-primary shadow-md'
                 }`}>
                   <Icon icon={item.icon || FaSearch} theme="light" size="md" />
                 </div>
@@ -113,7 +113,7 @@ const Component23 = ({
                   }`}>
                     {item.title}
                   </h3>
-                  <p className="text-[#62707D] leading-relaxed text-base">
+                  <p className="text-[#64748B] leading-relaxed text-base">
                     {item.description}
                   </p>
                 </div>

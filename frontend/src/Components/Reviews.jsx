@@ -36,8 +36,6 @@ const Reviews = ({
   const [selectedRating, setSelectedRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-  const [hasRamassage, setHasRamassage] = useState(false);
-  const [checkingRamassage, setCheckingRamassage] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const location = useLocation();
 
@@ -57,22 +55,7 @@ const Reviews = ({
     }
   }, [laundryId]);
 
-  // Check if user has a ramassage for this laundry
-  useEffect(() => {
-    if (isAuthenticated && laundryId && variant === "default") {
-      setCheckingRamassage(true);
-      API.get(`/ramassages/check/${laundryId}`)
-        .then((res) => {
-          setHasRamassage(res.data.hasRamassage);
-        })
-        .catch(() => {
-          setHasRamassage(false);
-        })
-        .finally(() => {
-          setCheckingRamassage(false);
-        });
-    }
-  }, [isAuthenticated, laundryId]);
+
   // Calculate average rating
   const averageRating =
     localReviews.length > 0
@@ -278,7 +261,7 @@ const Reviews = ({
           {reviews.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl text-gray-300 mb-4">★</div>
-              <p className="text-[#62707D] text-lg">
+              <p className="text-[#64748B] text-lg">
                 Reviews coming soon. Be the first to leave a review!
               </p>
             </div>
@@ -293,18 +276,18 @@ const Reviews = ({
                     <div className="flex items-center gap-1 mb-4">
                       {renderStars(review.rating)}
                     </div>
-                    <p className="text-[#62707D] mb-4 leading-relaxed">
+                    <p className="text-[#64748B] mb-4 leading-relaxed">
                       "{review.comment}"
                     </p>
                     <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0EA5C9] to-[#1BB38C] flex items-center justify-center text-white font-bold text-lg">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0C8CE9] to-[#06D6A0] flex items-center justify-center text-white font-bold text-lg">
                         {review.customerName.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-semibold text-[#1E2A36]">
+                        <p className="font-semibold text-[#0F172A]">
                           {review.customerName}
                         </p>
-                        <p className="text-sm text-[#62707D]">
+                        <p className="text-sm text-[#64748B]">
                           {review.location || "Customer"}
                         </p>
                       </div>
@@ -324,7 +307,7 @@ const Reviews = ({
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
-                  <span className="text-[#62707D]">
+                  <span className="text-[#64748B]">
                     Page {currentPage + 1} of {totalPages}
                   </span>
                   <button
@@ -357,12 +340,12 @@ const Reviews = ({
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mx-auto mb-4">
               <Trash2 className="w-6 h-6 text-red-500" />
             </div>
-            <h3 className="text-lg font-bold text-[#1E2A36] text-center mb-2">Delete Comment</h3>
-            <p className="text-sm text-[#62707D] text-center mb-6">Are you sure you want to delete this comment? This action cannot be undone.</p>
+            <h3 className="text-lg font-bold text-[#0F172A] text-center mb-2">Delete Comment</h3>
+            <p className="text-sm text-[#64748B] text-center mb-6">Are you sure you want to delete this comment? This action cannot be undone.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-[#1E2A36] font-medium text-sm hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-[#0F172A] font-medium text-sm hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
@@ -378,18 +361,18 @@ const Reviews = ({
       )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h2 className="text-xl font-bold text-[#1E2A36] tracking-tight">{title}</h2>
-          <div className="w-10 h-0.5 bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] rounded-full mt-2" />
+          <h2 className="text-xl font-bold text-[#0F172A] tracking-tight">{title}</h2>
+          <div className="w-10 h-0.5 bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] rounded-full mt-2" />
         </div>
         {showRatingSummary && localReviews.length > 0 && (
           <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 py-2">
             <div className="flex items-center gap-1">
               {renderStars(parseFloat(averageRating))}
             </div>
-            <span className="text-lg font-bold text-[#1E2A36]">
+            <span className="text-lg font-bold text-[#0F172A]">
               {averageRating}
             </span>
-            <span className="text-sm text-[#62707D]">({localReviews.length})</span>
+            <span className="text-sm text-[#64748B]">({localReviews.length})</span>
           </div>
         )}
       </div>
@@ -397,7 +380,7 @@ const Reviews = ({
       {localReviews.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl text-gray-300 mb-4">★</div>
-          <p className="text-[#62707D] text-lg">
+          <p className="text-[#64748B] text-lg">
             Reviews coming soon. Be the first to leave a review!
           </p>
         </div>
@@ -411,14 +394,14 @@ const Reviews = ({
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0EA5C9] to-[#1BB38C] flex items-center justify-center text-white font-semibold">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0C8CE9] to-[#06D6A0] flex items-center justify-center text-white font-semibold">
                       {(review.name || review.customerName || review.user?.name || "?").charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-semibold text-[#1E2A36]">
+                      <p className="font-semibold text-[#0F172A]">
                         {review.name || review.customerName || review.user?.name}
                       </p>
-                      <p className="text-sm text-[#62707D]">
+                      <p className="text-sm text-[#64748B]">
                         {formatDate(review.created_at || review.date)}
                       </p>
                     </div>
@@ -431,14 +414,14 @@ const Reviews = ({
                       <div className="flex items-center gap-1 ml-2">
                         <button
                           onClick={() => handleEditComment(review)}
-                          className="p-1.5 rounded-md text-[#62707D] hover:text-[#0EA5C9] hover:bg-[#E0F2FE] transition-colors"
+                          className="p-1.5 rounded-md text-[#64748B] hover:text-[#0C8CE9] hover:bg-[#0C8CE9/8] transition-colors"
                           title="Edit comment"
                         >
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteComment(review.id)}
-                          className="p-1.5 rounded-md text-[#62707D] hover:text-red-500 hover:bg-red-50 transition-colors"
+                          className="p-1.5 rounded-md text-[#64748B] hover:text-red-500 hover:bg-red-50 transition-colors"
                           title="Delete comment"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -452,19 +435,19 @@ const Reviews = ({
                     <textarea
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg p-3 text-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] resize-none"
+                      className="w-full border border-gray-300 rounded-lg p-3 text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] resize-none"
                       rows={3}
                     />
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => handleSaveEdit(review.id)}
-                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-[#1BB38C] text-white text-sm hover:bg-[#1bb38dcf] transition-colors"
+                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-[#06D6A0] text-white text-sm hover:bg-[#1bb38dcf] transition-colors"
                       >
                         <Check className="w-4 h-4" /> Save
                       </button>
                       <button
                         onClick={handleCancelEdit}
-                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-gray-200 text-[#1E2A36] text-sm hover:bg-gray-300 transition-colors"
+                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-gray-200 text-[#0F172A] text-sm hover:bg-gray-300 transition-colors"
                       >
                         <X className="w-4 h-4" /> Cancel
                       </button>
@@ -472,7 +455,7 @@ const Reviews = ({
                   </div>
                 ) : (
                   <>
-                    <p className="text-[#62707D] leading-relaxed">
+                    <p className="text-[#64748B] leading-relaxed">
                       {review.comment}
                     </p>
                     {review.image && (
@@ -489,7 +472,7 @@ const Reviews = ({
                 )}
                 {review.service && (
                   <div className="mt-3">
-                    <span className="text-sm bg-[#E0F2FE] text-[#0EA5C9] px-3 py-1 rounded-lg">
+                    <span className="text-sm bg-[#0C8CE9/8] text-[#0C8CE9] px-3 py-1 rounded-lg">
                       Service: {review.service}
                     </span>
                   </div>
@@ -504,7 +487,7 @@ const Reviews = ({
                       setReplyImage(null);
                       setReplyImagePreview(null);
                     }}
-                    className="mt-3 inline-flex items-center gap-1.5 text-sm text-[#62707D] hover:text-[#0EA5C9] transition-colors"
+                    className="mt-3 inline-flex items-center gap-1.5 text-sm text-[#64748B] hover:text-[#0C8CE9] transition-colors"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Reply
@@ -514,14 +497,14 @@ const Reviews = ({
                 {/* Reply form */}
                 {replyingTo === review.id && (
                   <div className="mt-3 ml-6 p-4 bg-[#F7F9FA] rounded-lg border border-gray-200">
-                    <p className="text-sm text-[#62707D] mb-2">
-                      Replying to <span className="font-semibold text-[#1E2A36]">{review.name || review.customerName}</span>
+                    <p className="text-sm text-[#64748B] mb-2">
+                      Replying to <span className="font-semibold text-[#0F172A]">{review.name || review.customerName}</span>
                     </p>
                     <textarea
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       placeholder="Write your reply..."
-                      className="w-full border border-gray-300 rounded-lg p-3 text-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] resize-none text-sm"
+                      className="w-full border border-gray-300 rounded-lg p-3 text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] resize-none text-sm"
                       rows={2}
                     />
                     {replyImagePreview && (
@@ -538,17 +521,17 @@ const Reviews = ({
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => handleSubmitReply(review.id)}
-                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-[#0EA5C9] text-white text-sm hover:bg-[#0EA5C9]/90 transition-colors"
+                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-[#0C8CE9] text-white text-sm hover:bg-[#0C8CE9]/90 transition-colors"
                       >
                         Reply
                       </button>
-                      <label className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-gray-200 text-[#1E2A36] text-sm hover:bg-gray-300 transition-colors cursor-pointer">
+                      <label className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-gray-200 text-[#0F172A] text-sm hover:bg-gray-300 transition-colors cursor-pointer">
                         <Image className="w-4 h-4" />
                         <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, 'reply')} />
                       </label>
                       <button
                         onClick={() => { setReplyingTo(null); setReplyText(""); clearImage('reply'); }}
-                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-gray-200 text-[#1E2A36] text-sm hover:bg-gray-300 transition-colors"
+                        className="inline-flex items-center gap-1 px-4 py-1.5 rounded-md bg-gray-200 text-[#0F172A] text-sm hover:bg-gray-300 transition-colors"
                       >
                         Cancel
                       </button>
@@ -558,19 +541,19 @@ const Reviews = ({
 
                 {/* Replies */}
                 {review.replies && review.replies.length > 0 && (
-                  <div className="mt-4 ml-6 space-y-4 border-l-2 border-[#E0F2FE] pl-4">
+                  <div className="mt-4 ml-6 space-y-4 border-l-2 border-[#0C8CE9/8] pl-4">
                     {review.replies.map((reply) => (
                       <div key={reply.id} className="bg-[#F7F9FA] rounded-lg p-4">
                         <div className="flex items-center gap-3 mb-2">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0EA5C9] to-[#1BB38C] flex items-center justify-center text-white font-semibold text-xs">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0C8CE9] to-[#06D6A0] flex items-center justify-center text-white font-semibold text-xs">
                             {(reply.name || reply.user?.name || "?").charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <p className="font-semibold text-[#1E2A36] text-sm">{reply.name || reply.user?.name}</p>
-                            <p className="text-xs text-[#62707D]">{formatDate(reply.created_at)}</p>
+                            <p className="font-semibold text-[#0F172A] text-sm">{reply.name || reply.user?.name}</p>
+                            <p className="text-xs text-[#64748B]">{formatDate(reply.created_at)}</p>
                           </div>
                         </div>
-                        <p className="text-[#62707D] text-sm leading-relaxed">{reply.comment}</p>
+                        <p className="text-[#64748B] text-sm leading-relaxed">{reply.comment}</p>
                         {reply.image && (
                           <div className="mt-2">
                             <img
@@ -598,7 +581,7 @@ const Reviews = ({
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <span className="text-[#62707D]">
+              <span className="text-[#64748B]">
                 Page {currentPage + 1} of {totalPages}
               </span>
               <button
@@ -619,13 +602,12 @@ const Reviews = ({
         <div className="mt-4">
           <p className="font-bold text-xl mb-3">Add a comment</p>
           {isAuthenticated ? (
-            hasRamassage ? (
             <div>
-              <p className="text-sm text-[#62707D] mb-2">Commenting as <span className="font-semibold text-[#1E2A36]">{user?.name}</span></p>
+              <p className="text-sm text-[#64748B] mb-2">Commenting as <span className="font-semibold text-[#0F172A]">{user?.name}</span></p>
               
               {/* Star Rating Picker */}
               <div className="mb-3">
-                <p className="text-sm font-medium text-[#1E2A36] mb-1">Your rating</p>
+                <p className="text-sm font-medium text-[#0F172A] mb-1">Your rating</p>
                 <div className="flex items-center gap-1">
                   {Array.from({ length: 5 }, (_, i) => (
                     <button
@@ -646,7 +628,7 @@ const Reviews = ({
                     </button>
                   ))}
                   {selectedRating > 0 && (
-                    <span className="text-sm text-[#62707D] ml-2">{selectedRating}/5</span>
+                    <span className="text-sm text-[#64748B] ml-2">{selectedRating}/5</span>
                   )}
                 </div>
               </div>
@@ -659,7 +641,7 @@ const Reviews = ({
                   onChange={(e) => {
                     setComments(e.target.value);
                   }}
-                  className="w-full border border-gray-300 rounded-lg p-3 text-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] resize-none mb-0"
+                  className="w-full border border-gray-300 rounded-lg p-3 text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] resize-none mb-0"
                   rows={3}
                 ></textarea>
                 {error.comments && (
@@ -682,41 +664,35 @@ const Reviews = ({
                   onClick={() => {
                     handleSubmitComments();
                   }}
-                  className="py-2 px-16 rounded-md hover:bg-[#1bb38dcf] bg-[#1BB38C] text-white"
+                  className="py-2 px-16 rounded-md hover:bg-[#1bb38dcf] bg-[#06D6A0] text-white"
                 >
                   Send
                 </button>
-                <label className="inline-flex items-center gap-1.5 py-2 px-4 rounded-md bg-gray-200 text-[#1E2A36] hover:bg-gray-300 transition-colors cursor-pointer">
+                <label className="inline-flex items-center gap-1.5 py-2 px-4 rounded-md bg-gray-200 text-[#0F172A] hover:bg-gray-300 transition-colors cursor-pointer">
                   <Image className="w-4 h-4" />
                   <span className="text-sm">Image</span>
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, 'comment')} />
                 </label>
               </div>
             </div>
-            ) : (
-              <div className="bg-amber-50 rounded-xl p-6 text-center border border-amber-200">
-                <ShieldAlert className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-                <p className="text-[#1E2A36] font-semibold mb-1">Réservation requise</p>
-                <p className="text-[#62707D] text-sm">Vous devez avoir effectué une réservation (ramassage) dans cette laverie avant de pouvoir laisser un avis.</p>
-              </div>
-            )
+
           ) : (
             <div className="bg-[#F7F9FA] rounded-xl p-6 text-center border border-gray-200">
-              <LogIn className="w-10 h-10 text-[#0EA5C9] mx-auto mb-3" />
-              <p className="text-[#1E2A36] font-semibold mb-1">Sign in to leave a review</p>
-              <p className="text-[#62707D] text-sm mb-4">You need an account to share your experience with this laundry.</p>
+              <LogIn className="w-10 h-10 text-[#0C8CE9] mx-auto mb-3" />
+              <p className="text-[#0F172A] font-semibold mb-1">Sign in to leave a review</p>
+              <p className="text-[#64748B] text-sm mb-4">You need an account to share your experience with this laundry.</p>
               <div className="flex items-center justify-center gap-3">
                 <Link
                   to="/login"
                   state={{ from: location.pathname }}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] text-white font-medium hover:opacity-90 transition-opacity"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] text-white font-medium hover:opacity-90 transition-opacity"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
                   state={{ from: location.pathname }}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-[#0EA5C9] text-[#0EA5C9] font-medium hover:bg-[#E0F2FE] transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-[#0C8CE9] text-[#0C8CE9] font-medium hover:bg-[#0C8CE9/8] transition-colors"
                 >
                   Create Account
                 </Link>

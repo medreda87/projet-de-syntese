@@ -74,7 +74,7 @@ const Component22 = ({
                 <div>
                   <label
                     htmlFor="businessName"
-                    className="block text-sm font-medium text-[#1E2A36] mb-2"
+                    className="block text-sm font-medium text-[#0F172A] mb-2"
                   >
                     {formFields.businessName.label}
                   </label>
@@ -85,7 +85,7 @@ const Component22 = ({
                     value={formData.businessName}
                     onChange={handleChange}
                     placeholder={formFields.businessName.placeholder}
-                    className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                    className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                   />
                 </div>
 
@@ -93,7 +93,7 @@ const Component22 = ({
                 <div>
                   <label
                     htmlFor="ownerName"
-                    className="block text-sm font-medium text-[#1E2A36] mb-2"
+                    className="block text-sm font-medium text-[#0F172A] mb-2"
                   >
                     {formFields.ownerName.label}
                   </label>
@@ -104,7 +104,7 @@ const Component22 = ({
                     value={formData.ownerName}
                     onChange={handleChange}
                     placeholder={formFields.ownerName.placeholder}
-                    className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                    className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                   />
                 </div>
 
@@ -112,7 +112,7 @@ const Component22 = ({
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-[#1E2A36] mb-2"
+                    className="block text-sm font-medium text-[#0F172A] mb-2"
                   >
                     {formFields.email.label}
                   </label>
@@ -123,7 +123,7 @@ const Component22 = ({
                     value={formData.email}
                     onChange={handleChange}
                     placeholder={formFields.email.placeholder}
-                    className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                    className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                   />
                 </div>
 
@@ -131,7 +131,7 @@ const Component22 = ({
                 <div>
                   <label
                     htmlFor="phone"
-                    className="block text-sm font-medium text-[#1E2A36] mb-2"
+                    className="block text-sm font-medium text-[#0F172A] mb-2"
                   >
                     {formFields.phone.label}
                   </label>
@@ -142,7 +142,7 @@ const Component22 = ({
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder={formFields.phone.placeholder}
-                    className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                    className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -151,7 +151,7 @@ const Component22 = ({
               <div>
                 <label
                   htmlFor="address"
-                  className="block text-sm font-medium text-[#1E2A36] mb-2"
+                  className="block text-sm font-medium text-[#0F172A] mb-2"
                 >
                   {formFields.address.label}
                 </label>
@@ -162,7 +162,7 @@ const Component22 = ({
                   value={formData.address}
                   onChange={handleChange}
                   placeholder={formFields.address.placeholder}
-                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#1E2A36] placeholder-[#62707D] focus:outline-none focus:ring-2 focus:ring-[#0EA5C9] focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[#F7F9FA] border border-[#DDE2E8] rounded-lg text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#0C8CE9] focus:border-transparent"
                 />
               </div>
 
@@ -174,7 +174,7 @@ const Component22 = ({
                   size="md"
                   className="flex-shrink-0 mt-0.5"
                 />
-                <p className="text-sm text-[#62707D] leading-relaxed">
+                <p className="text-sm text-[#64748B] leading-relaxed">
                   {termsText}
                 </p>
               </div>
@@ -184,7 +184,7 @@ const Component22 = ({
                 <Button
                   type="submit"
                   icon={<Icon icon={FaArrowRight} theme="light" size="sm" />}
-                  className="w-full bg-gradient-to-r from-[#0EA5C9] to-[#1BB38C] hover:from-[#0d94b8] hover:to-[#16a077] text-white px-8 py-4 rounded-lg text-lg"
+                  className="w-full bg-gradient-to-r from-[#0C8CE9] to-[#06D6A0] hover:from-[#0d94b8] hover:to-[#16a077] text-white px-8 py-4 rounded-lg text-lg"
                 >
                   {submitButtonText}
                 </Button>
@@ -196,10 +196,10 @@ const Component22 = ({
           <div className="space-y-6 w-[90%] mx-auto">
             {/* Header */}
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-[#1E2A36] mb-2">
+              <h2 className="text-3xl font-bold text-[#0F172A] mb-2">
                 Other Ways to Get Help
               </h2>
-              <p className="text-[#62707D]">
+              <p className="text-[#64748B]">
                 Prefer self-service? Check out these resources.
               </p>
             </div>
@@ -209,11 +209,11 @@ const Component22 = ({
               {/* Help Center Card */}
               <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
                 <div className="bg-[#E0F2FE] rounded-full p-3 flex-shrink-0">
-                  <Icon icon={FaQuestionCircle} theme="primary" size="lg" className="text-[#0EA5C9]" />
+                  <Icon icon={FaQuestionCircle} theme="primary" size="lg" className="text-[#0C8CE9]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1E2A36] mb-1">Help Center</h3>
-                  <p className="text-[#62707D] text-sm">
+                  <h3 className="font-bold text-[#0F172A] mb-1">Help Center</h3>
+                  <p className="text-[#64748B] text-sm">
                     Browse FAQs and guides for quick answers to common questions.
                   </p>
                 </div>
@@ -222,11 +222,11 @@ const Component22 = ({
               {/* Live Chat Card */}
               <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
                 <div className="bg-[#E0F2FE] rounded-full p-3 flex-shrink-0">
-                  <Icon icon={FaComments} theme="primary" size="lg" className="text-[#0EA5C9]" />
+                  <Icon icon={FaComments} theme="primary" size="lg" className="text-[#0C8CE9]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1E2A36] mb-1">Live Chat</h3>
-                  <p className="text-[#62707D] text-sm">
+                  <h3 className="font-bold text-[#0F172A] mb-1">Live Chat</h3>
+                  <p className="text-[#64748B] text-sm">
                     Chat with our support team in real-time during business hours.
                   </p>
                 </div>
@@ -235,11 +235,11 @@ const Component22 = ({
               {/* Community Card */}
               <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
                 <div className="bg-[#E0F2FE] rounded-full p-3 flex-shrink-0">
-                  <Icon icon={FaUsers} theme="primary" size="lg" className="text-[#0EA5C9]" />
+                  <Icon icon={FaUsers} theme="primary" size="lg" className="text-[#0C8CE9]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1E2A36] mb-1">Community</h3>
-                  <p className="text-[#62707D] text-sm">
+                  <h3 className="font-bold text-[#0F172A] mb-1">Community</h3>
+                  <p className="text-[#64748B] text-sm">
                     Join our community forum to connect with other users.
                   </p>
                 </div>
@@ -249,12 +249,12 @@ const Component22 = ({
             {/* Response Time Guarantee Section */}
             <div className="bg-[#E0F2FE] rounded-xl p-6 mt-6">
               <div className="flex items-start gap-4">
-                <div className="bg-[#0EA5C9] rounded-full p-3 flex-shrink-0">
+                <div className="bg-[#0C8CE9] rounded-full p-3 flex-shrink-0">
                   <Icon icon={FaClock} theme="light" size="lg" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1E2A36] mb-2">Response Time Guarantee</h3>
-                  <p className="text-[#62707D] text-sm">
+                  <h3 className="font-bold text-[#0F172A] mb-2">Response Time Guarantee</h3>
+                  <p className="text-[#64748B] text-sm">
                     We aim to respond to all inquiries within 24 hours during business days. For urgent matters, please call us directly.
                   </p>
                 </div>

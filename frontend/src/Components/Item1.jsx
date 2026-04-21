@@ -19,7 +19,7 @@ function Item1(props){
   
   return (
     <div 
-      className='group bg-white rounded-2xl overflow-hidden border border-gray-100 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1 h-full flex flex-col'
+      className='group bg-white rounded-2xl overflow-hidden border border-gray-100 cursor-pointer transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-transparent hover:-translate-y-1 h-full flex flex-col'
       onClick={handleClick}
     >
       {/* Image */}
@@ -34,7 +34,7 @@ function Item1(props){
         {/* Badges */}
         <div className='flex items-center gap-2 absolute z-10 left-3 top-3'>
           {props.verified && (
-            <span className='flex items-center gap-1 text-[#0EA5C9] bg-white/95 backdrop-blur-sm text-xs font-semibold py-1.5 px-3 rounded-lg shadow-sm'>
+            <span className='flex items-center gap-1 text-[#0C8CE9] bg-white/95 backdrop-blur-sm text-xs font-semibold py-1.5 px-3 rounded-lg shadow-sm'>
               <MdOutlineVerified className="text-sm" /> Verified
             </span>
           )}
@@ -50,32 +50,32 @@ function Item1(props){
         {/* Rating pill on image */}
         <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-sm">
           <span className="text-yellow-500 text-sm">★</span>
-          <span className="text-[#1E2A36] text-xs font-bold">{Number(props.comments_avg_rating).toFixed(1)}</span>
-          <span className="text-[#62707D] text-xs">({props.comments_count})</span>
+          <span className="text-[#0F172A] text-xs font-bold">{Number(props.comments_avg_rating).toFixed(1)}</span>
+          <span className="text-[#64748B] text-xs">({props.comments_count})</span>
         </div>
       </div>
 
       {/* Content */}
       <div className='p-4 flex flex-col flex-1'>
-        <h3 className='font-bold text-[#1E2A36] text-base mb-1.5 group-hover:text-[#0EA5C9] transition-colors leading-tight'>
+        <h3 className='font-bold text-[#0F172A] text-base mb-1.5 group-hover:text-[#0C8CE9] transition-colors leading-tight'>
           {props.name}
         </h3>
         
-        <p className='text-[#62707D] text-sm leading-relaxed mb-3 line-clamp-2 flex-1'>
+        <p className='text-[#64748B] text-sm leading-relaxed mb-3 line-clamp-2 flex-1'>
           {props.description}
         </p>
 
         {/* Meta info */}
-        <div className='flex items-center gap-3 text-xs text-[#62707D] mb-3'>
+        <div className='flex items-center gap-3 text-xs text-[#64748B] mb-3'>
           {props.address && (
             <span className='flex items-center gap-1'>
-              <IoLocationOutline className="text-[#0EA5C9] text-sm" />
+              <IoLocationOutline className="text-[#0C8CE9] text-sm" />
               {props.address}
             </span>
           )}
           {props.time && (
             <span className='flex items-center gap-1'>
-              <IoTimeOutline className="text-[#0EA5C9] text-sm" />
+              <IoTimeOutline className="text-[#0C8CE9] text-sm" />
               {props.time}
             </span>
           )}
@@ -86,13 +86,13 @@ function Item1(props){
           {props.services?.map((re, index) => (
             <span 
               key={index} 
-              className="text-[11px] font-medium text-[#0EA5C9] bg-sky-50 px-2.5 py-1 rounded-md"
+              className="text-[11px] font-medium text-[#0C8CE9] bg-[#0C8CE9]/8 px-2.5 py-1 rounded-md"
             >
               {re.name}
             </span>
           ))}
           {props.services?.length > 3 && (
-            <span className="text-[11px] font-medium text-[#62707D] bg-gray-100 px-2.5 py-1 rounded-md">
+            <span className="text-[11px] font-medium text-[#64748B] bg-gray-100 px-2.5 py-1 rounded-md">
               +{props.services.length - 3}
             </span>
           )}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet'
+import React from 'react'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, CircleMarker } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { IoLocationOutline } from 'react-icons/io5'
@@ -42,7 +42,18 @@ const BoundsWatcher = ({ onBoundsChange }) => {
   return null
 }
 
-function ShopMap({ laundries, onBoundsChange, onClearFilter, mapBounds, loading }) {
+const FlyToLocation = ({ focusLocation }) => {
+  const map = useMap()
+
+  React.useEffect(() => {
+    if (!focusLocation?.lat || !focusLocation?.lng) return
+    map.flyTo([focusLocation.lat, focusLocation.lng], 12, { duration: 1.2 })
+  }, [focusLocation, map])
+
+  return null
+}
+
+function ShopMap({ laundries, onBoundsChange, onClearFilter, mapBounds, loading, focusLocation }) {
   const navigate = useNavigate()
   const { setIdLaundry } = useAuth()
 
@@ -63,10 +74,10 @@ function ShopMap({ laundries, onBoundsChange, onClearFilter, mapBounds, loading 
       {/* Info bar */}
       <div className='flex items-center justify-between mb-4'>
         <div>
-          <h2 className='text-2xl font-bold text-[#1E2A36]'>
-            Find on <span className='text-[#0EA5C9]'>Map</span>
+          <h2 className='text-2xl font-bold text-[#0F172A]'>
+            Find on <span className='text-[#0C8CE9]'>Map</span>
           </h2>
-          <p className='text-sm text-[#62707D] mt-1'>
+          <p className='text-sm text-[#64748B] mt-1'>
             {loading ? 'Searching...' : `${laundries.length} shops in this area`}
             {laundriesWithCoords.length < laundries.length && !loading && (
               <span className='text-xs ml-2 text-amber-600'>
@@ -78,7 +89,7 @@ function ShopMap({ laundries, onBoundsChange, onClearFilter, mapBounds, loading 
         {mapBounds && (
           <button
             onClick={onClearFilter}
-            className='text-sm font-medium text-[#0EA5C9] hover:text-[#0EA5C9]/80 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#0EA5C9]/20 hover:bg-sky-50'
+            className='text-sm font-medium text-[#0C8CE9] hover:text-[#0C8CE9]/80 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#0C8CE9]/20 hover:bg-sky-50'
           >
             <IoLocationOutline /> Reset Area
           </button>
@@ -98,6 +109,17 @@ function ShopMap({ laundries, onBoundsChange, onClearFilter, mapBounds, loading 
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <BoundsWatcher onBoundsChange={onBoundsChange} />
+          <FlyToLocation focusLocation={focusLocation} />
+
+          {focusLocation?.lat && focusLocation?.lng && (
+            <CircleMarker
+              center={[focusLocation.lat, focusLocation.lng]}
+              radius={8}
+              pathOptions={{ color: '#0C8CE9', fillColor: '#0C8CE9', fillOpacity: 0.8 }}
+            >
+              <Popup>You are here</Popup>
+            </CircleMarker>
+          )}
 
           {laundriesWithCoords.map((shop) => (
             <Marker
@@ -114,13 +136,13 @@ function ShopMap({ laundries, onBoundsChange, onClearFilter, mapBounds, loading 
                     />
                   )}
                   <div className='flex items-center gap-1.5'>
-                    <span className='font-bold text-sm text-[#1E2A36]'>{shop.name}</span>
+                    <span className='font-bold text-sm text-[#0F172A]'>{shop.name}</span>
                     {shop.email_verified_at && (
-                      <MdOutlineVerified className='text-[#0EA5C9] text-sm' />
+                      <MdOutlineVerified className='text-[#0C8CE9] text-sm' />
                     )}
                   </div>
                   {shop.address && (
-                    <p className='text-xs text-[#62707D] flex items-center gap-1'>
+                    <p className='text-xs text-[#64748B] flex items-center gap-1'>
                       <IoLocationOutline /> {shop.address}
                     </p>
                   )}
@@ -128,13 +150,13 @@ function ShopMap({ laundries, onBoundsChange, onClearFilter, mapBounds, loading 
                     <div className='flex items-center gap-1 text-xs'>
                       <span className='text-yellow-500'>★</span>
                       <span className='font-semibold'>{Number(shop.comments_avg_rating).toFixed(1)}</span>
-                      <span className='text-[#62707D]'>({shop.comments_count} reviews)</span>
+                      <span className='text-[#64748B]'>({shop.comments_count} reviews)</span>
                     </div>
                   )}
                   {shop.services && shop.services.length > 0 && (
                     <div className='flex flex-wrap gap-1'>
                       {shop.services.slice(0, 3).map((s, i) => (
-                        <span key={i} className='text-[10px] font-medium text-[#0EA5C9] bg-sky-50 px-2 py-0.5 rounded'>
+                        <span key={i} className='text-[10px] font-medium text-[#0C8CE9] bg-sky-50 px-2 py-0.5 rounded'>
                           {s.name}
                         </span>
                       ))}
@@ -142,7 +164,7 @@ function ShopMap({ laundries, onBoundsChange, onClearFilter, mapBounds, loading 
                   )}
                   <button
                     onClick={() => handleShopClick(shop)}
-                    className='mt-1 w-full text-center text-xs font-semibold text-white bg-[#0EA5C9] hover:bg-[#0EA5C9]/90 py-2 rounded-lg transition-colors'
+                    className='mt-1 w-full text-center text-xs font-semibold text-white bg-[#0C8CE9] hover:bg-[#0C8CE9]/90 py-2 rounded-lg transition-colors'
                   >
                     View Details
                   </button>
@@ -157,7 +179,7 @@ function ShopMap({ laundries, onBoundsChange, onClearFilter, mapBounds, loading 
       {laundriesWithCoords.length === 0 && laundries.length > 0 && !loading && (
         <div className='mt-6 text-center py-10'>
           <FaMapMarkerAlt className='text-4xl text-gray-300 mx-auto mb-3' />
-          <p className='text-[#62707D] text-sm'>No shops with location data in this area. Try zooming out or resetting the area.</p>
+          <p className='text-[#64748B] text-sm'>No shops with location data in this area. Try zooming out or resetting the area.</p>
         </div>
       )}
     </div>

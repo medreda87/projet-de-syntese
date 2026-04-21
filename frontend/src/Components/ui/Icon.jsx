@@ -17,8 +17,8 @@ const Icon = ({
   const themeClasses = {
     light: "text-white",
     dark: "text-gray-800",
-    primary: "text-[#0EA5C9]",
-    accent: "text-[#1BB38C]"
+    primary: "text-[#0C8CE9]",
+    accent: "text-[#06D6A0]"
   }
 
   if (!IconComponent) {

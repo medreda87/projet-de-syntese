@@ -12,6 +12,21 @@ export const AppProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     
     useEffect(()=>{
+        // Check for token passed via URL from frontend
+        const params = new URLSearchParams(window.location.search);
+        const urlToken = params.get('token');
+        const urlUser = params.get('user');
+        if (urlToken && urlUser) {
+            try {
+                localStorage.setItem('token', urlToken);
+                localStorage.setItem('user', urlUser);
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch {
+                // ignore parse errors
+            }
+        }
+
         const token = localStorage.getItem('token');
         const userConnected = localStorage.getItem('user');
         const laundry = localStorage.getItem('laundry');
