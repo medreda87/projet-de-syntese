@@ -70,7 +70,7 @@ class UserController extends Controller
     }
 
     public function sendMail(){
-        Mail::to("chroudiimran@gmail.com")->send(new \App\Mail\FreshFooldMail('Imran'));
+        Mail::to("chroudiimran@gmail.com")->send(new \App\Mail\MesbanatiMail('Imran'));
         
         return response()->json([
             "success" => "email sent"

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 const Component20 = ({
   tagText = null,
-  titlePart1 = "Join the freshfold <span>community</span>",
+  titlePart1 = "Join the mesbanati <span>community</span>",
   description = "Whether you need laundry services or provide them, we're here to help.",
   primaryButtonText = "Get Started",
   onPrimaryClick,
@@ -42,7 +42,7 @@ const Component20 = ({
             <img
               src="/images/community.png"
               className="w-full h-full object-cover"
-              alt="Join FreshFold community"
+              alt="Join Mesbanati community"
             />
           </div>
           </div>

@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import TitleSectionText from './ui/TitleSectionText'
 import Button from './Button'
 import Icon from './ui/Icon'
 import { FaCheck, FaArrowRight, FaCheckCircle, FaTimes } from 'react-icons/fa'
 import { sendEmail } from '../utils/send_email'
 import API from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
 const Component16 = ({
   tagText = null,
   titlePart1 = "Ready to Get <span>Started ?</span>",
@@ -45,6 +47,8 @@ const Component16 = ({
   submitButtonText = "Submit Application",
   onSubmit
 }) => {
+  const navigate = useNavigate();
+  const { updateRole } = useAuth();
   const [formData, setFormData] = useState({
     businessName: formFields.businessName.value || "",
     ownerName: formFields.ownerName.value || "",
@@ -141,6 +145,10 @@ const handleSubmit = async (e) => {
     setType("success");
     setError(null);
     setShowSuccess(true); 
+
+    // Upgrade user role to provider and redirect to dashboard setup
+    await updateRole('provider');
+    setTimeout(() => navigate('/admin'), 2000);
     
     // Reset form
     setFormData({

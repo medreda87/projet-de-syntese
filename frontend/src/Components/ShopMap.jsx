@@ -7,6 +7,7 @@ import { FaMapMarkerAlt } from 'react-icons/fa'
 import { MdOutlineVerified } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { STORAGE_URL } from '../utils/config'
 
 // Fix Leaflet default icon
 if (typeof window !== 'undefined') {
@@ -17,8 +18,6 @@ if (typeof window !== 'undefined') {
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
   })
 }
-
-const STORAGE_URL = "http://127.0.0.1:8000/storage/"
 
 const getImageUrl = (path) => {
   if (!path) return null

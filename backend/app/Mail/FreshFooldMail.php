@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class FreshFooldMail extends Mailable
+class MesbanatiMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -23,7 +23,7 @@ class FreshFooldMail extends Mailable
      }
 
      public function build(){
-        $this->subject('Bienvenue chez FreshFoold')
+        $this->subject('Bienvenue chez Mesbanati')
              ->view('emails.freshMail')
              ->with([
                  'name' => $this->name,

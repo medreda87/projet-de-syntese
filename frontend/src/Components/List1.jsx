@@ -32,7 +32,7 @@ function List1({
 
   return (
     <div className="main-content mx-auto">
-      <div style={{ backgroundColor: "#f4f7f7", fontSize: "20px" }}>
+      <div>
         <Filter1
           search={search}
           setSearch={setSearch}
@@ -49,7 +49,7 @@ function List1({
         />
       </div>
 
-      <div className="px-4 md:px-8 py-10 max-w-7xl mx-auto">
+      <div className="px-4 md:px-8 pt-8 pb-10 max-w-7xl mx-auto">
         <div className="mb-6">
           {search ? (
             <h2 className="text-2xl font-bold text-[#0F172A]">

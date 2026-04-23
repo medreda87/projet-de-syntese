@@ -4,8 +4,7 @@ import { Link, useLocation, useParams, useSearchParams } from "react-router-dom"
 import TitleSectionText from "./ui/TitleSectionText";
 import { useAuth } from "../contexts/AuthContext";
 import API from "../utils/api";
-
-const STORAGE_URL = "http://127.0.0.1:8000/storage/"
+import { STORAGE_URL } from "../utils/config";
 
 const getImageUrl = (path) => {
   if (!path) return null
@@ -252,7 +251,7 @@ const Reviews = ({
             <TitleSectionText
               titlePart1={"What Our <span>Customers</span> Say"}
               description={
-                " Don't just take our word for it. See what our satisfied customers have to say about FreshFold."
+                " Don't just take our word for it. See what our satisfied customers have to say about Mesbanati."
               }
               descriptionClass={"text-center mx-auto"}
             />

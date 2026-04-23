@@ -2,9 +2,9 @@ import React from 'react'
 import Tag from './ui/Tag'
 
 const Component31 = ({
-  tagText = "About FreshFold",
+  tagText = "About Mesbanati",
   titlePart1 = "Who We <span>Are</span>",
-  description = "We're revolutionizing the laundry industry by connecting customers with trusted local providers. Our platform makes it easy to find, book, and manage laundry services with just a few clicks. At FreshFold, we believe that clean clothes shouldn't require stress, time, or guesswork. We've built a comprehensive marketplace that brings together the best laundry service providers in your area, making it simple to compare prices, read reviews, and book services that fit your schedule. ",
+  description = "We're revolutionizing the laundry industry by connecting customers with trusted local providers. Our platform makes it easy to find, book, and manage laundry services with just a few clicks. At Mesbanati, we believe that clean clothes shouldn't require stress, time, or guesswork. We've built a comprehensive marketplace that brings together the best laundry service providers in your area, making it simple to compare prices, read reviews, and book services that fit your schedule. ",
   image = "/images/about.png"
 }) => {
   return (

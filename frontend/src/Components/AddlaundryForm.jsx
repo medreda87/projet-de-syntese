@@ -187,15 +187,43 @@ const AddLaundryForm = () => {
         </div>
 
         <div className="field">
-          <label><Clock size={18} /> Horaires</label>
-          <input
-            type="text"
+          <label><Clock size={18} /> Horaires d'ouverture</label>
+          <textarea
             name="time"
             value={formData.time}
             onChange={handleChange}
-            placeholder="24 hours"
+            placeholder="Ex: Lundi-Vendredi: 08:00-20:00\nSamedi: 09:00-18:00\nDimanche: fermé"
+            rows={3}
+            className="w-full border border-gray-200 rounded-xl p-2 text-sm"
           />
+          <div className="text-xs text-gray-500 mt-1">Spécifiez les horaires pour chaque jour, ou laissez vide si ouvert 24h/24.</div>
         </div>
+      </div>
+
+      {/* Bouton position actuelle */}
+      <div className="field mb-4">
+        <button
+          type="button"
+          className="px-4 py-2 rounded-xl bg-[#0C8CE9] text-white text-sm font-semibold hover:bg-[#0C8CE9]/90 transition-colors"
+          onClick={() => {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                pos => {
+                  setFormData(f => ({
+                    ...f,
+                    location: `${pos.coords.latitude},${pos.coords.longitude}`
+                  }));
+                  alert('Position définie !');
+                },
+                err => alert("Impossible d'obtenir la position : " + err.message)
+              );
+            } else {
+              alert('La géolocalisation est indisponible sur ce navigateur.');
+            }
+          }}
+        >
+          Utiliser ma position actuelle
+        </button>
       </div>
 
       {/* IMAGE */}

@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [idLaundry, setIdLaundry] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load user from localStorage on mount
   useEffect(() => {
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
       }
     }
+    setIsLoading(false);
   }, []);
 
   const login = async (credentials) => {
@@ -34,6 +36,7 @@ export const AuthProvider = ({ children }) => {
         const { user: userData, access_token } = res.data;
         setUser(userData);
         setIsAuthenticated(true);
+        localStorage.removeItem('laundry');
         localStorage.setItem('userFreshFold', JSON.stringify(userData));
         localStorage.setItem('tokenFreshFold', access_token);
         return { success: true };
@@ -52,6 +55,7 @@ export const AuthProvider = ({ children }) => {
         const { user: userData, access_token } = res.data;
         setUser(userData);
         setIsAuthenticated(true);
+        localStorage.removeItem('laundry');
         localStorage.setItem('userFreshFold', JSON.stringify(userData));
         localStorage.setItem('tokenFreshFold', access_token);
         return { success: true };
@@ -92,11 +96,12 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     localStorage.removeItem('userFreshFold');
     localStorage.removeItem('tokenFreshFold');
+    localStorage.removeItem('laundry');
   };
 
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, updateRole, idLaundry, setIdLaundry }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, register, logout, updateRole, idLaundry, setIdLaundry }}>
       {children}
     </AuthContext.Provider>
   );

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 const Footer = ({
-  brandName = "FreshFold",
+  brandName = "Mesbanati",
   brandDescription = "Connecting you with the best local laundry services. Fresh clothes, hassle-free. Your trusted laundry marketplace.",
   servicesLinks = [
     "Find Laundry Shops",
@@ -26,7 +26,7 @@ const Footer = ({
     facebook: "https://facebook.com",
     twitter: "https://twitter.com",
     instagram: "https://instagram.com",
-    email: "mailto:info@freshfold.com"
+    email: "mailto:info@mesbanati.ma"
   }
   
 }) => {

@@ -144,88 +144,98 @@ const FindShops = () => {
     };
 
     return (
-        <main>
-            <div className='container mx-auto'>
-                {/* View toggle */}
-                <div className='flex justify-between items-center px-4 md:px-8 pt-4 gap-3 flex-wrap'>
-                    <div className='flex items-center gap-2'>
+        <main className="min-h-screen bg-[#F8FAFC]">
+            {/* Hero */}
+            <div className="bg-gradient-to-br from-[#0C8CE9] via-[#0a78c8] to-[#06D6A0] px-4 md:px-8 pt-12 pb-20">
+                <div className="max-w-7xl mx-auto">
+                    <p className="text-white/70 text-sm font-medium uppercase tracking-widest mb-2">Mesbanati</p>
+                    <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2 leading-tight">Find Laundry Shops</h1>
+                    <p className="text-white/80 text-base mb-6">Discover the best laundry services near you</p>
+                    <div className="flex items-center gap-3 flex-wrap">
                         <button
                             onClick={handleOpenMap}
-                            className='flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#0C8CE9] text-white hover:bg-[#0a78c8] transition-colors'
+                            className='flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-white text-[#0C8CE9] hover:bg-white/90 shadow-lg shadow-black/10 transition-all'
                         >
                             <FaMap size={14} /> Open Map
                         </button>
                         <button
                             onClick={handleOpenMapNearMe}
                             disabled={locating}
-                            className='flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border border-[#0C8CE9]/30 text-[#0C8CE9] hover:bg-sky-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                            className='flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border border-white/40 text-white hover:bg-white/15 backdrop-blur-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed'
                         >
                             <IoLocationOutline size={16} /> {locating ? 'Locating...' : 'Near Me'}
                         </button>
-                    </div>
-                    <div className='flex bg-gray-100 rounded-xl p-1 gap-1'>
-                        <button
-                            onClick={() => setViewMode('list')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                                viewMode === 'list'
-                                    ? 'bg-white text-[#0C8CE9] shadow-sm'
-                                    : 'text-[#64748B] hover:text-[#0F172A]'
-                            }`}
-                        >
-                            <FaList size={14} /> List
-                        </button>
-                        <button
-                            onClick={() => setViewMode('map')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                                viewMode === 'map'
-                                    ? 'bg-white text-[#0C8CE9] shadow-sm'
-                                    : 'text-[#64748B] hover:text-[#0F172A]'
-                            }`}
-                        >
-                            <FaMap size={14} /> Map
-                        </button>
+                        <div className="ml-auto flex bg-white/15 backdrop-blur-sm rounded-xl p-1 gap-1">
+                            <button
+                                onClick={() => setViewMode('list')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    viewMode === 'list'
+                                        ? 'bg-white text-[#0C8CE9] shadow-sm'
+                                        : 'text-white/80 hover:text-white'
+                                }`}
+                            >
+                                <FaList size={14} /> List
+                            </button>
+                            <button
+                                onClick={() => setViewMode('map')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    viewMode === 'map'
+                                        ? 'bg-white text-[#0C8CE9] shadow-sm'
+                                        : 'text-white/80 hover:text-white'
+                                }`}
+                            >
+                                <FaMap size={14} /> Map
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                {mapError && (
-                    <div className='px-4 md:px-8 pt-3'>
-                        <p className='text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2'>
-                            {mapError}
-                        </p>
-                    </div>
-                )}
-
-                {viewMode === 'map' ? (
-                    <ShopMap
-                        laundries={laundries}
-                        onBoundsChange={handleMapBoundsChange}
-                        onClearFilter={handleClearMapFilter}
-                        mapBounds={mapBounds}
-                        loading={loading}
-                        focusLocation={myLocation}
-                    />
-                ) : (
-                    <List1
-                        laundries={laundries}
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        total={total}
-                        onPageChange={handlePageChange}
-                        loading={loading}
-                        servicesList={servicesList}
-                        citiesList={citiesList}
-                        filter={filter}
-                        setFilter={setFilter}
-                        selectedCity={selectedCity}
-                        setSelectedCity={setSelectedCity}
-                        search={search}
-                        setSearch={setSearch}
-                        sortType={sortType}
-                        setSortType={setSortType}
-                        handleClear={handleClearAll}
-                    />
-                )}
             </div>
+
+            {/* Content card pulled up over hero */}
+            <div className="max-w-7xl mx-auto px-4 md:px-8 -mt-8">
+                <div className="bg-white rounded-2xl  overflow-hidden">
+                    {mapError && (
+                        <div className='px-6 pt-4'>
+                            <p className='text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3'>
+                                {mapError}
+                            </p>
+                        </div>
+                    )}
+
+                    {viewMode === 'map' ? (
+                        <ShopMap
+                            laundries={laundries}
+                            onBoundsChange={handleMapBoundsChange}
+                            onClearFilter={handleClearMapFilter}
+                            mapBounds={mapBounds}
+                            loading={loading}
+                            focusLocation={myLocation}
+                        />
+                    ) : (
+                        <List1
+                            laundries={laundries}
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            total={total}
+                            onPageChange={handlePageChange}
+                            loading={loading}
+                            servicesList={servicesList}
+                            citiesList={citiesList}
+                            filter={filter}
+                            setFilter={setFilter}
+                            selectedCity={selectedCity}
+                            setSelectedCity={setSelectedCity}
+                            search={search}
+                            setSearch={setSearch}
+                            sortType={sortType}
+                            setSortType={setSortType}
+                            handleClear={handleClearAll}
+                        />
+                    )}
+                </div>
+            </div>
+
+            <div className="pb-16" />
         </main>
     )
 }

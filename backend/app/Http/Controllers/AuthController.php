@@ -178,10 +178,36 @@ class AuthController extends Controller
         ]);
     }
 
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'name'              => 'sometimes|required|string|max:255',
+            'current_password'  => 'nullable|string',
+            'password'          => 'nullable|string|min:8|confirmed',
+        ]);
+
+        if ($request->filled('current_password') || $request->filled('password')) {
+            if (!$request->filled('current_password') || !Hash::check($request->current_password, $user->password)) {
+                return response()->json(['success' => false, 'message' => 'Current password is incorrect.'], 422);
+            }
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
+            }
+        }
+
+        if ($request->filled('name')) $user->name = $request->name;
+
+        $user->save();
+
+        return response()->json(['success' => true, 'user' => $user]);
+    }
+
     public function updateRole(Request $request)
     {
         $request->validate([
-            'role' => 'required|string|in:client,provider',
+            'role' => 'required|string|in:client,customer,provider',
         ]);
 
         $user = $request->user();
@@ -196,5 +222,67 @@ class AuthController extends Controller
     public function userInfo(){
         $user=User::all();
         return response()->json($user);
+    }
+
+    /**
+     * Send a password reset code to an existing user's email.
+     */
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        if (!User::where('email', $request->email)->exists()) {
+            // Return success to avoid email enumeration
+            return response()->json(['success' => true, 'message' => 'If this email is registered, a reset code has been sent.']);
+        }
+
+        EmailVerification::where('email', $request->email)->delete();
+
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        EmailVerification::create([
+            'email' => $request->email,
+            'code' => $code,
+            'expires_at' => Carbon::now()->addMinutes(10),
+        ]);
+
+        Mail::to($request->email)->send(new VerificationCodeMail($code));
+
+        return response()->json(['success' => true, 'message' => 'Reset code sent to your email.']);
+    }
+
+    /**
+     * Reset the password after code verification.
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email'    => 'required|email',
+            'code'     => 'required|string|size:6',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $verification = EmailVerification::where('email', $request->email)
+            ->where('code', $request->code)
+            ->first();
+
+        if (!$verification) {
+            return response()->json(['success' => false, 'message' => 'Invalid reset code.'], 422);
+        }
+
+        if ($verification->isExpired()) {
+            $verification->delete();
+            return response()->json(['success' => false, 'message' => 'Reset code has expired.'], 422);
+        }
+
+        $user = User::where('email', $request->email)->firstOrFail();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        $verification->delete();
+
+        return response()->json(['success' => true, 'message' => 'Password reset successfully.']);
     }
 }

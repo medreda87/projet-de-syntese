@@ -1,9 +1,10 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { useAuth } from "./contexts/AuthContext";
 import Header  from "./Components/Header";
 import Footer from "./Components/Footer";
 import CookieBanner from "./Components/CookieBanner";
+import DashboardLayout from "./Dashboard/DashboardLayout";
 import Home from "./Pages/Home";
 import FindShops from "./Pages/FindShops";
 import Services from "./Pages/Services";
@@ -18,10 +19,19 @@ import ShopDetail from "./Pages/ShopDetail";
 import Checkout from "./Components/Checkout";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
+import MyOrders from "./Pages/MyOrders";
+import ForgotPassword from "./Pages/ForgotPassword";
+import Profile from "./Pages/Profile";
 import AddLaundryForm from "./Components/AddlaundryForm";
+import AdminDashboard from "./Pages/AdminDashboard";
+import AdminHome from "./Pages/AdminHome";
+import AdminUsers from "./Pages/AdminUsers";
+import AdminLaundries from "./Pages/AdminLaundries";
+import AdminComments from "./Pages/AdminComments";
 
 const ProtectedRoute = ({ children, requiredRole }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+  if (isLoading) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (requiredRole && user?.role !== requiredRole) return <Navigate to="/" replace />;
   return children;
@@ -31,10 +41,13 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
 
 const App = () => {
+  const { pathname } = useLocation();
+  const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/superadmin');
+
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-background transition-colors duration-200">
-        <Header />
+        {!isDashboard && <Header />}
 
         <Routes>
           <Route path="/" element={<Home />} />
@@ -56,15 +69,57 @@ const App = () => {
               <AddLaundryForm />
             </ProtectedRoute>
           } />
-
           <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+
+          {/* Customer orders — requires authentication */}
+          <Route path="/my-orders" element={
+            <ProtectedRoute>
+              <MyOrders />
+            </ProtectedRoute>
+          } />
+
+          {/* Profile page */}
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
+
+          {/* Super admin dashboard — nested routes */}
+          <Route path="/superadmin" element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }>
+            <Route index element={<AdminHome />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="laundries" element={<AdminLaundries />} />
+            <Route path="comments" element={<AdminComments />} />
+          </Route>
+
+          {/* Dashboard — protected, has its own layout (no frontend Header/Footer) */}
+          <Route path="/dashboard/*" element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          } />
+
+          {/* 404 — must be last */}
+          <Route path="*" element={
+            <main className="bg-background min-h-screen flex flex-col items-center justify-center px-4 text-center">
+              <p className="text-8xl font-black text-[#0C8CE9] mb-4">404</p>
+              <h1 className="text-2xl font-bold text-[#0F172A] mb-2">Page not found</h1>
+              <p className="text-[#64748B] mb-8">The page you're looking for doesn't exist or has been moved.</p>
+              <a href="/" className="px-8 py-3 rounded-xl text-white font-semibold text-sm" style={{ background: 'linear-gradient(135deg, #0C8CE9, #06D6A0)' }}>Back to Home</a>
+            </main>
+          } />
         </Routes>
 
-        <Footer />
-        <CookieBanner />
+        {!isDashboard && <Footer />}
+        {!isDashboard && <CookieBanner />}
       </div>
-      
     </ThemeProvider>
   );
 };

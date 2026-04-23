@@ -6,7 +6,7 @@ const Component21 = ({
   emailCard = {
     title: "Email Us",
     subtitle: "We'll respond within 24 hours",
-    contact: "support@freshfold.com"
+    contact: "support@mesbanati.ma"
   },
   phoneCard = {
     title: "Call Us",

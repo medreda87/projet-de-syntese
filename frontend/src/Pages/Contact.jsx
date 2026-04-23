@@ -10,15 +10,11 @@ const Contact = () => {
   const {user} = useAuth()
   return (
     <main className="pt-20">
-      <Component14
-        buttonText = "Get in Touch"
-        titlePart1 = "We're Here to <span>Help</span>"
-        description = "Have a question, feedback, or need assistance? Our team is ready to help you get the most out of FreshFold."
-      />
+     
       <Component21 emailCard = {{
              title : "Email Us",
             subtitle: "We'll respond within 24 hours",
-            contact: "support@freshfold.com"
+            contact: "support@mesbanati.ma"
         }}
       phoneCard = {{
         title: "Call Us",
@@ -33,7 +29,7 @@ const Contact = () => {
 
       <Component22 />
        {
-        user.role === 'customer' && (
+        user?.role === 'customer' && (
            <Component20 />
         )
       }

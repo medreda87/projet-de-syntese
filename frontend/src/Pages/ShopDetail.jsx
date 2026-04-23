@@ -10,6 +10,7 @@ import 'leaflet/dist/leaflet.css'
 import Reviews from '../Components/Reviews'
 import { useAuth } from '../contexts/AuthContext'
 import API from '../utils/api'
+import { STORAGE_URL, PRODUCTS_URL } from '../utils/config'
 
 // Fix Leaflet default icon
 if (typeof window !== 'undefined') {
@@ -21,12 +22,16 @@ if (typeof window !== 'undefined') {
   })
 }
 
-const STORAGE_URL = "http://127.0.0.1:8000/storage/"
-
 const getImageUrl = (path) => {
   if (!path) return null
   if (path.startsWith('http')) return path
   return STORAGE_URL + path
+}
+
+const getProductImageUrl = (path) => {
+  if (!path) return null
+  if (path.startsWith('http')) return path
+  return PRODUCTS_URL + path
 }
 
 const getDeliveryLabel = (delivery) => {
@@ -267,21 +272,21 @@ const ShopDetail = () => {
               {shop.services && shop.services.length > 0 && (
               <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
                 <SectionTitle subtitle="Select services you need">Our Services</SectionTitle>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {shop.services.map((service) => {
                     const isSelected = selectedServices.some(s => s.id === service.id)
                     
                     return (
                       <label
                         key={service.id}
-                        className={`relative flex flex-col items-center text-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 group ${
+                        className={`relative flex flex-col items-start gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 group ${
                           isSelected 
                             ? "border-[#0C8CE9] bg-sky-50 shadow-sm" 
                             : "border-gray-100 bg-white hover:border-[#0C8CE9]/30 hover:bg-gray-50"
                         }`}
                       >
                         {isSelected && (
-                          <span className="absolute top-2.5 right-2.5 w-5 h-5 bg-[#0C8CE9] rounded-md flex items-center justify-center">
+                          <span className="absolute top-2.5 right-2.5 w-5 h-5 bg-[#0C8CE9] rounded-md flex items-center justify-center flex-shrink-0">
                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                             </svg>
@@ -294,16 +299,12 @@ const ShopDetail = () => {
                           className="sr-only"
                         />
                         {service.icon && (
-                          <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-2 transition-colors ${
-                            isSelected ? "bg-[#0C8CE9]/15" : "bg-gray-100 group-hover:bg-[#0C8CE9]/10"
-                          }`}>
-                            <span className="text-xl">{service.icon}</span>
-                          </div>
+                          <span className="text-2xl">{service.icon}</span>
                         )}
-                        <span className="font-semibold text-[#0F172A] text-sm mb-0.5 leading-tight">{service.name}</span>
+                        <span className="font-semibold text-[#0F172A] text-sm leading-tight">{service.name}</span>
                         <span className="text-[#0C8CE9] font-bold text-base">{service.price} MAD</span>
                         {service.description && (
-                          <span className="text-[11px] text-[#64748B] mt-1">{service.description}</span>
+                          <span className="text-[11px] text-[#64748B] leading-snug">{service.description}</span>
                         )}
                       </label>
                     )
@@ -353,7 +354,7 @@ const ShopDetail = () => {
                         {category.products.map((product) => (
                           <div key={product.id} className="rounded-2xl border border-gray-100 bg-white overflow-hidden hover:shadow-md transition-all group">
                             {product.image ? (
-                              <img src={getImageUrl(product.image)} alt={product.name} className="w-full h-48 object-cover" />
+                              <img src={getProductImageUrl(product.image)} alt={product.name} className="w-full h-48 object-cover" />
                             ) : (
                               <div className="w-full h-48 bg-gradient-to-br from-sky-50 to-teal-50 flex items-center justify-center">
                                 <span className="text-4xl">👕</span>

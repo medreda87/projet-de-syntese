@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Laundry extends Model
 {
@@ -22,12 +23,14 @@ class Laundry extends Model
         'email_verified_at',
         'openingHours',
         'is_accepted',
+        'admin_approved',
         'latitude',
         'longitude',
     ];
 
     protected $casts = [
-        'is_accepted' => 'boolean',
+        'is_accepted'    => 'boolean',
+        'admin_approved' => 'boolean',
     ];
 
     public function checkAccepted()
@@ -43,6 +46,25 @@ class Laundry extends Model
         $hasDelivery = $this->delivery()->exists();
 
         return $hasRequiredFields && $hasServices && $hasDelivery;
+    }
+
+    public function getLogoAttribute($value)
+    {
+        if (!$value) return null;
+        if (str_starts_with($value, 'http')) return $value;
+        return url(Storage::url($value));
+    }
+
+    public function toArray()
+    {
+        $arr = parent::toArray();
+        $raw = $this->attributes['bigLogo'] ?? null;
+        if ($raw) {
+            $arr['bigLogo'] = str_starts_with($raw, 'http') ? $raw : url(Storage::url($raw));
+        } else {
+            $arr['bigLogo'] = null;
+        }
+        return $arr;
     }
 
     public function user()

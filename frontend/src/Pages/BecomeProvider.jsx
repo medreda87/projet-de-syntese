@@ -1,15 +1,43 @@
-import React from 'react'
-import Component16 from '../Components/Component16'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Component9 from '../Components/Component9'
-import Component18 from '../Components/Component18'
 import Component14 from '../Components/Component14'
+import BecomeProviderModal from '../Components/BecomeProviderModal'
+import { useAuth } from '../contexts/AuthContext'
 
 const BecomeProvider = () => {
+  const { isAuthenticated, user } = useAuth()
+  const navigate = useNavigate()
+  const [showModal, setShowModal] = useState(false)
+
+  // If already a provider redirect straight to dashboard
+  useEffect(() => {
+    if (isAuthenticated && user?.role === 'provider') {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, user, navigate])
+
+  // Auto-open the modal when authenticated customer/client lands here
+  useEffect(() => {
+    if (isAuthenticated && (user?.role === 'customer' || user?.role === 'client')) {
+      setShowModal(true)
+    }
+  }, [isAuthenticated, user])
+
+  const handleGetStarted = () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: '/become-provider' } })
+    } else {
+      setShowModal(true)
+    }
+  }
+
   return (
     <main>
-      <Component14 
-        buttonText='Join 500+ providers'
-        titlePart1='Grow Your Laundry Business with <span>FreshFold<span>'
+      <Component14
+        buttonText={isAuthenticated ? 'Set up my laundry' : 'Join 500+ providers'}
+        onButtonClick={handleGetStarted}
+        titlePart1='Grow Your Laundry Business with <span>Mesbanati</span>'
         description='Whether you own a laundry shop or provide individual services, join our marketplace and connect with customers in your area.'
         steps={[
           "Create your free account",
@@ -19,22 +47,16 @@ const BecomeProvider = () => {
         ]}
         image='/images/provider.png'
       />
-       <Component9
-        titlePart1="Why Partner with <span>FreshFold?</span>"
+      <Component9
+        titlePart1="Why Partner with <span>Mesbanati?</span>"
         description="We provide everything you need to succeed in the laundry business."
       />
-      <Component16
-        titlePart1="Ready to Get Started?"
-        description="Fill out the form below and we'll get you set up in no time."
-        onSubmit={(formData) => {
-        }}
-        
-      />
-     
-     
+
+      {showModal && <BecomeProviderModal onClose={() => setShowModal(false)} />}
     </main>
   )
 }
 
 export default BecomeProvider
+
 

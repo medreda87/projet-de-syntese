@@ -17,7 +17,7 @@ const Legal = () => {
       >
         <LegalSection title="1. Introduction">
           <p className="mb-4">
-            FreshFold ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website, mobile application, and related services (collectively, the "Service").
+            Mesbanati ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website, mobile application, and related services (collectively, the "Service").
           </p>
           <p>
             Please read this Privacy Policy carefully. By using our Service, you consent to the data practices described in this policy. If you do not agree with the practices described in this policy, please do not use our Service.
@@ -245,12 +245,12 @@ const Legal = () => {
             If you have questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:
           </p>
           <p className="mt-4">
-            <strong>Email:</strong> privacy@freshfold.com<br />
+            <strong>Email:</strong> privacy@mesbanati.ma<br />
             <strong>Address:</strong> 123 Market Street, San Francisco, CA 94102<br />
             <strong>Phone:</strong> +1 (555) 123-4567
           </p>
           <p className="mt-4">
-            <strong>Data Protection Officer:</strong> dpo@freshfold.com
+            <strong>Data Protection Officer:</strong> dpo@mesbanati.ma
           </p>
         </LegalSection>
       </LegalContent>

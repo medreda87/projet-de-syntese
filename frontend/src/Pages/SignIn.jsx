@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import Button from '../Components/Button';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,8 +14,11 @@ const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const from = location.state?.from || '/';
+
+  if (authLoading) return null;
+  if (isAuthenticated) return <Navigate to="/" replace />;
 
 
   

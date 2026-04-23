@@ -12,7 +12,7 @@ function Component11() {
         <h1>Are You a Laundry Service Provider?</h1>
 
         <p className="subtitle">
-            Join FreshFold and connect with customers looking for quality laundry services.
+            Join Mesbanati and connect with customers looking for quality laundry services.
             It's free to get started!
         </p>
 

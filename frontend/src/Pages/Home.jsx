@@ -111,7 +111,7 @@ const siteTestimonials = [
     customerName: "Sarah Johnson",
     rating: 5,
     comment:
-      "FreshFold has completely transformed how I handle laundry. Finding quality services in my area has never been easier. The platform is intuitive and the providers are all verified and professional.",
+      "Mesbanati has completely transformed how I handle laundry. Finding quality services in my area has never been easier. The platform is intuitive and the providers are all verified and professional.",
     location: "New York, NY",
     date: "2024-01-15",
   },
@@ -119,7 +119,7 @@ const siteTestimonials = [
     customerName: "Michael Chen",
     rating: 5,
     comment:
-      "As a busy professional, FreshFold saves me so much time. I can compare prices, read reviews, and book services all in one place. The customer service is excellent too!",
+      "As a busy professional, Mesbanati saves me so much time. I can compare prices, read reviews, and book services all in one place. The customer service is excellent too!",
     location: "Los Angeles, CA",
     date: "2024-01-20",
   },
@@ -127,7 +127,7 @@ const siteTestimonials = [
     customerName: "Emily Rodriguez",
     rating: 5,
     comment:
-      "I love how transparent FreshFold is. I can see ratings, prices, and service details before booking. It's given me confidence to try new laundry services I wouldn't have found otherwise.",
+      "I love how transparent Mesbanati is. I can see ratings, prices, and service details before booking. It's given me confidence to try new laundry services I wouldn't have found otherwise.",
     location: "Chicago, IL",
     date: "2024-01-25",
   },
@@ -135,7 +135,7 @@ const siteTestimonials = [
     customerName: "David Thompson",
     rating: 4.5,
     comment:
-      "The platform is user-friendly and the booking process is seamless. I've used FreshFold multiple times and always had great experiences with the providers.",
+      "The platform is user-friendly and the booking process is seamless. I've used Mesbanati multiple times and always had great experiences with the providers.",
     location: "Houston, TX",
     date: "2024-02-01",
   },
@@ -143,7 +143,7 @@ const siteTestimonials = [
     customerName: "Jessica Martinez",
     rating: 5,
     comment:
-      "FreshFold has made laundry day so much easier. I can schedule pickups, track my orders, and everything is delivered back perfectly cleaned and folded. Highly recommend!",
+      "Mesbanati has made laundry day so much easier. I can schedule pickups, track my orders, and everything is delivered back perfectly cleaned and folded. Highly recommend!",
     location: "Miami, FL",
     date: "2024-02-05",
   },
@@ -151,7 +151,7 @@ const siteTestimonials = [
     customerName: "Robert Williams",
     rating: 4.5,
     comment:
-      "Great platform for finding reliable laundry services. The reviews are helpful and I've found some excellent providers through FreshFold. The app makes everything convenient.",
+      "Great platform for finding reliable laundry services. The reviews are helpful and I've found some excellent providers through Mesbanati. The app makes everything convenient.",
     location: "Seattle, WA",
     date: "2024-02-10",
   },
@@ -275,7 +275,6 @@ const Home = () => {
         viewport={{ once: true, amount: 0.3 }}
         variants={slideUpVariants}
       >
-        <Component3 />
       </motion.div>
 
       <motion.section
@@ -383,7 +382,7 @@ const Home = () => {
           <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-[#0F172A] mb-2">
-                Welcome to FreshFold!
+                Welcome to Mesbanati!
               </h2>
               <p className="text-[#64748B]">
                 How would you like to use our platform?
@@ -464,7 +463,7 @@ const Home = () => {
                 onClick={() => {
                   const token = localStorage.getItem('tokenFreshFold') || '';
                   const userData = localStorage.getItem('userFreshFold') || '';
-                  window.open(`http://localhost:3001?token=${encodeURIComponent(token)}&user=${encodeURIComponent(userData)}`, "_blank");
+                  window.open(`/dashboard/?token=${encodeURIComponent(token)}&user=${encodeURIComponent(userData)}`, "_blank");
                   setShowDashboardPrompt(false);
                 }}
                 className="flex-1 py-3 rounded-xl font-semibold bg-[#0C8CE9] text-white hover:bg-[#0A6FC2] transition-colors"

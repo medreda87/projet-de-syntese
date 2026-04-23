@@ -2,12 +2,12 @@ import React from 'react'
 import TitleSectionText from './ui/TitleSectionText'
 import Button from './Button'
 import Icon from './ui/Icon'
-import { FaArrowRight, FaUsers, FaChartLine, FaDollarSign, FaShieldAlt, FaClock, FaStar } from 'react-icons/fa'
+import { FaArrowRight, FaUsers, FaChartLine, FaDollarSign, FaTruck, FaClock, FaStar } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
 const Component9 = ({
   tagText = null,
-  titlePart1 = "Why Partner with <span>FreshFold?</span>",
+  titlePart1 = "Why Partner with <span>Mesbanati?</span>",
   description = "We provide everything you need to succeed in the laundry business.",
   ctaButtonText = "Become Provier",
   cards = [
@@ -27,9 +27,9 @@ const Component9 = ({
       description: "Set your own prices and keep more of what you earn with low platform fees."
     },
     {
-      icon: FaShieldAlt,
-      title: "Secure Payments",
-      description: "Get paid on time with our secure payment processing system."
+      icon: FaTruck,
+      title: "Pickup & Delivery",
+      description: "Manage pickup and delivery requests directly from your dashboard."
     },
     {
       icon: FaClock,

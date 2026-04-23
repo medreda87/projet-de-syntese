@@ -19,7 +19,7 @@ class VerificationCodeMail extends Mailable
 
     public function build()
     {
-        return $this->subject('FreshFold - Your Verification Code')
+        return $this->subject('Mesbanati - Your Verification Code')
                     ->view('emails.verification-code');
     }
 }

@@ -26,7 +26,7 @@ const Cookies = () => {
 
         <LegalSection title="2. How We Use Cookies">
           <p className="mb-4">
-            FreshFold uses cookies and similar tracking technologies to:
+            Mesbanati uses cookies and similar tracking technologies to:
           </p>
           <LegalList items={[
             "Remember your preferences and settings",
@@ -228,7 +228,7 @@ const Cookies = () => {
             If you have questions about our use of cookies or this Cookie Policy, please contact us:
           </p>
           <p className="mt-4">
-            <strong>Email:</strong> privacy@freshfold.com<br />
+            <strong>Email:</strong> privacy@mesbanati.ma<br />
             <strong>Address:</strong> 123 Market Street, San Francisco, CA 94102<br />
             <strong>Phone:</strong> +1 (555) 123-4567
           </p>

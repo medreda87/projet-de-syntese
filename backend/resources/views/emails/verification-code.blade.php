@@ -13,7 +13,7 @@
                     <!-- Header -->
                     <tr>
                         <td style="background:linear-gradient(135deg,#0EA5C9,#1BB38C);padding:32px 40px;text-align:center;">
-                            <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.5px;">FreshFold</h1>
+                            <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.5px;">Mesbanati</h1>
                             <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:14px;">Email Verification</p>
                         </td>
                     </tr>
@@ -34,7 +34,7 @@
                     <!-- Footer -->
                     <tr>
                         <td style="padding:20px 40px;border-top:1px solid #eef1f5;text-align:center;">
-                            <p style="margin:0;color:#9ca3af;font-size:12px;">&copy; {{ date('Y') }} FreshFold. All rights reserved.</p>
+                            <p style="margin:0;color:#9ca3af;font-size:12px;">&copy; {{ date('Y') }} Mesbanati. All rights reserved.</p>
                         </td>
                     </tr>
                 </table>

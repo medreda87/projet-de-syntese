@@ -24,8 +24,8 @@ const HowItWorks = () => {
     <main>
 
         <Component14
-            buttonText = "About FreshFold"
-            titlePart1 = "How <span>FreshFold</span> Works"
+            buttonText = "About Mesbanati"
+            titlePart1 = "How <span>Mesbanati</span> Works"
             image='/images/howitWorks.png'
             description = "Whether you're looking for laundry services or offering them, our platform makes it simple, secure, and efficient."
         />

@@ -25,7 +25,7 @@ function Item1(props){
       {/* Image */}
       <div className='relative overflow-hidden h-[200px]'>
         <img 
-          src={props.logo} 
+          src={`${props.logo}`} 
           alt={props.name} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -67,10 +67,10 @@ function Item1(props){
 
         {/* Meta info */}
         <div className='flex items-center gap-3 text-xs text-[#64748B] mb-3'>
-          {props.address && (
+          {props.city && (
             <span className='flex items-center gap-1'>
               <IoLocationOutline className="text-[#0C8CE9] text-sm" />
-              {props.address}
+              {props.city}
             </span>
           )}
           {props.time && (

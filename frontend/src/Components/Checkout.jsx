@@ -93,6 +93,7 @@ const Checkout = ({
   const [laundry, setLaundry] = useState(null)
   const [workingDays, setWorkingDays] = useState([0, 1, 2, 3, 4, 5, 6])
   const [deliveryPrice, setDeliveryPrice] = useState(null)
+  const [deliveryDistanceKm, setDeliveryDistanceKm] = useState(null)
 
   // Calculate services total from selected services
   const servicesTotal = selectedServices.reduce((sum, s) => sum + (parseFloat(s.price) || 0), 0)
@@ -108,30 +109,39 @@ const Checkout = ({
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
   }
 
-  // Compute delivery price based on laundry delivery settings
-  const computeDeliveryPrice = (laundryData, deliveryLat, deliveryLng) => {
+  // Compute delivery price based on laundry delivery settings and customer distance
+  const computeDeliveryPrice = (laundryData, customerLat, customerLng) => {
     const delivery = laundryData?.delivery
-    if (!delivery) return 0
+    if (!delivery) return { price: 0, distanceKm: null }
+
+    const fixedPrice = parseFloat(delivery.fixed_price) || 0
+    const minOrder   = parseFloat(delivery.min_order)   || 0
+    const pricePerKm = parseFloat(delivery.price_per_km) || 0
 
     switch (delivery.type) {
       case 'free':
-        return 0
+        return { price: 0, distanceKm: null }
       case 'fixed':
-        return delivery.fixed_price || 0
+        return { price: fixedPrice, distanceKm: null }
       case 'free_above':
-        return servicesTotal >= (delivery.min_order || 0) ? 0 : (delivery.fixed_price || 0)
+        return {
+          price: servicesTotal >= minOrder ? 0 : fixedPrice,
+          distanceKm: null,
+        }
       case 'distance': {
-        if (laundryData.latitude && laundryData.longitude && deliveryLat && deliveryLng) {
+        if (laundryData.latitude && laundryData.longitude && customerLat && customerLng) {
           const dist = haversineDistance(
             laundryData.latitude, laundryData.longitude,
-            deliveryLat, deliveryLng
+            customerLat, customerLng
           )
-          return Math.round(dist * (delivery.price_per_km || 0) * 100) / 100
+          const roundedDist = Math.round(dist * 10) / 10
+          const price = Math.round(dist * pricePerKm * 100) / 100
+          return { price, distanceKm: roundedDist }
         }
-        return 0
+        return { price: 0, distanceKm: null }
       }
       default:
-        return 0
+        return { price: 0, distanceKm: null }
     }
   }
 
@@ -268,13 +278,15 @@ const Checkout = ({
     longitude: -5.818333625793458,
   });
 
-  // Recalculate delivery price when delivery position or laundry changes
+  // Recalculate delivery price when pickup or delivery position changes
   useEffect(() => {
     if (laundry) {
-      const price = computeDeliveryPrice(laundry, positionLivraison.latitude, positionLivraison.longitude)
-      setDeliveryPrice(price)
+      // Use pickup position as customer location (laundry picks up from customer)
+      const result = computeDeliveryPrice(laundry, positionRamassage.latitude, positionRamassage.longitude)
+      setDeliveryPrice(result.price)
+      setDeliveryDistanceKm(result.distanceKm)
     }
-  }, [positionLivraison, laundry, servicesTotal])
+  }, [positionRamassage, positionLivraison, laundry, servicesTotal])
 
   const handleStep1Change = (e) => {
     const { name, value, type, checked } = e.target
@@ -384,6 +396,10 @@ const Checkout = ({
           deliveryLongitude: positionLivraison.longitude,
           services: selectedServices,
           servicesTotal: servicesTotal,
+          deliveryFee: deliveryPrice || 0,
+          deliveryType: laundry?.delivery?.type || null,
+          distanceKm: deliveryDistanceKm,
+          total: servicesTotal + (deliveryPrice || 0),
         })
 
 
@@ -470,11 +486,13 @@ const Checkout = ({
       if (!delivery) return 'Non configurée'
       switch (delivery.type) {
         case 'free': return 'Gratuite'
-        case 'fixed': return `Fixe: ${delivery.fixed_price} DH`
-        case 'free_above': return servicesTotal >= (delivery.min_order || 0) 
+        case 'fixed': return `Fixe`
+        case 'free_above': return servicesTotal >= (parseFloat(delivery.min_order) || 0) 
           ? 'Gratuite (min atteint)' 
-          : `${delivery.fixed_price} DH (gratuit dès ${delivery.min_order} DH)`
-        case 'distance': return `Par distance (${delivery.price_per_km} DH/km)`
+          : `Fixe (gratuit dès ${delivery.min_order} DH)`
+        case 'distance': return deliveryDistanceKm !== null
+          ? `Distance: ${deliveryDistanceKm} km × ${delivery.price_per_km} DH/km`
+          : `Par distance (${delivery.price_per_km} DH/km)`
         default: return delivery.type
       }
     }

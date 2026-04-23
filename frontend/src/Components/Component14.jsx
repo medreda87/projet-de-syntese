@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Component14 = ({ 
-  buttonText = "About FreshFold",
+  buttonText = "About Mesbanati",
   titlePart1 = "Making Laundry <span>Effortless</span>",
   description = "We're building the future of laundry services — connecting customers with trusted local providers for a seamless, hassle-free experience.",
   steps = null,
@@ -12,7 +12,7 @@ const Component14 = ({
       <div className={`container mx-auto ${image ? 'grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center' : ''}`}>
         {/* Left Column - Text Content */}
         <div className={image ? 'text-left' : 'text-center'}>
-          {/* About FreshFold Button */}
+          {/* About Mesbanati Button */}
           <div className="mb-8">
             <button className="bg-[#E0F2FE] hover:bg-[#BAE6FD] text-[#0C8CE9] font-medium px-6 py-2 rounded-full transition-colors duration-200">
               {buttonText}

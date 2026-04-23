@@ -27,7 +27,7 @@ const CUSTOMERS_FAQS = [
 const PROVIDERS_FAQS = [
   {
     question: "How much does it cost to join?",
-    answer: "Joining FreshFold is free! We only charge a small commission fee on completed bookings, so you only pay when you earn."
+    answer: "Joining Mesbanati is free! We only charge a small commission fee on completed bookings, so you only pay when you earn."
   },
   {
     question: "How do I get verified?",

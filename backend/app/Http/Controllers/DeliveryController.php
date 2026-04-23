@@ -33,14 +33,14 @@ class DeliveryController extends Controller
    'laundry_id' => 'required|exists:laundries,id',
     'type' => 'required|in:distance,fixed,free_above,free',
     'price_per_km' => 'required_if:type,distance|nullable|numeric',
-    'fixed_price' => 'required_if:type,fixed|nullable|numeric',
+    'fixed_price' => 'nullable|numeric',
     'min_order' => 'required_if:type,free_above|nullable|numeric',
     'delivery_radius' => 'nullable|numeric',
         ]);
     
 
     $data['price_per_km'] = $data['type'] === 'distance' ? $data['price_per_km'] ?? null : null;
-    $data['fixed_price']  = $data['type'] === 'fixed' ? $data['fixed_price'] ?? null : null;
+    $data['fixed_price']  = in_array($data['type'], ['fixed', 'free_above']) ? ($data['fixed_price'] ?? null) : null;
     $data['min_order']    = $data['type'] === 'free_above' ? $data['min_order'] ?? null : null;
 
 

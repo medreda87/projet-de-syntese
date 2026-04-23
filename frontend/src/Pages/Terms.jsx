@@ -8,7 +8,7 @@ const Terms = () => {
       <Component14
         buttonText="Legal Information"
         titlePart1="Terms of <span>Service</span>"
-        description="Please read these terms carefully before using FreshFold's services."
+        description="Please read these terms carefully before using Mesbanati's services."
       />
       
       <LegalContent 
@@ -17,16 +17,16 @@ const Terms = () => {
       >
         <LegalSection title="1. Acceptance of Terms">
           <p className="mb-4">
-            By accessing and using FreshFold ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+            By accessing and using Mesbanati ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
           </p>
           <p>
-            FreshFold reserves the right to modify these terms at any time. We will notify users of any changes by posting the new Terms of Service on this page and updating the "Last updated" date.
+            Mesbanati reserves the right to modify these terms at any time. We will notify users of any changes by posting the new Terms of Service on this page and updating the "Last updated" date.
           </p>
         </LegalSection>
 
         <LegalSection title="2. Description of Service">
           <p className="mb-4">
-            FreshFold is an online marketplace platform that connects customers seeking laundry services with independent service providers. We facilitate transactions between customers and providers but are not a party to the actual service agreement between them.
+            Mesbanati is an online marketplace platform that connects customers seeking laundry services with independent service providers. We facilitate transactions between customers and providers but are not a party to the actual service agreement between them.
           </p>
           <p>
             We provide a platform for:
@@ -78,7 +78,7 @@ const Terms = () => {
 
           <LegalSubsection title="4.2 Provider Fees">
             <p>
-              FreshFold charges a commission fee on completed transactions. The current commission rate is displayed in your provider dashboard. Fees are deducted from payments before they are transferred to your account. We reserve the right to modify commission rates with 30 days' notice.
+              Mesbanati charges a commission fee on completed transactions. The current commission rate is displayed in your provider dashboard. Fees are deducted from payments before they are transferred to your account. We reserve the right to modify commission rates with 30 days' notice.
             </p>
           </LegalSubsection>
         </LegalSection>
@@ -86,7 +86,7 @@ const Terms = () => {
         <LegalSection title="5. Customer Terms">
           <LegalSubsection title="5.1 Service Booking">
             <p className="mb-4">
-              When you book a service through FreshFold:
+              When you book a service through Mesbanati:
             </p>
             <LegalList items={[
               "You enter into a service agreement directly with the provider",
@@ -141,13 +141,13 @@ const Terms = () => {
             "Use automated systems to access the Service without permission",
             "Impersonate any person or entity",
             "Collect or store personal data about other users without permission",
-            "Use the Service to compete with FreshFold or solicit providers to use competing services"
+            "Use the Service to compete with Mesbanati or solicit providers to use competing services"
           ]} />
         </LegalSection>
 
         <LegalSection title="8. Intellectual Property">
           <p className="mb-4">
-            The Service and its original content, features, and functionality are owned by FreshFold and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
+            The Service and its original content, features, and functionality are owned by Mesbanati and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
           </p>
           <p>
             You may not reproduce, distribute, modify, create derivative works of, publicly display, or otherwise exploit any content from our Service without our express written permission.
@@ -156,7 +156,7 @@ const Terms = () => {
 
         <LegalSection title="9. Limitation of Liability">
           <p className="mb-4">
-            FreshFold acts as an intermediary platform connecting customers and providers. We are not responsible for:
+            Mesbanati acts as an intermediary platform connecting customers and providers. We are not responsible for:
           </p>
           <LegalList items={[
             "The quality, safety, or legality of services provided by third-party providers",
@@ -166,13 +166,13 @@ const Terms = () => {
             "Any disputes between customers and providers"
           ]} />
           <p className="mt-4">
-            To the maximum extent permitted by law, FreshFold shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service.
+            To the maximum extent permitted by law, Mesbanati shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service.
           </p>
         </LegalSection>
 
         <LegalSection title="10. Indemnification">
           <p>
-            You agree to indemnify and hold FreshFold harmless from any claims, damages, losses, liabilities, and expenses (including legal fees) arising out of your use of the Service, violation of these Terms, or infringement of any rights of another party.
+            You agree to indemnify and hold Mesbanati harmless from any claims, damages, losses, liabilities, and expenses (including legal fees) arising out of your use of the Service, violation of these Terms, or infringement of any rights of another party.
           </p>
         </LegalSection>
 
@@ -188,7 +188,7 @@ const Terms = () => {
         <LegalSection title="12. Dispute Resolution">
           <LegalSubsection title="12.1 Governing Law">
             <p>
-              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which FreshFold operates, without regard to its conflict of law provisions.
+              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which Mesbanati operates, without regard to its conflict of law provisions.
             </p>
           </LegalSubsection>
 
@@ -207,7 +207,7 @@ const Terms = () => {
         <LegalSection title="13. General Provisions">
           <LegalSubsection title="13.1 Entire Agreement">
             <p>
-              These Terms constitute the entire agreement between you and FreshFold regarding the use of the Service and supersede all prior agreements and understandings.
+              These Terms constitute the entire agreement between you and Mesbanati regarding the use of the Service and supersede all prior agreements and understandings.
             </p>
           </LegalSubsection>
 
@@ -222,7 +222,7 @@ const Terms = () => {
               If you have any questions about these Terms, please contact us at:
             </p>
             <p className="mt-2">
-              <strong>Email:</strong> legal@freshfold.com<br />
+              <strong>Email:</strong> legal@mesbanati.ma<br />
               <strong>Address:</strong> 123 Market Street, San Francisco, CA 94102
             </p>
           </LegalSubsection>

@@ -10,7 +10,7 @@ class LaundryController extends Controller
      public function index(Request $request)
     {
 
-        $query = Laundry::query()->where('is_accepted', true)->with('services:id,laundry_id,name');
+        $query = Laundry::query()->where('admin_approved', true)->with('services:id,laundry_id,name');
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
@@ -87,7 +87,8 @@ class LaundryController extends Controller
         $data
     );
 
-    // Auto-accept if all required info is filled
+    // Auto-mark profile as complete if all required info is filled
+    // admin_approved is NOT touched here — only admin can set it
     $laundry->is_accepted = $laundry->checkAccepted();
     $laundry->save();
 
@@ -101,7 +102,7 @@ class LaundryController extends Controller
             ->orderBy('name')
             ->pluck('name');
 
-        $cities = Laundry::where('is_accepted', true)
+        $cities = Laundry::where('admin_approved', true)
             ->whereNotNull('city')
             ->where('city', '!=', '')
             ->select('city')
@@ -114,6 +115,38 @@ class LaundryController extends Controller
             'cities' => $cities,
         ]);
     }
+public function update(Request $request, $id)
+{
+    $laundry = Laundry::findOrFail($id);
+
+    $request->validate([
+        'name' => 'sometimes|required|string',
+        'address' => 'sometimes|required|string',
+        'phone' => 'sometimes|required|string',
+        'email' => 'nullable|email',
+        'description' => 'nullable|string',
+        'logo' => 'nullable|file|image',
+        'bigLogo' => 'nullable|file|image',
+        'openingHours' => 'nullable|string',
+    ]);
+
+    $data = $request->except(['logo', 'bigLogo', '_method']);
+
+    if ($request->hasFile('logo')) {
+        $data['logo'] = $request->file('logo')->store('logos', 'public');
+    }
+    if ($request->hasFile('bigLogo')) {
+        $data['bigLogo'] = $request->file('bigLogo')->store('covers', 'public');
+    }
+
+    $laundry->update($data);
+    // Update profile-completeness flag; admin_approved is NOT changed
+    $laundry->is_accepted = $laundry->checkAccepted();
+    $laundry->save();
+
+    return response()->json($laundry);
+}
+
 // get toute les laundry d'un user 
 public function getLaundriesByUser($userId)
 {

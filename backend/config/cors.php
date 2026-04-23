@@ -15,9 +15,12 @@ return [
     |
     */
 
-    'paths' => ['api/*'],
-    
-    'allowed_origins' => ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:3001'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+
+    'allowed_origins' => array_filter(array_merge(
+        ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
+        env('FRONTEND_URL') ? [env('FRONTEND_URL')] : []
+    )),
 
     'allowed_methods' => ['*'],
     'allowed_origins_patterns' => [],

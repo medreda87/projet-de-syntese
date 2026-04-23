@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 const Component18 = ({
   tagText = null,
   titlePart1 = "How We <span>Help</span>",
-  description = "FreshFold creates value for both customers and service providers",
+  description = "Mesbanati creates value for both customers and service providers",
   customersCard = {
     tagText: "For Customers",
     tagVariant: "default",

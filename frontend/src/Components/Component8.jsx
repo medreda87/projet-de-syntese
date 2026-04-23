@@ -41,7 +41,7 @@ function Component8() {
 
 
         <TitleSectionText
-            titlePart1="How Parteners of <i>FreshFold</i> <br/> Works"
+            titlePart1="How Parteners of <i>Mesbanati</i> <br/> Works"
             description={"Getting your laundry done has never been easier. Here's how it works."}
             descriptionClass="text-center mx-auto"
         />

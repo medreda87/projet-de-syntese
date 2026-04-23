@@ -70,14 +70,14 @@ class RamassageController extends Controller
                     break;
 
                 case 'distance':
-                    // Calculate distance between laundry and delivery address
+                    // Calculate distance between laundry and pickup address (customer location)
                     $pricePerKm = $delivery->price_per_km ?? 0;
                     $distance = 0;
 
-                    if ($laundry->latitude && $laundry->longitude && $request->deliveryLatitude && $request->deliveryLongitude) {
+                    if ($laundry->latitude && $laundry->longitude && $request->pickupLatitude && $request->pickupLongitude) {
                         $distance = $this->haversineDistance(
                             $laundry->latitude, $laundry->longitude,
-                            $request->deliveryLatitude, $request->deliveryLongitude
+                            $request->pickupLatitude, $request->pickupLongitude
                         );
                     }
 
